@@ -1,0 +1,65 @@
+export const dormersData = [
+  {
+    userId: "user_001",
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    phone: "+1 (555) 123-4567",
+    dormerDetails: {
+      dormerId: "dormer_001",
+      roomNumber: "101",
+      status: "Active",
+      moveInDate: "2025-01-15",
+    },
+    bills: [
+      {
+        billId: "bill_01",
+        billingPeriod: "2025-08",
+        totalAmountDue: 275.0,
+        amountPaid: 275.0,
+        status: "Paid",
+        dueDate: "2025-08-31",
+        paymentDate: "2025-08-15",
+      },
+      {
+        billId: "bill_02",
+        billingPeriod: "2025-09",
+        totalAmountDue: 275.0,
+        amountPaid: 0.0,
+        status: "Unpaid",
+        dueDate: "2025-09-30",
+      },
+    ],
+  },
+  {
+    userId: "user_002",
+    firstName: "Jane",
+    lastName: "Smith",
+    email: "jane.smith@example.com",
+    phone: "+1 (555) 987-6543",
+    dormerDetails: {
+      dormerId: "dormer_002",
+      roomNumber: "205",
+      status: "Active",
+      moveInDate: "2025-02-20",
+    },
+    bills: [
+      {
+        billId: "bill_03",
+        billingPeriod: "2025-08",
+        totalAmountDue: 325.0,
+        amountPaid: 200.0,
+        status: "Partially Paid",
+        dueDate: "2025-08-31",
+      },
+      {
+        billId: "bill_04",
+        billingPeriod: "2025-09",
+        totalAmountDue: 325.0,
+        amountPaid: 0.0,
+        status: "Overdue",
+        dueDate: "2025-09-30",
+      },
+    ],
+  },
+];

@@ -1,6 +1,14 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -10,8 +18,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TrendingUp, TrendingDown, Wallet, Users } from "lucide-react";
+import {
+  TrendingUp,
+  TrendingDown,
+  Wallet,
+  Users,
+  PlusIcon,
+} from "lucide-react";
 
+import { firestore as db, auth } from "@/lib/firebase";
+import {
+  collection,
+  addDoc,
+  doc,
+  setDoc,
+  query,
+  onSnapshot,
+  runTransaction,
+  serverTimestamp, // Use serverTimestamp for more accurate timestamps
+} from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import AddPayableModal from "./dormers/components/AddPayabaleModal";
 const kpiData = [
   {
     title: "Dorm Fund Balance",
@@ -76,7 +103,68 @@ const recentActivity = [
   },
 ];
 
+function PayableItem({ name, amount, description }) {
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+      <div className="flex items-start justify-between">
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          {name}
+        </h3>
+      </div>
+      <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+        ₱ {amount.toFixed(2)}
+      </p>
+      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        {description}
+      </p>
+    </div>
+  );
+}
+
 export default function Dashboard() {
+  const [payables, setPayables] = useState([]);
+  const [user, setUser] = useState(null);
+  const [showEditPayableModal, setShowEditPayableModal] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    // Fetch data from API
+    async function fetchPayables() {
+      try {
+        const queryPayable = query(collection(db, "regularCharge"));
+        const unsubscribe = onSnapshot(queryPayable, (snapshot) => {
+          const payablesData = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setPayables(payablesData);
+          console.log("Payables data fetched:", payablesData);
+        });
+        return () => unsubscribe();
+      } catch (error) {
+        console.error("Error fetching payables:", error);
+      }
+    }
+    fetchPayables();
+  }, []);
+
+  const handleSavePayable = async (payableData) => {
+    if (payableData.id) {
+      // If it has an ID, we're updating an existing document
+      const docRef = doc(db, "regularCharge", payableData.id);
+      await setDoc(docRef, payableData, { merge: true }); // Use setDoc with merge to update
+    } else {
+      // Otherwise, we're adding a new document
+      await addDoc(collection(db, "regularCharge"), payableData);
+    }
+  };
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
@@ -134,6 +222,40 @@ export default function Dashboard() {
           );
         })}
       </div>
+
+      <Card className="border border-gray-200 dark:border-gray-700">
+        <CardHeader className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+          <div>
+            <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white md:text-xl">
+              Regular Payables
+            </CardTitle>
+            <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+              Recurring monthly expenses
+            </CardDescription>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => setIsAddModalOpen(true)}
+            className="gap-2 bg-green-50 hover:bg-green-100 dark:bg-green-900/30 dark:hover:bg-green-800/50"
+          >
+            <PlusIcon className="h-4 w-4 text-green-600 dark:text-green-400" />
+            Edit Payable
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {payables.map((payable) => (
+              <PayableItem key={payable.id} {...payable} />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <AddPayableModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={handleSavePayable}
+      />
 
       {/* Recent Activity */}
       <Card className="border border-gray-100 dark:border-gray-800 shadow-sm">
