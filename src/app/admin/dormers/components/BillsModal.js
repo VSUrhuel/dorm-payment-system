@@ -68,7 +68,7 @@ export default function BillsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="sm:max-w-2xl overflow-y-scroll">
         <DialogHeader>
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
@@ -110,10 +110,10 @@ export default function BillsModal({
                 {dormer.bills.map((bill) => {
                   const status = getStatusBadge(bill.status);
                   return (
-                    <TableRow key={bill.billId}>
+                    <TableRow key={bill.id}>
                       <TableCell>{bill.billingPeriod}</TableCell>
-                      <TableCell>${bill.totalAmountDue.toFixed(2)}</TableCell>
-                      <TableCell>${bill.amountPaid.toFixed(2)}</TableCell>
+                      <TableCell>₱{bill.totalAmountDue.toFixed(2)}</TableCell>
+                      <TableCell>₱{bill.amountPaid.toFixed(2)}</TableCell>
                       <TableCell>
                         <Badge className={status.className}>
                           {status.icon}
@@ -176,18 +176,6 @@ export default function BillsModal({
                     <p>
                       {new Date(dormer.createdAt.toDate()).toLocaleDateString()}
                     </p>
-                  </div>
-                  <div>
-                    <Label className="text-xs text-gray-500">Status</Label>
-                    <Badge
-                      className={
-                        dormer.status === "Active"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-800"
-                      }
-                    >
-                      {dormer.status}
-                    </Badge>
                   </div>
                 </CardContent>
               </Card>

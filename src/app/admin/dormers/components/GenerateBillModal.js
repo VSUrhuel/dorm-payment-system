@@ -107,16 +107,23 @@ export default function GenerateBillModal({
   if (!dormer) return null;
 
   const handleGenerateBill = () => {
+    if (!billingPeriod) {
+      alert("Please select a billing period.");
+      return;
+    }
+    if (totalAmount <= 0) {
+      alert("Please select at least one payable to generate a bill.");
+      return;
+    }
     // Logic to generate the bill would go here
     const billData = {
       dormerId: dormer.id,
       billingPeriod,
       status: "Unpaid",
       totalAmountDue: totalAmount,
-      description: "",
+      description: document.getElementById("description").value || "",
       amountPaid: 0,
     };
-    console.log("Generating bill with data:", billData);
     onGenerateBill(billData);
     onClose(); // Close the modal after generating the bill
   };

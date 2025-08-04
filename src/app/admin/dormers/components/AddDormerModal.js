@@ -49,6 +49,7 @@ export default function AddDormerModal({ isOpen, onClose, onSave }) {
       email,
       phone,
       role,
+      roomNumber,
     };
     onSave(dormerData); // Pass the collected data up to the parent
     onClose(); // Close the modal after saving

@@ -58,7 +58,11 @@ export default function PaymentModal({
   if (!dormer || !bill) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={onClose}
+      className="max-w-2xl overflow-x-scroll"
+    >
       <DialogContent>
         <DialogHeader>
           <div className="flex items-center gap-3">
@@ -79,7 +83,7 @@ export default function PaymentModal({
 
         <div className="space-y-4 py-4">
           <Card>
-            <CardHeader className="pb-2">
+            <CardHeader className="">
               <CardDescription className="text-sm">
                 Bill Summary
               </CardDescription>
@@ -93,8 +97,10 @@ export default function PaymentModal({
                   <p>{bill.billingPeriod}</p>
                 </div>
                 <div>
-                  <Label className="text-xs text-gray-500">Due Date</Label>
-                  <p>{new Date(bill.dueDate).toLocaleDateString()}</p>
+                  <Label className="text-xs text-gray-500">Date Issued</Label>
+                  <p>
+                    {new Date(bill.createdAt.toDate()).toLocaleDateString()}
+                  </p>
                 </div>
                 <div>
                   <Label className="text-xs text-gray-500">Amount Due</Label>

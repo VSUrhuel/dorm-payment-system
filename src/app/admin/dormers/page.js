@@ -49,6 +49,31 @@ export default function DormersPage() {
   const [billToCreate, setBillToCreate] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(6); // You can adjust this as needed
+
+  const sendEmail = async (emailData) => {
+    try {
+      const response = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(emailData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send email");
+      }
+
+      const data = await response.json();
+      console.log("Email sent successfully:", data);
+    } catch (error) {
+      console.error("Error sending email:", error);
+      alert("Failed to send email. Please try again later.");
+    }
+  };
+
   // --- Your existing useEffects and functions (openModal, closeModal, saveDormer, etc.) remain here ---
   // ... (keep all your existing useEffects and functions)
 
@@ -108,6 +133,10 @@ export default function DormersPage() {
     };
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(1); // Reset to first page when search or filter changes
+  }, [searchTerm, statusFilter]);
+
   const dormersWithBills = useMemo(() => {
     if (!dormers.length) return [];
     return dormers.map((dormer) => ({
@@ -122,10 +151,29 @@ export default function DormersPage() {
       return;
     }
     try {
+      // Check if dormer email already exists
+      const existingDormer = dormers.find((d) => d.email === dormerData.email);
+      if (existingDormer) {
+        alert("A dormer with this email already exists.");
+        return;
+      }
       await addDoc(collection(db, "dormers"), {
         ...dormerData,
         createdBy: user.uid,
         createdAt: serverTimestamp(),
+      });
+
+      alert("Dormer added successfully!");
+      // Optionally, send a welcome email
+      await sendEmail({
+        to: dormerData.email,
+        subject: "Welcome to Mabolo Payment System",
+        html: `
+          <h1>Welcome, ${dormerData.firstName}!</h1>
+          <p>Your dormer account has been created successfully. This is where you will received your bills and sucessfully payment!</p>
+          <p>Room Number: ${dormerData.roomNumber}</p>
+          <p>Thank you for joining us!</p>
+        `,
       });
     } catch (error) {
       console.error("Error adding dormer: ", error);
@@ -187,7 +235,23 @@ export default function DormersPage() {
         });
       });
 
-      console.log("Payment saved successfully!");
+      alert("Payment added succesfully!");
+
+      const dormerInfo = dormers.find((d) => d.id === paymentData.dormerId);
+      if (dormerInfo) {
+        await sendEmail({
+          to: dormerInfo.email,
+          subject: `Payment Confirmation - ${paymentData.billId}`,
+          html: `
+            <h1>Payment Received!</h1>
+            <p>Hi ${dormerInfo.firstName},</p>
+            <p>We've received your payment of <strong>₱${paymentData.amount.toFixed(
+              2
+            )}</strong>.</p>
+            <p>Thank you!</p>
+          `,
+        });
+      }
     } catch (error) {
       console.error("Error saving payment in transaction: ", error);
     } finally {
@@ -245,6 +309,26 @@ export default function DormersPage() {
           createdAt: serverTimestamp(),
         });
       }
+
+      // --- NEW: Send new bill email ---
+      const dormerInfo = dormers.find((d) => d.id === billData.dormerId);
+      if (dormerInfo) {
+        await sendEmail({
+          to: dormerInfo.email,
+          subject: `New Bill for ${billData.billingPeriod}`,
+          html: `
+            <h1>New Bill Generated</h1>
+            <p>Hi ${dormerInfo.firstName},</p>
+            <p>A new bill for the period <strong>${
+              billData.billingPeriod
+            }</strong> has been generated.</p>
+            <p>Amount Due: <strong>₱${billData.totalAmountDue.toFixed(
+              2
+            )}</strong></p>
+            <p>Please pay this amount to the Dorm SA.</p>
+          `,
+        });
+      }
     } catch (error) {
       console.error("Error saving bill: ", error);
     } finally {
@@ -294,6 +378,26 @@ export default function DormersPage() {
     return matchesSearch && matchesStatus;
   });
 
+  const indexOfLastDormer = currentPage * itemsPerPage;
+  const indexOfFirstDormer = indexOfLastDormer - itemsPerPage;
+  const paginatedDormers = filteredDormers.slice(
+    indexOfFirstDormer,
+    indexOfLastDormer
+  );
+  const totalPages = Math.ceil(filteredDormers.length / itemsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   if (loading) {
     return <div>Loading Dormers...</div>;
   }
@@ -307,14 +411,36 @@ export default function DormersPage() {
         onSearchChange={setSearchTerm}
         statusFilter={statusFilter}
         onStatusChange={setStatusFilter}
-        count={filteredDormers.length}
+        count={paginatedDormers.length}
       />
 
       <DormersTable
-        dormers={filteredDormers}
+        dormers={paginatedDormers}
         onGenerateBill={(dormer) => openModal("generateBill", dormer)}
         onViewBills={(dormer) => openModal("bills", dormer)}
       />
+
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <span className="text-sm text-gray-700">
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleNextPage}
+          disabled={currentPage >= totalPages}
+        >
+          Next
+        </Button>
+      </div>
 
       {/* --- MODALS --- */}
       <AddDormerModal

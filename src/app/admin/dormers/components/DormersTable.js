@@ -40,7 +40,7 @@ export default function DormersTable({ dormers, onGenerateBill, onViewBills }) {
           </TableHeader>
           <TableBody>
             {dormers.map((dormer) => (
-              <TableRow className="hover:bg-gray-50">
+              <TableRow className="hover:bg-gray-50" key={dormer.id}>
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
