@@ -1,114 +1,120 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // 1. Import useRouter
-// Import the 'auth' instance from your central Firebase config file
+import { useRouter } from "next/navigation";
 import { auth } from "@/lib/firebase";
 import {
-  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut,
+  sendPasswordResetEmail, // 1. Import for password reset
 } from "firebase/auth";
+import { Building2 } from "lucide-react";
 
-// --- THE MAIN REACT COMPONENT ---
 export default function AuthPage() {
-  const router = useRouter(); // 2. Initialize the router
-  // State to hold the current user object from Firebase
+  const router = useRouter();
   const [user, setUser] = useState(null);
-  // State to toggle between Sign In and Sign Up forms
-  const [isSignUp, setIsSignUp] = useState(false);
-  // State for form inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // State for loading indicators and error messages
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true); // Start with loading true until first auth check
+  const [message, setMessage] = useState(""); // For success messages like password reset
+  const [loading, setLoading] = useState(true);
+  const [authActionLoading, setAuthActionLoading] = useState(false);
 
-  // --- EFFECT FOR AUTH STATE CHANGES ---
-  // This hook runs once on component mount to set up the Firebase auth listener.
+  // Effect to check auth state and redirect if already logged in
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false); // Auth check is complete
+      if (currentUser) {
+        setUser(currentUser);
+        // If user is found, redirect to the admin dashboard
+        router.push("/admin");
+      } else {
+        setUser(null);
+        setLoading(false); // Only stop loading if there's no user
+      }
     });
 
-    // Cleanup function to unsubscribe from the listener
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
-  // --- EFFECT FOR REDIRECTING ---
-  // 3. This hook handles the redirect after a user logs in.
-  useEffect(() => {
-    if (!loading && user) {
-      router.push("/admin");
-    }
-  }, [user, loading, router]);
-
-  // --- AUTH HANDLER FUNCTIONS ---
-
-  const handleAuthAction = async (event) => {
+  // Handler for the sign-in form submission
+  const handleSignIn = async (event) => {
     event.preventDefault();
     setError("");
-    setLoading(true);
+    setMessage("");
+    setAuthActionLoading(true);
 
     try {
-      if (isSignUp) {
-        await createUserWithEmailAndPassword(auth, email, password);
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-      }
-      // onAuthStateChanged and the redirect effect will handle the rest.
+      await signInWithEmailAndPassword(auth, email, password);
+      // The onAuthStateChanged listener will handle the redirect
     } catch (err) {
-      setError(err.message || "An error occurred. Please try again.");
+      setError(
+        err.code.includes("auth/invalid-credential")
+          ? "Invalid email or password."
+          : "An error occurred. Please try again."
+      );
     } finally {
-      setLoading(false);
+      setAuthActionLoading(false);
     }
   };
 
-  // Note: A sign-out button wouldn't typically be on this page,
-  // but the function is here if needed elsewhere.
-  const handleSignOut = async () => {
+  // 2. Handler for the "Forgot Password" action
+  const handlePasswordReset = async () => {
+    if (!email) {
+      setError("Please enter your email address to reset your password.");
+      return;
+    }
     setError("");
+    setMessage("");
+    setAuthActionLoading(true);
+
     try {
-      await signOut(auth);
+      await sendPasswordResetEmail(auth, email);
+      setMessage("Password reset email sent! Please check your inbox.");
     } catch (err) {
-      setError(err.message);
+      setError(
+        "Failed to send reset email. Please check the address and try again."
+      );
+    } finally {
+      setAuthActionLoading(false);
     }
   };
 
-  // --- RENDER LOGIC ---
-
-  // 4. Show a loading state while checking auth or redirecting.
+  // 3. Improved loading/redirecting state
   if (loading || user) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <p className="text-gray-500">Loading...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-600">
+        <Building2 className="h-12 w-12 text-green-600 animate-pulse" />
+        <p className="mt-4 text-lg">Connecting to your dashboard...</p>
       </div>
     );
   }
 
-  // If there's no user and loading is complete, show the login form.
   return (
-    <div className="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div className="bg-gray-100 flex items-center justify-center min-h-screen p-4">
       <div className="w-full max-w-md mx-auto">
-        <div className="bg-white p-8 rounded-2xl shadow-lg transition-all">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
-            {isSignUp ? "Create an Account" : "Welcome Back"}
-          </h2>
-          <p className="text-center text-gray-500 mb-8">
-            {isSignUp
-              ? "Fill in the details to get started"
-              : "Sign in to continue"}
-          </p>
+        <div className="bg-white p-8 rounded-2xl shadow-lg">
+          <div className="flex flex-col items-center mb-6">
+            <div className="flex items-center justify-center w-16 h-16 bg-green-50 rounded-full mb-4">
+              <Building2 className="h-8 w-8 text-green-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-center text-gray-800">
+              Welcome to DormPay
+            </h2>
+            <p className="text-center text-gray-500 mt-1">Admin Sign In</p>
+          </div>
 
           {error && (
             <div className="mb-4 text-center text-sm font-medium p-3 rounded-lg bg-red-100 text-red-700">
               {error}
             </div>
           )}
+          {message && (
+            <div className="mb-4 text-center text-sm font-medium p-3 rounded-lg bg-green-100 text-green-700">
+              {message}
+            </div>
+          )}
 
-          <form onSubmit={handleAuthAction}>
+          <form onSubmit={handleSignIn}>
             <div className="mb-4">
               <label
                 htmlFor="email"
@@ -126,13 +132,16 @@ export default function AuthPage() {
                 placeholder="you@example.com"
               />
             </div>
-            <div className="mb-6">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Password
-              </label>
+            <div className="mb-4">
+              <div className="flex justify-between items-center">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Password
+                </label>
+                {/* 4. Forgot Password Button */}
+              </div>
               <input
                 type="password"
                 id="password"
@@ -144,31 +153,20 @@ export default function AuthPage() {
               />
             </div>
             <button
-              type="submit"
-              disabled={loading}
-              className={`w-full text-white py-3 rounded-lg font-semibold transition-all ${
-                isSignUp
-                  ? "bg-green-600 hover:bg-green-700 focus:ring-green-500"
-                  : "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
-              } focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:bg-gray-400`}
+              type="button"
+              onClick={handlePasswordReset}
+              className="text-sm font-medium text-blue-600 hover:underline flex items-end justify-end mb-4 w-full"
             >
-              {loading
-                ? "Processing..."
-                : isSignUp
-                ? "Create Account"
-                : "Sign In"}
+              Forgot Password?
+            </button>
+            <button
+              type="submit"
+              disabled={authActionLoading}
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
+            >
+              {authActionLoading ? "Processing..." : "Sign In"}
             </button>
           </form>
-
-          <p className="text-center text-sm text-gray-600 mt-8">
-            {isSignUp ? "Already have an account?" : "Don't have an account?"}
-            <button
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="font-semibold text-blue-600 hover:underline ml-1"
-            >
-              {isSignUp ? "Sign In" : "Sign Up"}
-            </button>
-          </p>
         </div>
       </div>
     </div>

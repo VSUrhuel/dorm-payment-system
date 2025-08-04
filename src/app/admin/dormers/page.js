@@ -157,6 +157,32 @@ export default function DormersPage() {
         alert("A dormer with this email already exists.");
         return;
       }
+      if (dormerData.role == "Admin") {
+        await addDoc(collection(db, "dormers"), {
+          ...dormerData,
+          createdBy: user.uid,
+          createdAt: serverTimestamp(),
+          password: "defaultAdminPassword",
+        });
+        createUserWithEmailAndPassword(
+          auth,
+          dormerData.email,
+          "defaultAdminPassword"
+        );
+        await sendEmail({
+          to: dormerData.email,
+          subject: "Welcome to Mabolo Payment System",
+          html: `
+            <h1>Welcome, ${dormerData.firstName}!</h1>
+            <p>We're inviting you to be the admin of the site. You can now log in with the following credentials:</p>
+            <p>Email: ${dormerData.email}</p>
+            <p>Password: defaultAdminPassword</p>
+            <p>Thank you for joining us!</p>
+          `,
+        });
+        alert("Admin dormer added successfully!");
+        return;
+      }
       await addDoc(collection(db, "dormers"), {
         ...dormerData,
         createdBy: user.uid,
