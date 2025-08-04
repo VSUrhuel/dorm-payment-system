@@ -239,7 +239,7 @@ export default function Dashboard() {
             className="gap-2 bg-green-50 hover:bg-green-100 dark:bg-green-900/30 dark:hover:bg-green-800/50"
           >
             <PlusIcon className="h-4 w-4 text-green-600 dark:text-green-400" />
-            Edit Payable
+            Add Payable
           </Button>
         </CardHeader>
         <CardContent>
