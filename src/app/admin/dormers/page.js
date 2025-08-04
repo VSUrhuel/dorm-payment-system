@@ -12,7 +12,10 @@ import {
   runTransaction,
   serverTimestamp, // Use serverTimestamp for more accurate timestamps
 } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+} from "firebase/auth";
 
 // Import your components
 import DormerHeader from "./components/DormerHeader";
