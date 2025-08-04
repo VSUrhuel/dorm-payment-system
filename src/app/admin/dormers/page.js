@@ -161,17 +161,19 @@ export default function DormersPage() {
         return;
       }
       if (dormerData.role == "Admin") {
-        await addDoc(collection(db, "dormers"), {
-          ...dormerData,
-          createdBy: user.uid,
-          createdAt: serverTimestamp(),
-          password: "defaultAdminPassword",
-        });
-        createUserWithEmailAndPassword(
+        const userCredential = await createUserWithEmailAndPassword(
           auth,
           dormerData.email,
-          "defaultAdminPassword"
+          "defaultAdminPassword123" // NOTE: Use a more secure temporary password strategy
         );
+        const newAdminUid = userCredential.user.uid;
+
+        // Use the new UID as the document ID in Firestore
+        await setDoc(doc(db, "dormers", newAdminUid), {
+          ...dormerData,
+          createdBy: user.uid, // The admin who created this account
+          createdAt: serverTimestamp(),
+        });
         await sendEmail({
           to: dormerData.email,
           subject: "Welcome to Mabolo Payment System",
@@ -179,7 +181,7 @@ export default function DormersPage() {
             <h1>Welcome, ${dormerData.firstName}!</h1>
             <p>We're inviting you to be the admin of the site. You can now log in with the following credentials:</p>
             <p>Email: ${dormerData.email}</p>
-            <p>Password: defaultAdminPassword</p>
+            <p>Password: defaultAdminPassword123</p>
             <p>Thank you for joining us!</p>
           `,
         });
