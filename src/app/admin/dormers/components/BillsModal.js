@@ -68,7 +68,12 @@ export default function BillsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl overflow-y-scroll">
+      <DialogContent
+        className="sm:max-w-2xl max-h-[90vh] overflow-y-auto"
+        onInteractOutside={(e) => {
+          e.preventDefault();
+        }}
+      >
         <DialogHeader>
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
@@ -85,103 +90,110 @@ export default function BillsModal({
             </div>
           </div>
         </DialogHeader>
+        <div className="mt-4 overflow-x-auto">
+          <Tabs defaultValue="bills" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="bills">Bills</TabsTrigger>
+              <TabsTrigger value="details">Details</TabsTrigger>
+            </TabsList>
 
-        <Tabs defaultValue="bills" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="bills">Bills</TabsTrigger>
-            <TabsTrigger value="details">Details</TabsTrigger>
-          </TabsList>
+            <TabsContent
+              value="bills"
+              className="py-4 max-h-[60vh] overflow-y-auto"
+            >
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Period</TableHead>
+                    <TableHead>Amount Due</TableHead>
+                    <TableHead>Amount Paid</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {dormer.bills.map((bill) => {
+                    const status = getStatusBadge(bill.status);
+                    return (
+                      <TableRow key={bill.id}>
+                        <TableCell>{bill.billingPeriod}</TableCell>
+                        <TableCell>₱{bill.totalAmountDue.toFixed(2)}</TableCell>
+                        <TableCell>₱{bill.amountPaid.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Badge className={status.className}>
+                            {status.icon}
+                            {bill.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {(bill.status === "Unpaid" ||
+                            bill.status === "Partially Paid" ||
+                            bill.status === "Overdue") && (
+                            <Button
+                              size="sm"
+                              onClick={() => onRecordPayment(bill)}
+                              className="h-8"
+                            >
+                              <CreditCard className="h-4 w-4 mr-1" /> Pay
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TabsContent>
 
-          <TabsContent
-            value="bills"
-            className="py-4 max-h-[60vh] overflow-y-auto"
-          >
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Period</TableHead>
-                  <TableHead>Amount Due</TableHead>
-                  <TableHead>Amount Paid</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {dormer.bills.map((bill) => {
-                  const status = getStatusBadge(bill.status);
-                  return (
-                    <TableRow key={bill.id}>
-                      <TableCell>{bill.billingPeriod}</TableCell>
-                      <TableCell>₱{bill.totalAmountDue.toFixed(2)}</TableCell>
-                      <TableCell>₱{bill.amountPaid.toFixed(2)}</TableCell>
-                      <TableCell>
-                        <Badge className={status.className}>
-                          {status.icon}
-                          {bill.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {(bill.status === "Unpaid" ||
-                          bill.status === "Partially Paid" ||
-                          bill.status === "Overdue") && (
-                          <Button
-                            size="sm"
-                            onClick={() => onRecordPayment(bill)}
-                            className="h-8"
-                          >
-                            <CreditCard className="h-4 w-4 mr-1" /> Pay
-                          </Button>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TabsContent>
+            <TabsContent value="details" className="py-4 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-gray-500">
+                      Contact Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div>
+                      <Label className="text-xs text-gray-500">Email</Label>
+                      <p>{dormer.email}</p>
+                    </div>
+                    <div>
+                      <Label className="text-xs text-gray-500">Phone</Label>
+                      <p>{dormer.phone}</p>
+                    </div>
+                  </CardContent>
+                </Card>
 
-          <TabsContent value="details" className="py-4 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-500">
-                    Contact Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div>
-                    <Label className="text-xs text-gray-500">Email</Label>
-                    <p>{dormer.email}</p>
-                  </div>
-                  <div>
-                    <Label className="text-xs text-gray-500">Phone</Label>
-                    <p>{dormer.phone}</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-500">
-                    Dormitory Details
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div>
-                    <Label className="text-xs text-gray-500">Room Number</Label>
-                    <p>{dormer.roomNumber}</p>
-                  </div>
-                  <div>
-                    <Label className="text-xs text-gray-500">Date Added</Label>
-                    <p>
-                      {new Date(dormer.createdAt.toDate()).toLocaleDateString()}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-gray-500">
+                      Dormitory Details
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div>
+                      <Label className="text-xs text-gray-500">
+                        Room Number
+                      </Label>
+                      <p>{dormer.roomNumber}</p>
+                    </div>
+                    <div>
+                      <Label className="text-xs text-gray-500">
+                        Date Added
+                      </Label>
+                      <p>
+                        {new Date(
+                          dormer.createdAt.toDate()
+                        ).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </DialogContent>
     </Dialog>
   );

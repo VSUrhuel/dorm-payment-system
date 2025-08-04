@@ -55,9 +55,25 @@ export default function AddDormerModal({ isOpen, onClose, onSave }) {
     onClose(); // Close the modal after saving
   };
 
+  const handleClose = () => {
+    // Reset form fields when closing the modal
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setPhone("");
+    setRole("");
+    setRoomNumber("");
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg">
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent
+        className="sm:max-w-2xl max-h-[90vh] overflow-y-auto"
+        onInteractOutside={(e) => {
+          e.preventDefault();
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Add New Dormer</DialogTitle>
           <DialogDescription>
@@ -152,7 +168,7 @@ export default function AddDormerModal({ isOpen, onClose, onSave }) {
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={handleClose}>
             Cancel
           </Button>
           <Button

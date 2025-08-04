@@ -55,9 +55,16 @@ export default function AddPayableModal({ isOpen, onClose, onSave, payable }) {
     onClose(); // Close the modal after saving
   };
 
+  const handleClose = () => {
+    // Reset form fields when closing the modal
+    setTitle("");
+    setAmount("");
+    setDescription("");
+    onClose(); // Call the parent's onClose function
+  };
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Payable</DialogTitle>
           <DialogDescription>
@@ -104,7 +111,7 @@ export default function AddPayableModal({ isOpen, onClose, onSave, payable }) {
           </div>
         </div>
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={handleClose}>
             Cancel
           </Button>
           <Button type="button" onClick={handleSave}>

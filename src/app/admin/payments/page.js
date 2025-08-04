@@ -26,6 +26,7 @@ import { onAuthStateChanged } from "firebase/auth";
 export default function PaymentsContent() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [billingPeriodFilter, setBillingPeriodFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [payments, setPayments] = useState([]);
@@ -110,7 +111,6 @@ export default function PaymentsContent() {
           ...p,
           recordedByUser: dormersMap.get(p.recordedBy), // Attach user info to each payment
         }));
-        console.log("Associated Payments:", associatedPayments);
 
         const totalPaidForBill = associatedPayments.reduce(
           (sum, p) => sum + p.amount,
@@ -128,6 +128,14 @@ export default function PaymentsContent() {
       .filter(Boolean); // Remove any null entries
   }, [loading, payments, bills, dormers]);
 
+  const uniqueBillingPeriods = useMemo(() => {
+    if (!combinedBillData.length) return [];
+    // Use a Set for efficiency to get unique values, then convert to array and sort
+    return [
+      ...new Set(combinedBillData.map((bill) => bill.billingPeriod)),
+    ].sort();
+  }, [combinedBillData]);
+
   // --- 3. FIXED: Dependency array for filtering ---
   const filteredBills = useMemo(() => {
     return combinedBillData.filter((bill) => {
@@ -144,9 +152,13 @@ export default function PaymentsContent() {
       const matchesStatus =
         statusFilter === "All" || bill.status === statusFilter;
 
-      return matchesSearch && matchesStatus;
+      const matchesBillingPeriod =
+        billingPeriodFilter === "All" ||
+        bill.billingPeriod === billingPeriodFilter;
+
+      return matchesSearch && matchesStatus && matchesBillingPeriod;
     });
-  }, [searchTerm, statusFilter, combinedBillData]); // Added combinedBillData dependency
+  }, [searchTerm, statusFilter, billingPeriodFilter, combinedBillData]); // Added combinedBillData dependency
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredBills.length / itemsPerPage);
@@ -309,6 +321,10 @@ export default function PaymentsContent() {
         setSearchTerm={setSearchTerm}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
+        // PASS the new props to the filter component
+        billingPeriodFilter={billingPeriodFilter}
+        setBillingPeriodFilter={setBillingPeriodFilter}
+        billingPeriods={uniqueBillingPeriods}
         paginatedBills={paginatedBills}
         filteredBills={filteredBills}
       />
