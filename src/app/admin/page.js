@@ -111,6 +111,8 @@ export default function Dashboard() {
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [totalDormers, setTotalDormers] = useState(0);
 
+  const [recentTransactions, setRecentTransactions] = useState([]);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -186,6 +188,62 @@ export default function Dashboard() {
     setTotalFunds(funds);
   }, [expensesData, dormersData, billsData, paymentsData]); // Dependencies for recalculation
 
+  useEffect(() => {
+    // Helper function to find dormer info safely
+    const getDormerInfo = (dormerId) => {
+      return dormersData.find((d) => d.id === dormerId) || {};
+    };
+
+    const getBillInfo = (billId) => {
+      return billsData.find((b) => b.id === billId) || {};
+    };
+
+    // Format payments into a standardized transaction object
+    const formattedPayments = paymentsData.map((payment) => {
+      const dormer = getDormerInfo(payment.dormerId);
+      const dormerName = `${dormer.firstName || "Unknown"} ${
+        dormer.lastName || "Dormer"
+      }`;
+      return {
+        id: payment.id,
+        // Ensure date is a valid Date object; fall back to now if missing
+        date: payment.createdAt?.toDate
+          ? payment.createdAt.toDate()
+          : new Date(),
+        description: `Payment for ${
+          getBillInfo(payment.billId).billingPeriod
+        } paid through ${payment.paymentMethod} by ${dormerName} (Room ${
+          dormer.roomNumber || "N/A"
+        })`,
+        amount: payment.amount,
+        type: "payment",
+      };
+    });
+
+    // Format expenses into a standardized transaction object
+    const formattedExpenses = expensesData.map((expense) => {
+      // Safely access recorder's name
+      const recorderName =
+        `${expense.recordedBy?.firstName || ""} ${
+          expense.recordedBy?.lastName || ""
+        }`.trim() || "Admin";
+      return {
+        id: expense.id,
+        date: expense.date?.toDate ? expense.date.toDate() : new Date(),
+        description: `${expense.category} expenses - ${expense.title}`,
+        amount: expense.amount,
+        type: "expense",
+      };
+    });
+
+    // Combine, sort by date (most recent first), and take the top 5
+    const allTransactions = [...formattedPayments, ...formattedExpenses]
+      .sort((a, b) => b.date - a.date)
+      .slice(0, 5);
+
+    setRecentTransactions(allTransactions);
+  }, [paymentsData, expensesData, dormersData]); // This effect depends on these data arrays
+
   const kpiData = [
     {
       title: "Dorm Fund Balance",
@@ -203,7 +261,7 @@ export default function Dashboard() {
         .toFixed(2)
         .toString()
         .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
-      description: "Expected monthly income",
+      description: "Remaining collectibles",
       icon: TrendingUp,
       trend: "up",
     },
@@ -213,14 +271,14 @@ export default function Dashboard() {
         .toFixed(2)
         .toString()
         .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
-      description: "Monthly expenditures",
+      description: "Overall expenses this semester",
       icon: TrendingDown,
       trend: "down",
     },
     {
       title: "Active Dormers",
       value: `${totalDormers}`,
-      description: "Currently registered",
+      description: "Currently registered dormers",
       icon: Users,
       trend: "neutral",
     },
@@ -367,20 +425,20 @@ export default function Dashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recentActivity.map((activity, index) => (
+                {/* ✨ Renders the new dynamic list */}
+                {recentTransactions.map((activity) => (
                   <TableRow
-                    key={index}
+                    key={activity.id} // Use unique ID from Firestore doc
                     className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   >
                     <TableCell className="font-medium">
                       {new Date(activity.date).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
+                        year: "numeric",
                       })}
                     </TableCell>
-                    <TableCell className="max-w-[200px] truncate md:max-w-none">
-                      {activity.description}
-                    </TableCell>
+                    <TableCell>{activity.description}</TableCell>
                     <TableCell className="text-right">
                       <Badge
                         variant="outline"
@@ -390,7 +448,9 @@ export default function Dashboard() {
                             : "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                         }`}
                       >
-                        {activity.amount}
+                        {/* Dynamically add '+' or '-' sign */}
+                        {activity.type === "payment" ? "+" : "-"}₱
+                        {activity.amount.toFixed(2)}
                       </Badge>
                     </TableCell>
                   </TableRow>
