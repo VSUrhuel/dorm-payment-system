@@ -37,38 +37,9 @@ import {
   runTransaction,
   serverTimestamp, // Use serverTimestamp for more accurate timestamps
 } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
 import AddPayableModal from "./dormers/components/AddPayabaleModal";
-const kpiData = [
-  {
-    title: "Dorm Fund Balance",
-    value: "$12,450.75",
-    description: "Current available funds",
-    icon: Wallet,
-    trend: "up",
-  },
-  {
-    title: "Total Collectibles",
-    value: "$8,800.00",
-    description: "Expected monthly income",
-    icon: TrendingUp,
-    trend: "up",
-  },
-  {
-    title: "Total Expenses",
-    value: "$1,230.50",
-    description: "Monthly expenditures",
-    icon: TrendingDown,
-    trend: "down",
-  },
-  {
-    title: "Active Dormers",
-    value: "32",
-    description: "Currently registered",
-    icon: Users,
-    trend: "neutral",
-  },
-];
+
+import { onAuthStateChanged } from "firebase/auth";
 
 const recentActivity = [
   {
@@ -127,12 +98,133 @@ export default function Dashboard() {
   const [showEditPayableModal, setShowEditPayableModal] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
+  // State for raw data from Firestore
+  const [expensesData, setExpensesData] = useState([]);
+  const [dormersData, setDormersData] = useState([]);
+  const [billsData, setBillsData] = useState([]);
+  const [paymentsData, setPaymentsData] = useState([]); // Added state for payments
+  const [loading, setLoading] = useState(true);
+
+  // State for calculated dashboard values
+  const [totalFunds, setTotalFunds] = useState(0);
+  const [totalCollectibles, setTotalCollectibles] = useState(0);
+  const [totalExpenses, setTotalExpenses] = useState(0);
+  const [totalDormers, setTotalDormers] = useState(0);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
     return () => unsubscribe();
   }, []);
+
+  // Effect for fetching all necessary data from Firestore in real-time
+  useEffect(() => {
+    setLoading(true);
+
+    const collections = {
+      expenses: setExpensesData,
+      dormers: setDormersData,
+      bills: setBillsData,
+      payments: setPaymentsData, // Added payments collection listener
+    };
+
+    const unsubscribers = Object.entries(collections).map(
+      ([collectionName, setter]) => {
+        const q = query(collection(db, collectionName));
+        return onSnapshot(q, (snapshot) => {
+          const data = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setter(data);
+        });
+      }
+    );
+
+    setLoading(false);
+
+    // Cleanup function to unsubscribe from all listeners on component unmount
+    return () => unsubscribers.forEach((unsub) => unsub());
+  }, []);
+
+  // Effect for calculating totals whenever the source data changes
+  useEffect(() => {
+    // 1. Calculate Total Expenses
+    // Sums the 'expenseAmount' from all documents in the expensesData array.
+    const expensesSum = expensesData.reduce(
+      (total, expense) => total + (expense.amount || 0),
+      0
+    );
+    setTotalExpenses(expensesSum);
+
+    // 2. Count Total Dormers
+    // Simply gets the total number of items in the dormersData array.
+    const dormerCount = dormersData.length;
+    setTotalDormers(dormerCount);
+
+    // 3. Calculate intermediate totals for funds and collectibles
+    const totalAmountPaid = paymentsData.reduce(
+      (total, payment) => total + (payment.amount || 0),
+      0
+    );
+    const totalAmountDue = billsData.reduce(
+      (total, bill) => total + (bill.totalAmountDue || 0),
+      0
+    );
+
+    // 4. Calculate Total Collectibles
+    // The difference between the total amount due and the total amount paid.
+    const collectibles = totalAmountDue - totalAmountPaid;
+    setTotalCollectibles(collectibles);
+
+    // 5. Calculate Total Fund Balance
+    // The total money collected (total paid) minus the total sum of expenses.
+    const funds = totalAmountPaid - expensesSum;
+    console.log("Total Funds:", funds);
+    console.log("Total collectibles", collectibles);
+    setTotalFunds(funds);
+  }, [expensesData, dormersData, billsData, paymentsData]); // Dependencies for recalculation
+
+  const kpiData = [
+    {
+      title: "Dorm Fund Balance",
+      value: `₱${totalFunds
+        .toFixed(2)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
+      description: "Current available funds",
+      icon: Wallet,
+      trend: "up",
+    },
+    {
+      title: "Total Collectibles",
+      value: `₱${totalCollectibles
+        .toFixed(2)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
+      description: "Expected monthly income",
+      icon: TrendingUp,
+      trend: "up",
+    },
+    {
+      title: "Total Expenses",
+      value: `₱${totalExpenses
+        .toFixed(2)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
+      description: "Monthly expenditures",
+      icon: TrendingDown,
+      trend: "down",
+    },
+    {
+      title: "Active Dormers",
+      value: `${totalDormers}`,
+      description: "Currently registered",
+      icon: Users,
+      trend: "neutral",
+    },
+  ];
 
   useEffect(() => {
     // Fetch data from API

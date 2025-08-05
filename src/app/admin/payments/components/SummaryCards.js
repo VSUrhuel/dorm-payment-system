@@ -10,38 +10,50 @@ export default function SummaryCards({
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <Card className="border-gray-200">
-        <CardHeader className="pb-2">
+        <CardHeader className="">
           <CardTitle className="text-sm font-medium text-gray-600">
             Total Amount Due
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-gray-900">
-            ₱{totalAmountDue.toFixed(2)}
+            ₱
+            {totalAmountDue
+              .toFixed(2)
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </div>
         </CardContent>
       </Card>
       <Card className="border-gray-200">
-        <CardHeader className="pb-2">
+        <CardHeader className="">
           <CardTitle className="text-sm font-medium text-gray-600">
             Total Amount Paid
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-green-600">
-            ₱{totalAmountPaid.toFixed(2)}
+            ₱
+            {totalAmountPaid
+              .toFixed(2)
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </div>
         </CardContent>
       </Card>
       <Card className="border-gray-200">
-        <CardHeader className="pb-2">
+        <CardHeader className="">
           <CardTitle className="text-sm font-medium text-gray-600">
             Total Remaining Balance
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-red-600">
-            ₱{totalRemainingBalance.toFixed(2)}
+            ₱
+            {totalRemainingBalance
+              .toFixed(2)
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </div>
         </CardContent>
       </Card>

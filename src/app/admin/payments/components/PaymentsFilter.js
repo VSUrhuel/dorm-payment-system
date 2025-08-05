@@ -77,23 +77,23 @@ export default function PaymentsFilter({
               </SelectContent>
             </Select>
           </div>
-          <div className="w-full md:w-36">
-            <Button
-              onClick={() => {
-                setSearchTerm("");
-                setStatusFilter("All");
-                setBillingPeriodFilter("All");
-              }}
-              disabled={
-                !searchTerm &&
-                statusFilter === "All" &&
-                billingPeriodFilter === "All"
-              }
-              className="mt-2 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              Reset Filters
-            </Button>
-          </div>
+
+          {(searchTerm ||
+            statusFilter !== "All" ||
+            billingPeriodFilter !== "All") && (
+            <div className="w-full md:w-auto">
+              <Button
+                onClick={() => {
+                  setSearchTerm("");
+                  setStatusFilter("All");
+                  setBillingPeriodFilter("All");
+                }}
+                className="mt-2 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Reset Filters
+              </Button>
+            </div>
+          )}
         </div>
         <div className="mt-4 text-sm text-gray-600">
           Showing {paginatedBills.length} of {filteredBills.length} bills

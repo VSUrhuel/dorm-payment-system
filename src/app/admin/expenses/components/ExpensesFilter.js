@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -34,7 +35,7 @@ export default function ExpensesFilter({
               />
             </div>
           </div>
-          <div className="w-full md:w-48">
+          <div className="w-full md:w-auto mr-2">
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger className="border-gray-300">
                 <Filter className="h-4 w-4 mr-2" />
@@ -50,6 +51,20 @@ export default function ExpensesFilter({
               </SelectContent>
             </Select>
           </div>
+
+          {(searchTerm || categoryFilter !== "All") && (
+            <div className="w-full md:w-26">
+              <Button
+                onClick={() => {
+                  setSearchTerm("");
+                  setCategoryFilter("All");
+                }}
+                className="mt-2 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Reset Filters
+              </Button>
+            </div>
+          )}
         </div>
         <div className="mt-4 text-sm text-gray-600">
           Showing {paginatedExpenses.length} of {filteredExpenses.length}{" "}

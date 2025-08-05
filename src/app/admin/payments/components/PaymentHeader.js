@@ -1,18 +1,20 @@
 import { Button } from "@/components/ui/button";
+import { FileDown } from "lucide-react";
 export default function PaymentHeader() {
   return (
-    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+    <div className="flex flex-col md:flex-row justify-between gap-4">
       <div className="space-y-1">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
           Payment Management
         </h1>
         <p className="text-sm text-gray-600">
-          Track and manage all dormitory payments
+          Manage and track all bills and payments for the dormitory
         </p>
       </div>
       <div className="flex gap-2">
         <Button variant="outline" className="border-gray-200 hover:bg-gray-50">
-          Export Report
+          <FileDown className="h-4 w-4 mr-2" />
+          Export
         </Button>
       </div>
     </div>

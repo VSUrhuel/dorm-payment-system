@@ -29,11 +29,7 @@ import Image from "next/image";
  * onEditExpense: (expense: any) => void;
  * }} props
  */
-export default function ExpensesTable({
-  expenses,
-  onViewDetails,
-  onEditExpense,
-}) {
+export default function ExpensesTable({ expenses, onViewDetails }) {
   const [receiptModalOpen, setReceiptModalOpen] = useState(false);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
 
@@ -96,7 +92,7 @@ export default function ExpensesTable({
                 <TableHead className="hidden lg:table-cell">
                   Recorded By
                 </TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-right">Details</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -173,15 +169,7 @@ export default function ExpensesTable({
                           className="border-gray-200 hover:bg-gray-50"
                         >
                           <Eye className="h-4 w-4 mr-1" />
-                          Details
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={() => onEditExpense(expense)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white"
-                        >
-                          <Edit className="h-4 w-4 mr-1" />
-                          Edit
+                          View Details
                         </Button>
                       </div>
                     </TableCell>
@@ -195,7 +183,12 @@ export default function ExpensesTable({
 
       {/* Receipt Modal */}
       <Dialog open={receiptModalOpen} onOpenChange={setReceiptModalOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent
+          className="sm:max-w-md"
+          onInteractOutside={(e) => {
+            e.preventDefault();
+          }}
+        >
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <ImageIcon className="h-5 w-5" />
@@ -214,15 +207,19 @@ export default function ExpensesTable({
                 </p>
               </div>
               <div className="border rounded-lg overflow-hidden">
-                <Image
-                  src={
-                    selectedReceipt.receiptImageUrl || "/placeholder-image.svg"
-                  } // Use '||' to provide a fallback
-                  alt="Receipt"
-                  className="w-full h-auto max-h-96 object-contain"
-                  width={500}
-                  height={500}
-                />
+                {selectedReceipt.receiptImageUrl ? (
+                  <Image
+                    src={selectedReceipt.receiptImageUrl}
+                    alt="Receipt"
+                    className="w-full h-auto max-h-96 object-contain"
+                    width={500}
+                    height={500}
+                  />
+                ) : (
+                  <div className="text-sm text-center text-gray-500 p-4 border rounded-md">
+                    No receipt image available.
+                  </div>
+                )}
               </div>
             </div>
           )}

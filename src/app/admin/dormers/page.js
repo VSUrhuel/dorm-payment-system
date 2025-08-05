@@ -439,7 +439,7 @@ export default function DormersPage() {
 
       <DormerFilters
         searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
+        onSearchChange={() => setSearchTerm(event.target.value)}
         statusFilter={statusFilter}
         onStatusChange={setStatusFilter}
         count={paginatedDormers.length}

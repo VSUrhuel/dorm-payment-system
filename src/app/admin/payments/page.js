@@ -28,7 +28,7 @@ export default function PaymentsContent() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [billingPeriodFilter, setBillingPeriodFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(6);
   const [payments, setPayments] = useState([]);
   const [bills, setBills] = useState([]);
   const [dormers, setDormers] = useState([]);
@@ -177,7 +177,7 @@ export default function PaymentsContent() {
   // Summary statistics calculation
   const { totalAmountDue, totalAmountPaid, totalRemainingBalance } =
     useMemo(() => {
-      return filteredBills.reduce(
+      return combinedBillData.reduce(
         (acc, bill) => {
           const amountPaid = bill.totalAmountDue - bill.remainingBalance;
           acc.totalAmountDue += bill.totalAmountDue;
@@ -187,7 +187,7 @@ export default function PaymentsContent() {
         },
         { totalAmountDue: 0, totalAmountPaid: 0, totalRemainingBalance: 0 }
       );
-    }, [filteredBills]);
+    }, [combinedBillData]);
 
   const handleViewDetails = (bill) => {
     setSelectedBill(bill);

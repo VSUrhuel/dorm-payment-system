@@ -32,104 +32,6 @@ import {
 import { firestore as db } from "@/lib/firebase";
 import ViewEditExpenseModal from "./components/ViewEditExpenseModal";
 
-// Sample data - replace with your Firebase data
-const expensesData = [
-  {
-    id: 1,
-    title: "Dorm Cleaning Materials",
-    description:
-      "Purchased cleaning supplies including detergent, floor cleaner, and disinfectant for monthly deep cleaning",
-    amount: 450.75,
-    expenseDate: "2024-01-15",
-    receiptImage: "/placeholder.svg?height=200&width=300",
-    recordedBy: {
-      name: "Admin User",
-      email: "admin@dormitory.com",
-      id: "admin1",
-    },
-    category: "Maintenance",
-    createdAt: "2024-01-15T10:30:00Z",
-  },
-  {
-    id: 2,
-    title: "Electricity Bill Payment",
-    description: "Monthly electricity bill payment for the dormitory building",
-    amount: 2850.0,
-    expenseDate: "2024-01-10",
-    receiptImage: "/placeholder.svg?height=200&width=300",
-    recordedBy: {
-      name: "Finance Manager",
-      email: "finance@dormitory.com",
-      id: "finance1",
-    },
-    category: "Utilities",
-    createdAt: "2024-01-10T14:20:00Z",
-  },
-  {
-    id: 3,
-    title: "Water Bill Payment",
-    description: "Monthly water and sewerage bill for dormitory facilities",
-    amount: 1200.5,
-    expenseDate: "2024-01-08",
-    receiptImage: "/placeholder.svg?height=200&width=300",
-    recordedBy: {
-      name: "Admin User",
-      email: "admin@dormitory.com",
-      id: "admin1",
-    },
-    category: "Utilities",
-    createdAt: "2024-01-08T09:15:00Z",
-  },
-  {
-    id: 4,
-    title: "Security System Maintenance",
-    description:
-      "Annual maintenance and inspection of CCTV cameras and security equipment",
-    amount: 3500.0,
-    expenseDate: "2024-01-05",
-    receiptImage: "/placeholder.svg?height=200&width=300",
-    recordedBy: {
-      name: "Maintenance Staff",
-      email: "maintenance@dormitory.com",
-      id: "maintenance1",
-    },
-    category: "Security",
-    createdAt: "2024-01-05T16:45:00Z",
-  },
-  {
-    id: 5,
-    title: "Kitchen Equipment Repair",
-    description:
-      "Repair of common kitchen refrigerator and replacement of damaged microwave",
-    amount: 2200.0,
-    expenseDate: "2024-01-03",
-    receiptImage: "/placeholder.svg?height=200&width=300",
-    recordedBy: {
-      name: "Admin User",
-      email: "admin@dormitory.com",
-      id: "admin1",
-    },
-    category: "Maintenance",
-    createdAt: "2024-01-03T11:30:00Z",
-  },
-  {
-    id: 6,
-    title: "Internet Service Payment",
-    description:
-      "Monthly internet service provider payment for high-speed WiFi",
-    amount: 1899.0,
-    expenseDate: "2024-01-01",
-    receiptImage: "/placeholder.svg?height=200&width=300",
-    recordedBy: {
-      name: "Finance Manager",
-      email: "finance@dormitory.com",
-      id: "finance1",
-    },
-    category: "Utilities",
-    createdAt: "2024-01-01T08:00:00Z",
-  },
-];
-
 export default function ExpensesContent() {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -225,11 +127,11 @@ export default function ExpensesContent() {
   };
 
   // Calculate summary statistics
-  const totalExpenses = filteredExpenses.reduce(
+  const totalExpenses = combinedBillUserData.reduce(
     (sum, expense) => sum + expense.amount,
     0
   );
-  const monthlyExpenses = filteredExpenses
+  const monthlyExpenses = combinedBillUserData
     .filter((expense) => {
       const expenseDate = new Date(expense.expenseDate);
       const currentMonth = new Date().getMonth();
@@ -241,7 +143,7 @@ export default function ExpensesContent() {
     })
     .reduce((sum, expense) => sum + expense.amount, 0);
 
-  const expensesByCategory = filteredExpenses.reduce((acc, expense) => {
+  const expensesByCategory = combinedBillUserData.reduce((acc, expense) => {
     acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
     return acc;
   }, {});
@@ -253,13 +155,6 @@ export default function ExpensesContent() {
 
   const handleViewExpenseDetails = (expense) => {
     console.log("View expense details:", expense);
-    setSelectedExpense(expense);
-    setIsOpenViewEditExpenseModal(true);
-    console.log("Sope");
-  };
-
-  const handleEditExpense = (expense) => {
-    console.log("Edit expense:", expense);
     setSelectedExpense(expense);
     setIsOpenViewEditExpenseModal(true);
   };
@@ -334,7 +229,6 @@ export default function ExpensesContent() {
       <ExpensesTable
         expenses={paginatedExpenses}
         onViewDetails={handleViewExpenseDetails}
-        onEditExpense={handleEditExpense}
       />
 
       {/* View Edit Expense Modal */}
