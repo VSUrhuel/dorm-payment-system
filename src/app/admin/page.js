@@ -40,39 +40,23 @@ import {
 import AddPayableModal from "./dormers/components/AddPayabaleModal";
 
 import { onAuthStateChanged } from "firebase/auth";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
-const recentActivity = [
-  {
-    date: "2024-01-15",
-    description: "Monthly rent - John Doe (Room 101)",
-    amount: "+$275.00",
-    type: "payment",
-  },
-  {
-    date: "2024-01-14",
-    description: "Electricity bill payment",
-    amount: "-$180.50",
-    type: "expense",
-  },
-  {
-    date: "2024-01-14",
-    description: "Monthly rent - Jane Smith (Room 205)",
-    amount: "+$275.00",
-    type: "payment",
-  },
-  {
-    date: "2024-01-13",
-    description: "Water bill payment",
-    amount: "-$95.25",
-    type: "expense",
-  },
-  {
-    date: "2024-01-13",
-    description: "Monthly rent - Mike Johnson (Room 103)",
-    amount: "+$275.00",
-    type: "payment",
-  },
-];
+function SkeletonCard() {
+  return (
+    <Card className="border border-gray-100 dark:border-gray-800 shadow-sm">
+      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+        <Skeleton className="h-4 w-2/4" />
+        <Skeleton className="h-8 w-8 rounded-lg" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="h-7 w-3/4 mb-2" />
+        <Skeleton className="h-3 w-full" />
+      </CardContent>
+    </Card>
+  );
+}
 
 function PayableItem({ name, amount, description }) {
   return (
@@ -134,13 +118,21 @@ export default function Dashboard() {
     const unsubscribers = Object.entries(collections).map(
       ([collectionName, setter]) => {
         const q = query(collection(db, collectionName));
-        return onSnapshot(q, (snapshot) => {
-          const data = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setter(data);
-        });
+        return onSnapshot(
+          q,
+          (snapshot) => {
+            const data = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            setter(data);
+          },
+          (error) => {
+            console.error(`Error fetching ${collectionName}: `, error);
+            toast.error(`Failed to load ${collectionName}.`); // ✨ Error toast
+            setLoading(false); // Stop loading on error
+          }
+        );
       }
     );
 
@@ -189,6 +181,7 @@ export default function Dashboard() {
   }, [expensesData, dormersData, billsData, paymentsData]); // Dependencies for recalculation
 
   useEffect(() => {
+    setLoading(true);
     // Helper function to find dormer info safely
     const getDormerInfo = (dormerId) => {
       return dormersData.find((d) => d.id === dormerId) || {};
@@ -229,7 +222,7 @@ export default function Dashboard() {
         }`.trim() || "Admin";
       return {
         id: expense.id,
-        date: expense.date?.toDate ? expense.date.toDate() : new Date(),
+        date: expense.expenseDate ? expense.expenseDate : new Date(),
         description: `${expense.category} expenses - ${expense.title}`,
         amount: expense.amount,
         type: "expense",
@@ -242,6 +235,7 @@ export default function Dashboard() {
       .slice(0, 5);
 
     setRecentTransactions(allTransactions);
+    setLoading(false);
   }, [paymentsData, expensesData, dormersData]); // This effect depends on these data arrays
 
   const kpiData = [
@@ -306,15 +300,78 @@ export default function Dashboard() {
   }, []);
 
   const handleSavePayable = async (payableData) => {
-    if (payableData.id) {
-      // If it has an ID, we're updating an existing document
-      const docRef = doc(db, "regularCharge", payableData.id);
-      await setDoc(docRef, payableData, { merge: true }); // Use setDoc with merge to update
-    } else {
-      // Otherwise, we're adding a new document
-      await addDoc(collection(db, "regularCharge"), payableData);
+    try {
+      if (payableData.id) {
+        const docRef = doc(db, "regularCharge", payableData.id);
+        await setDoc(docRef, payableData, { merge: true });
+        toast.success("Payable Updated Successfully!");
+      } else {
+        await addDoc(collection(db, "regularCharge"), payableData);
+        toast.success("New Payable Added Successfully!");
+      }
+      setIsAddModalOpen(false); // Close modal on success
+    } catch (error) {
+      console.error("Error saving payable:", error);
+      toast.error("Failed to save payable. Please try again.");
     }
   };
+
+  if (loading) {
+    return (
+      <div className="p-4 md:p-6 space-y-6">
+        {/* Header Skeleton */}
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-1/3" />
+          <Skeleton className="h-4 w-1/2" />
+        </div>
+
+        {/* KPI Cards Skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+
+        {/* Payables Section Skeleton */}
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-1/4" />
+            <Skeleton className="h-4 w-2/5 mt-2" />
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <Skeleton className="h-24 w-full rounded-lg" />
+            <Skeleton className="h-24 w-full rounded-lg" />
+            <Skeleton className="h-24 w-full rounded-lg" />
+          </CardContent>
+        </Card>
+
+        {/* Recent Transactions Skeleton */}
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-1/4" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <Skeleton className="h-5 w-3/5" />
+                <Skeleton className="h-5 w-1/5" />
+              </div>
+              <div className="flex justify-between items-center">
+                <Skeleton className="h-5 w-4/5" />
+                <Skeleton className="h-5 w-1/5" />
+              </div>
+              <div className="flex justify-between items-center">
+                <Skeleton className="h-5 w-3/5" />
+                <Skeleton className="h-5 w-1/5" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}

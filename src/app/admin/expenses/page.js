@@ -31,6 +31,91 @@ import {
 } from "firebase/firestore";
 import { firestore as db } from "@/lib/firebase";
 import ViewEditExpenseModal from "./components/ViewEditExpenseModal";
+import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  TableCell,
+  Table,
+  TableHeader,
+  TableRow,
+  TableBody,
+  TableHead,
+} from "@/components/ui/table";
+
+function ExpensesPageSkeleton() {
+  const skeletonRows = Array(6).fill(0); // Create 6 skeleton rows for the table
+
+  return (
+    <div className="p-4 md:p-6 space-y-6 animate-pulse">
+      {/* Header Skeleton */}
+      <div className="flex justify-between items-center">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-10 w-36 rounded-md" />
+      </div>
+
+      {/* Summary Cards Skeleton */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Skeleton className="h-28 rounded-lg" />
+        <Skeleton className="h-28 rounded-lg" />
+        <Skeleton className="h-28 rounded-lg" />
+      </div>
+
+      {/* Filters Skeleton */}
+      <div className="p-4 border rounded-lg">
+        <div className="flex flex-col md:flex-row gap-4">
+          <Skeleton className="h-10 w-full md:w-2/3" />
+          <Skeleton className="h-10 w-full md:w-1/3" />
+        </div>
+      </div>
+
+      {/* Table Skeleton */}
+      <div className="border rounded-lg">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>
+                <Skeleton className="h-5 w-24" />
+              </TableHead>
+              <TableHead>
+                <Skeleton className="h-5 w-40" />
+              </TableHead>
+              <TableHead className="hidden md:table-cell">
+                <Skeleton className="h-5 w-32" />
+              </TableHead>
+              <TableHead className="hidden lg:table-cell">
+                <Skeleton className="h-5 w-28" />
+              </TableHead>
+              <TableHead className="text-right">
+                <Skeleton className="h-5 w-20 ml-auto" />
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {skeletonRows.map((_, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <Skeleton className="h-5 w-full" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-5 w-full" />
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  <Skeleton className="h-5 w-full" />
+                </TableCell>
+                <TableCell className="hidden lg:table-cell">
+                  <Skeleton className="h-5 w-full" />
+                </TableCell>
+                <TableCell className="text-right">
+                  <Skeleton className="h-8 w-8 rounded-md ml-auto" />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+}
 
 export default function ExpensesContent() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -102,9 +187,6 @@ export default function ExpensesContent() {
     return matchesSearch && matchesCategory;
   });
 
-  console.log(" Expenses:", expensesData);
-  console.log("Filtered Expenses:", filteredExpenses);
-
   // Pagination
   const indexOfLastExpense = currentPage * itemsPerPage;
   const indexOfFirstExpense = indexOfLastExpense - itemsPerPage;
@@ -154,7 +236,6 @@ export default function ExpensesContent() {
   );
 
   const handleViewExpenseDetails = (expense) => {
-    console.log("View expense details:", expense);
     setSelectedExpense(expense);
     setIsOpenViewEditExpenseModal(true);
   };
@@ -162,7 +243,7 @@ export default function ExpensesContent() {
   const handleAddExpense = async (expenseData) => {
     console.log("Add new expense:", expenseData);
     if (!user) {
-      alert("You must be logged in to add an expense.");
+      toast.error("You must be logged in to add an expense.");
       return;
     }
     try {
@@ -170,7 +251,7 @@ export default function ExpensesContent() {
         (expense) => expense.title === expenseData.title
       );
       if (expenseExist) {
-        alert("An expense with this title already exists.");
+        toast.error("An expense with this title already exists.");
         return;
       }
       await addDoc(collection(db, "expenses"), {
@@ -178,10 +259,10 @@ export default function ExpensesContent() {
         recordedBy: user.uid,
         createdAt: serverTimestamp(),
       });
-      alert("Expense added successfully!");
+      toast.success("Expense added successfully!");
     } catch (error) {
       console.error("Error adding expense:", error);
-      alert("Failed to add expense. Please try again.");
+      toast.error("Failed to add expense. Please try again.");
     }
 
     setAddExpenseModalOpen(false);
@@ -195,12 +276,16 @@ export default function ExpensesContent() {
         updatedAt: serverTimestamp(),
         updatedBy: user.uid,
       });
-      alert("Expense updated successfully!");
+      toast.success("Expense updated successfully!");
     } catch (error) {
       console.error("Error updating expense:", error);
-      alert("Failed to update expense. Please try again.");
+      toast.error("Failed to update expense. Please try again.");
     }
   };
+
+  if (loading) {
+    return <ExpensesPageSkeleton />;
+  }
 
   return (
     <div className="p-4 md:p-6 space-y-6">

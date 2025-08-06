@@ -22,6 +22,93 @@ import PaymentHeader from "./components/PaymentHeader";
 import SummaryCards from "./components/SummaryCards";
 import PaymentsFilter from "./components/PaymentsFilter";
 import { onAuthStateChanged } from "firebase/auth";
+import { toast } from "sonner"; 
+import { Skeleton } from "@/components/ui/skeleton";
+
+import {
+  TableCell,
+  Table,
+  TableHeader,
+  TableRow,
+  TableBody,
+  TableHead,
+} from "@/components/ui/table";
+
+function PaymentsPageSkeleton() {
+  const skeletonRows = Array(6).fill(0);
+
+  return (
+    <div className="p-4 md:p-6 space-y-6 animate-pulse">
+      {/* Header Skeleton */}
+      <Skeleton className="h-8 w-48" />
+
+      {/* Summary Cards Skeleton */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Skeleton className="h-28 rounded-lg" />
+        <Skeleton className="h-28 rounded-lg" />
+        <Skeleton className="h-28 rounded-lg" />
+      </div>
+
+      {/* Filters Skeleton */}
+      <div className="p-4 border rounded-lg space-y-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          <Skeleton className="h-10 w-full md:w-1/3" />
+          <Skeleton className="h-10 w-full md:w-1/4" />
+          <Skeleton className="h-10 w-full md:w-1/4" />
+        </div>
+      </div>
+
+      {/* Table Skeleton */}
+      <div className="border rounded-lg">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>
+                <Skeleton className="h-5 w-32" />
+              </TableHead>
+              <TableHead className="hidden sm:table-cell">
+                <Skeleton className="h-5 w-24" />
+              </TableHead>
+              <TableHead className="hidden md:table-cell">
+                <Skeleton className="h-5 w-20" />
+              </TableHead>
+              <TableHead className="hidden lg:table-cell">
+                <Skeleton className="h-5 w-28" />
+              </TableHead>
+              <TableHead className="text-right">
+                <Skeleton className="h-5 w-36 ml-auto" />
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {skeletonRows.map((_, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <Skeleton className="h-5 w-full" />
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  <Skeleton className="h-5 w-full" />
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  <Skeleton className="h-5 w-full" />
+                </TableCell>
+                <TableCell className="hidden lg:table-cell">
+                  <Skeleton className="h-5 w-full" />
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex gap-2 justify-end">
+                    <Skeleton className="h-8 w-8 rounded-md" />
+                    <Skeleton className="h-8 w-8 rounded-md" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+}
 
 export default function PaymentsContent() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -76,6 +163,7 @@ export default function PaymentsContent() {
         },
         (error) => {
           console.error(`Error fetching ${key}:`, error);
+           toast.error(`Failed to load ${key} data.`);
           setLoading(false); // Stop loading on error to prevent infinite spinners
         }
       );
@@ -217,7 +305,7 @@ export default function PaymentsContent() {
       console.log("Email sent successfully:", data);
     } catch (error) {
       console.error("Error sending email:", error);
-      alert("Failed to send email. Please try again later.");
+      toast.error("Failed to send payment confirmation email.");
     }
   };
 
@@ -273,7 +361,7 @@ export default function PaymentsContent() {
         });
       });
 
-      alert("Payment added successfully!");
+      toast.success("Payment recorded successfully!");
 
       const dormerInfo = dormers.find((d) => d.id === paymentData.dormerId);
       if (dormerInfo?.email) {
@@ -292,18 +380,14 @@ export default function PaymentsContent() {
       }
     } catch (error) {
       console.error("Error saving payment in transaction: ", error);
-      alert(`Error: ${error.message}`);
+      toast.error(`Payment recording failed!`);
     } finally {
       setIsPaymentModalOpen(false); // Correctly close the modal
     }
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Loading payment records...</p>
-      </div>
-    );
+    return <PaymentsPageSkeleton />;
   }
 
   return (

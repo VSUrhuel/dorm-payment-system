@@ -33,6 +33,93 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"; // Assuming this is the correct path for shadcn/ui
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import {
+  TableCell,
+  Table,
+  TableHeader,
+  TableRow,
+  TableBody,
+  TableHead,
+} from "@/components/ui/table";
+
+function DormersPageSkeleton() {
+  const skeletonRows = Array(6).fill(0); // Create 6 skeleton rows for the table
+
+  return (
+    <div className="p-4 md:p-6 space-y-6 animate-pulse">
+      {/* Header Skeleton */}
+      <div className="flex justify-between items-center">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-10 w-32" />
+      </div>
+
+      {/* Filters Skeleton */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <Skeleton className="h-10 w-full md:w-1/3" />
+        <Skeleton className="h-10 w-full md:w-1/4" />
+      </div>
+
+      {/* Table Skeleton */}
+      <div className="border rounded-lg">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>
+                <Skeleton className="h-5 w-24" />
+              </TableHead>
+              <TableHead>
+                <Skeleton className="h-5 w-32" />
+              </TableHead>
+              <TableHead className="hidden md:table-cell">
+                <Skeleton className="h-5 w-40" />
+              </TableHead>
+              <TableHead className="hidden lg:table-cell">
+                <Skeleton className="h-5 w-20" />
+              </TableHead>
+              <TableHead className="text-right">
+                <Skeleton className="h-5 w-28 ml-auto" />
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {skeletonRows.map((_, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <Skeleton className="h-5 w-28" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-5 w-36" />
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  <Skeleton className="h-5 w-44" />
+                </TableCell>
+                <TableCell className="hidden lg:table-cell">
+                  <Skeleton className="h-5 w-24" />
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex gap-2 justify-end">
+                    <Skeleton className="h-8 w-8" />
+                    <Skeleton className="h-8 w-8" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination Skeleton */}
+      <div className="flex items-center justify-end space-x-4 py-4">
+        <Skeleton className="h-5 w-20" />
+        <Skeleton className="h-9 w-24" />
+        <Skeleton className="h-9 w-20" />
+      </div>
+    </div>
+  );
+}
 
 export default function DormersPage() {
   const [modal, setModal] = useState(null);
@@ -73,7 +160,7 @@ export default function DormersPage() {
       console.log("Email sent successfully:", data);
     } catch (error) {
       console.error("Error sending email:", error);
-      alert("Failed to send email. Please try again later.");
+      toast.error("Failed to send notification email.");
     }
   };
 
@@ -174,6 +261,8 @@ export default function DormersPage() {
           createdBy: user.uid, // The admin who created this account
           createdAt: serverTimestamp(),
         });
+
+        toast.success("Admin dormer added successfully!");
         await sendEmail({
           to: dormerData.email,
           subject: "Welcome to Mabolo Payment System",
@@ -185,7 +274,6 @@ export default function DormersPage() {
             <p>Thank you for joining us!</p>
           `,
         });
-        alert("Admin dormer added successfully!");
         return;
       }
       await addDoc(collection(db, "dormers"), {
@@ -194,8 +282,7 @@ export default function DormersPage() {
         createdAt: serverTimestamp(),
       });
 
-      alert("Dormer added successfully!");
-      // Optionally, send a welcome email
+      toast.success("Dormer added successfully!");
       await sendEmail({
         to: dormerData.email,
         subject: "Welcome to Mabolo Payment System",
@@ -208,6 +295,7 @@ export default function DormersPage() {
       });
     } catch (error) {
       console.error("Error adding dormer: ", error);
+      toast.error(`Failed to add dormer: ${error.message}`);
     } finally {
       closeModal();
     }
@@ -266,7 +354,7 @@ export default function DormersPage() {
         });
       });
 
-      alert("Payment added succesfully!");
+      toast.success("Payment recorded successfully!");
 
       const dormerInfo = dormers.find((d) => d.id === paymentData.dormerId);
       if (dormerInfo) {
@@ -285,6 +373,7 @@ export default function DormersPage() {
       }
     } catch (error) {
       console.error("Error saving payment in transaction: ", error);
+      toast.error("Failed to save payment.");
     } finally {
       closeModal(); // Close modal after the operation is done
     }
@@ -332,6 +421,7 @@ export default function DormersPage() {
           updatedBy: user.uid,
           updatedAt: serverTimestamp(),
         });
+        toast.success("Bill overwritten successfully!");
       } else {
         // No ID means we are CREATING a new bill
         await addDoc(collection(db, "bills"), {
@@ -339,6 +429,7 @@ export default function DormersPage() {
           createdBy: user.uid,
           createdAt: serverTimestamp(),
         });
+        toast.success("New bill generated successfully!");
       }
 
       // --- NEW: Send new bill email ---
@@ -430,7 +521,7 @@ export default function DormersPage() {
   };
 
   if (loading) {
-    return <div>Loading Dormers...</div>;
+    return <DormersPageSkeleton />;
   }
 
   return (

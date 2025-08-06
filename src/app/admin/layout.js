@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/Sidebar";
 import { Building2 } from "lucide-react";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
             <main className="flex-1 overflow-auto">{children}</main>
           </SidebarInset>
         </SidebarProvider>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );
