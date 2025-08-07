@@ -83,7 +83,13 @@ export default function AuthPage() {
   if (loading || user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-600">
-        <Building2 className="h-12 w-12 text-green-600 animate-pulse" />
+        <img
+          src="/profile.ico"
+          alt="Logo"
+          width={32}
+          height={32}
+          className="animate-pulse"
+        />
         <p className="mt-4 text-lg">Connecting to your dashboard...</p>
       </div>
     );
@@ -95,7 +101,7 @@ export default function AuthPage() {
         <div className="bg-white p-8 rounded-2xl shadow-lg">
           <div className="flex flex-col items-center mb-6">
             <div className="flex items-center justify-center w-16 h-16 bg-green-50 rounded-full mb-4">
-              <Building2 className="h-8 w-8 text-green-600" />
+              <img src="/profile.ico" alt="Logo" width={62} height={62} />
             </div>
             <h2 className="text-2xl font-bold text-center text-gray-800">
               Welcome to DormPay
@@ -167,6 +173,10 @@ export default function AuthPage() {
               {authActionLoading ? "Processing..." : "Sign In"}
             </button>
           </form>
+
+          <p className="mt-3 text-xs text-gray-400 text-center ">
+            Developed by Laurente, J.R. | Mabolo 2025
+          </p>
         </div>
       </div>
     </div>

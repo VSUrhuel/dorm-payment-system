@@ -109,7 +109,7 @@ export function AppSidebar() {
         <SidebarHeader className="p-6 border-b border-gray-100">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-10 h-10 bg-green-50 rounded-lg">
-              <Building2 className="h-6 w-6 text-green-600" />
+              <img src="/profile.ico" alt="Logo" width={32} height={32} />
             </div>
             <div>
               <h2 className="text-lg font-bold text-gray-900">DormPay</h2>

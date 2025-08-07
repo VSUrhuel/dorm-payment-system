@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
             <header className="md:hidden flex items-center p-4 border-b sticky top-0 bg-white z-10">
               <SidebarTrigger />
               <div className="flex items-center gap-2 mx-auto">
-                <Building2 className="h-6 w-6 text-green-600" />
+                <img src="/profile.ico" alt="Logo" width={32} height={32} />
                 <h1 className="text-lg font-bold text-gray-900">DormPay</h1>
               </div>
             </header>
