@@ -11,12 +11,6 @@ export default function PaymentHeader() {
           Manage and track all bills and payments for the dormitory
         </p>
       </div>
-      <div className="flex gap-2">
-        <Button variant="outline" className="border-gray-200 hover:bg-gray-50">
-          <FileDown className="h-4 w-4 mr-2" />
-          Export
-        </Button>
-      </div>
     </div>
   );
 }
