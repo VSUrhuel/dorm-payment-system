@@ -297,10 +297,16 @@ export default function DormersPage() {
           subject: "Welcome to Mabolo Payment System",
           html: `
             <h1>Welcome, ${dormerData.firstName}!</h1>
-            <p>We're inviting you to be an admin of the site. You can now log in with the following credentials:</p>
-            <p>Email: ${dormerData.email}</p>
-            <p>Password: defaultAdminPassword123</p>
-            <p>Thank you for joining us!</p>
+            <p>We're inviting you to be an admin of Mabolo Payment System. You can now log in with the following credentials:</p>
+            <p>Email: <strong>${dormerData.email}</strong></p>
+            <p>Password: <strong>defaultAdminPassword123</strong></p>
+            <p style="margin-top: 25px;">Best regards,<br><strong>Mabolo Management</strong></p>
+          
+            <div style="border-top: 1px solid #eeeeee; margin-top: 30px; padding-top: 20px; color: #888888; text-align: center; font-size: 12px; line-height: 1.5;">
+                <p style="margin: 0;">© ${new Date().getFullYear()} Mabolo Men's Home. All rights reserved.</p>
+                <p style="margin: 5px 0 0 0;">Visca, Baybay City, Leyte</p>
+                <p style="margin: 5px 0 0 0;">This is an automated message, please do not reply.</p>
+            </div>
           `,
         });
       } else {
@@ -316,10 +322,16 @@ export default function DormersPage() {
           to: dormerData.email,
           subject: "Welcome to Mabolo Payment System",
           html: `
-            <h1>Welcome, ${dormerData.firstName}!</h1>
-            <p>Your dormer account has been created successfully. This is where you will receive your bills and payment confirmations!</p>
-            <p>Room Number: ${dormerData.roomNumber}</p>
-            <p>Thank you for joining us!</p>
+           <h1>Welcome, ${dormerData.firstName}!</h1>
+          <p>Your dormer account has been created successfully. This is where you will receive your bills and payment confirmations!</p>
+          
+          <p style="margin-top: 25px;">Best regards,<br><strong>Mabolo Management</strong></p>
+          
+          <div style="border-top: 1px solid #eeeeee; margin-top: 30px; padding-top: 20px; color: #888888; text-align: center; font-size: 12px; line-height: 1.5;">
+              <p style="margin: 0;">© ${new Date().getFullYear()} Mabolo Men's Home. All rights reserved.</p>
+              <p style="margin: 5px 0 0 0;">Visca, Baybay City, Leyte</p>
+              <p style="margin: 5px 0 0 0;">This is an automated message, please do not reply.</p>
+          </div>
           `,
         });
       }
@@ -353,51 +365,56 @@ export default function DormersPage() {
       // A transaction reads data and writes changes in a single, safe operation
       await runTransaction(db, async (transaction) => {
         // 1. Get the most current bill data within the transaction
+        const billRef = doc(db, "bills", paymentData.billId); // Ensure you have the correct ref
         const billDoc = await transaction.get(billRef);
         if (!billDoc.exists()) {
           throw "Bill document does not exist!";
         }
-
         const currentBillData = billDoc.data();
-        const currentAmountPaid =
-          currentBillData.amountPaid > currentBillData.totalAmountDue
-            ? currentBillData.totalAmountDue
-            : currentBillData.amountPaid || 0;
-        const totalAmountDue = currentBillData.totalAmountDue; // This should not change
+        const totalAmountDue = currentBillData.totalAmountDue;
 
-        // 2. Calculate the new total amount paid
-        const newAmountPaid =
-          currentAmountPaid + paymentData.amount > totalAmountDue
-            ? totalAmountDue
-            : currentAmountPaid + paymentData.amount;
+        // --- CORRECTED LOGIC STARTS HERE ---
 
-        // 3. Determine the new status
+        // 2. Get the amount that was ALREADY paid from the bill document
+        const amountAlreadyPaid = currentBillData.amountPaid || 0;
+
+        // 3. Calculate the new total paid amount by adding the new payment
+        const newTotalPaid = amountAlreadyPaid + paymentData.amount;
+
+        // 4. Determine the final value to save, ensuring it doesn't exceed the total due
+        const finalAmountPaidForBill = Math.min(newTotalPaid, totalAmountDue);
+
+        // 5. Determine the actual amount of this specific payment that was applied
+        // This handles overpayments correctly for the payment record.
+        const amountAppliedThisTransaction =
+          finalAmountPaidForBill - amountAlreadyPaid;
+
+        // 6. Determine the new status based on the final, correct amount
         let newStatus = "Unpaid";
-        if (newAmountPaid >= totalAmountDue) {
+        if (finalAmountPaidForBill >= totalAmountDue) {
           newStatus = "Paid";
-        } else if (newAmountPaid > 0) {
-          newStatus = "Partially Paid"; // <-- Logic for partial payments
+        } else if (finalAmountPaidForBill > 0) {
+          newStatus = "Partially Paid";
         }
 
-        // 4. Record the new payment in the 'payments' new collection
-        // Create a new payment document with the bill ID as the document ID
-        // This assumes you want to store payments in a separate collection
+        // --- CORRECTED LOGIC ENDS HERE ---
+
+        // 7. Record the new payment. CRITICAL: Use the original paymentData.amount
+        // to record what the user actually gave you.
         await addDoc(collection(db, "payments"), {
-          ...paymentData,
+          ...paymentData, // This contains the original amount, which is correct
           recordedBy: user.uid,
           createdAt: serverTimestamp(),
         });
 
-        // 5. Update the main bill document with the correct, calculated values
+        // 8. Update the main bill document with the correct, calculated values
         transaction.update(billRef, {
-          amountPaid: newAmountPaid, // Add to the existing amount
-          status: newStatus, // Set the correct status
+          amountPaid: finalAmountPaidForBill, // Use the correctly calculated total
+          status: newStatus,
           updatedBy: user.uid,
           updatedAt: serverTimestamp(),
         });
       });
-
-      toast.success("Payment recorded successfully!");
 
       const dormerInfo = dormers.find((d) => d.id === paymentData.dormerId);
       if (dormerInfo) {
@@ -410,7 +427,12 @@ export default function DormersPage() {
             <p>We've received your payment of <strong>₱${paymentData.amount.toFixed(
               2
             )}</strong>.</p>
-            <p>Thank you!</p>
+            <p style="margin-top: 25px;">Best regards,<br><strong>Mabolo Management</strong></p>
+              <div style="border-top: 1px solid #eeeeee; margin-top: 30px; padding-top: 20px; color: #888888; text-align: center; font-size: 12px; line-height: 1.5;">
+                <p style="margin: 0;">© ${new Date().getFullYear()} Mabolo Men's Home. All rights reserved.</p>
+                <p style="margin: 5px 0 0 0;">Visca, Baybay City, Leyte</p>
+                <p style="margin: 5px 0 0 0;">This is an automated message, please do not reply.</p>
+            </div>
           `,
         });
       }
@@ -491,6 +513,13 @@ export default function DormersPage() {
               2
             )}</strong></p>
             <p>Please pay this amount to the Dorm SA.</p>
+
+             <p style="margin-top: 25px;">Best regards,<br><strong>Mabolo Management</strong></p>
+              <div style="border-top: 1px solid #eeeeee; margin-top: 30px; padding-top: 20px; color: #888888; text-align: center; font-size: 12px; line-height: 1.5;">
+                <p style="margin: 0;">© ${new Date().getFullYear()} Mabolo Men's Home. All rights reserved.</p>
+                <p style="margin: 5px 0 0 0;">Visca, Baybay City, Leyte</p>
+                <p style="margin: 5px 0 0 0;">This is an automated message, please do not reply.</p>
+            </div>
           `,
         });
       }

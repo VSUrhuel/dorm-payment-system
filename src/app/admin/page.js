@@ -172,8 +172,8 @@ export default function Dashboard() {
     setTotalDormers(dormerCount);
 
     // 3. Calculate intermediate totals for funds and collectibles
-    const totalAmountPaid = paymentsData.reduce(
-      (total, payment) => total + (payment.amount || 0),
+    const totalAmountPaid = billsData.reduce(
+      (total, bill) => total + (bill.amountPaid || 0),
       0
     );
     const totalAmountDue = billsData.reduce(
@@ -388,7 +388,7 @@ export default function Dashboard() {
           <br>
           <p>If you have any questions, please don't hesitate to reach out.</p>
           <p>Thank you!</p>
-          <p><strong>Dormitory Management</strong></p>
+          <p><strong>Mabolo Management</strong></p>
         </div>
         <div style="background-color: #f2f2f2; color: #777; padding: 10px; text-align: center; font-size: 12px;">
           <p>This is an automated report. Generated on ${new Date().toLocaleDateString()}.</p>

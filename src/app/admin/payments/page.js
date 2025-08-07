@@ -204,7 +204,10 @@ export default function PaymentsContent() {
           (sum, p) => sum + p.amount,
           0
         );
-        const remainingBalance = bill.totalAmountDue - totalPaidForBill;
+        const remainingBalance =
+          bill.totalAmountDue - totalPaidForBill < 0
+            ? 0
+            : bill.totalAmountDue - totalPaidForBill;
 
         return {
           ...bill,
@@ -374,7 +377,12 @@ export default function PaymentsContent() {
             <p>We've received your payment of <strong>₱${paymentData.amount.toFixed(
               2
             )}</strong>.</p>
-            <p>Thank you!</p>
+            <p>Thank you!</p> <p style="margin-top: 25px;">Best regards,<br><strong>Mabolo Management</strong></p>
+              <div style="border-top: 1px solid #eeeeee; margin-top: 30px; padding-top: 20px; color: #888888; text-align: center; font-size: 12px; line-height: 1.5;">
+                <p style="margin: 0;">© ${new Date().getFullYear()} Mabolo Men's Home. All rights reserved.</p>
+                <p style="margin: 5px 0 0 0;">Visca, Baybay City, Leyte</p>
+                <p style="margin: 5px 0 0 0;">This is an automated message, please do not reply.</p>
+            </div>
           `,
         });
       }
