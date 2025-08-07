@@ -19,24 +19,26 @@ export default function ExpensesHeader({
         </p>
       </div>
       <div className="flex flex-col md:flex-row gap-2 ">
+        <div class="flex gap-2">
+          <Button
+            variant="outline"
+            className="border-gray-200 hover:bg-gray-50 w-36"
+            onClick={onExport}
+          >
+            <FileDown className="h-4 w-4 mr-2" />
+            Export CSV
+          </Button>
+          <Button
+            variant="outline"
+            className="border-gray-200 hover:bg-gray-50 w-36"
+            onClick={onEmailReport}
+          >
+            <Mail className="h-4 w-4 mr-2" />
+            Email Report
+          </Button>
+        </div>
         <Button
-          variant="outline"
-          className="border-gray-200 hover:bg-gray-50"
-          onClick={onExport}
-        >
-          <FileDown className="h-4 w-4 mr-2" />
-          Export CSV
-        </Button>
-        <Button
-          variant="outline"
-          className="border-gray-200 hover:bg-gray-50"
-          onClick={onEmailReport}
-        >
-          <Mail className="h-4 w-4 mr-2" />
-          Email Report
-        </Button>
-        <Button
-          className="bg-green-600 hover:bg-green-700 text-white"
+          className="bg-green-600 hover:bg-green-700 text-white w-36"
           onClick={setAddExpenseModalOpen}
         >
           <Plus className="h-4 w-4 mr-2" />
