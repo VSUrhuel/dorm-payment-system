@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword, // 1. Import signInWithEmailAndPassword
   onAuthStateChanged,
 } from "firebase/auth";
 
@@ -241,6 +242,15 @@ export default function DormersPage() {
       toast.error("Authentication error. Please sign in again.");
       return;
     }
+
+    // --- Store current admin's credentials ---
+    const currentAdmin = auth.currentUser;
+    if (!currentAdmin) {
+      toast.error("Could not verify current admin session.");
+      return;
+    }
+    const adminEmail = currentAdmin.email;
+
     try {
       const existingDormer = dormers.find((d) => d.email === dormerData.email);
       if (existingDormer) {
@@ -248,51 +258,84 @@ export default function DormersPage() {
         return;
       }
 
-      // --- MODIFIED LOGIC ---
       if (dormerData.role === "Admin") {
-        // 2. Get a reference to your cloud function
-        const functions = getFunctions();
-        const createAdmin = httpsCallable(functions, "createAdminDormer");
+        // --- RE-AUTHENTICATION WORKAROUND ---
 
-        // 3. Call the function and pass the dormer data
-        // The current admin's auth token is sent automatically and securely.
-        await createAdmin(dormerData);
+        // 2. Securely ask the admin for their password to re-authenticate later.
+        // For security, you cannot access the password directly. Prompting is necessary.
+        const adminPassword = prompt(
+          "To keep your session active, please re-enter your password:"
+        );
+
+        if (!adminPassword) {
+          toast.info("Admin creation canceled.");
+          return;
+        }
+
+        // 3. Create the new admin user. This WILL sign out the current admin.
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          dormerData.email,
+          "defaultAdminPassword123" // Secure temporary password
+        );
+        const newAdminUid = userCredential.user.uid;
+
+        // 4. Immediately sign the original admin back in.
+        // This happens so fast the user might not even notice the change.
+        await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
+
+        // 5. Now that the original admin is logged in again, save the new dormer's data.
+        await setDoc(doc(db, "dormers", newAdminUid), {
+          ...dormerData,
+          createdBy: currentAdmin.uid, // Use the original admin's UID
+          createdAt: serverTimestamp(),
+        });
 
         toast.success("Admin dormer added successfully!");
-        // The welcome email can now be sent from the Cloud Function for consistency
         await sendEmail({
           to: dormerData.email,
           subject: "Welcome to Mabolo Payment System",
           html: `
-              <h1>Welcome, ${dormerData.firstName}!</h1>
-              <p>An admin account has been created for you. You can now log in with the following credentials:</p>
-              <p>Email: ${dormerData.email}</p>
-              <p>Password: defaultAdminPassword123</p>
-              <p>Thank you for joining us!</p>
-            `,
+            <h1>Welcome, ${dormerData.firstName}!</h1>
+            <p>We're inviting you to be an admin of the site. You can now log in with the following credentials:</p>
+            <p>Email: ${dormerData.email}</p>
+            <p>Password: defaultAdminPassword123</p>
+            <p>Thank you for joining us!</p>
+          `,
         });
       } else {
-        // This part for creating regular users remains unchanged
+        // This part for creating regular users remains unchanged.
         await addDoc(collection(db, "dormers"), {
           ...dormerData,
           createdBy: user.uid,
           createdAt: serverTimestamp(),
         });
+
         toast.success("Dormer added successfully!");
         await sendEmail({
           to: dormerData.email,
           subject: "Welcome to Mabolo Payment System",
           html: `
-              <h1>Welcome, ${dormerData.firstName}!</h1>
-              <p>Your dormer account has been created successfully. This is where you will receive your bills and payment confirmations!</p>
-              <p>Room Number: ${dormerData.roomNumber}</p>
-              <p>Thank you for joining us!</p>
-            `,
+            <h1>Welcome, ${dormerData.firstName}!</h1>
+            <p>Your dormer account has been created successfully. This is where you will receive your bills and payment confirmations!</p>
+            <p>Room Number: ${dormerData.roomNumber}</p>
+            <p>Thank you for joining us!</p>
+          `,
         });
       }
     } catch (error) {
       console.error("Error adding dormer: ", error);
-      toast.error(`Failed to add dormer: ${error.message}`);
+      // If re-authentication fails, the admin might be logged out.
+      if (
+        error.code === "auth/wrong-password" ||
+        error.code === "auth/invalid-credential"
+      ) {
+        toast.error("Re-authentication failed. Please log in again.");
+        // Consider forcing a page reload to clear state
+        // window.location.reload();
+      } else {
+        toast.error(`Failed to add dormer: ${error.message}`);
+      }
     } finally {
       closeModal();
     }
