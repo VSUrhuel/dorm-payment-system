@@ -297,7 +297,7 @@ export default function DormersPage() {
           subject: "Welcome to Mabolo Payment System",
           html: `
             <h1>Welcome, ${dormerData.firstName}!</h1>
-            <p>We're inviting you to be an admin of Mabolo Payment System. You can now log in with the following credentials:</p>
+            <p>We're inviting you to be an admin of <a href="https://dorm-payment-system.vercel.app/">Mabolo Payment System</a>. You can now log in with the following credentials:</p>
             <p>Email: <strong>${dormerData.email}</strong></p>
             <p>Password: <strong>defaultAdminPassword123</strong></p>
             <p style="margin-top: 25px;">Best regards,<br><strong>Mabolo Management</strong></p>
