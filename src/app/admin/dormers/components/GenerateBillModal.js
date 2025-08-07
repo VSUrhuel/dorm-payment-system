@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
 const generateBillingPeriods = () => {
   const periods = [];
@@ -108,11 +109,11 @@ export default function GenerateBillModal({
 
   const handleGenerateBill = () => {
     if (!billingPeriod) {
-      alert("Please select a billing period.");
+      toast.info("Please select a billing period.");
       return;
     }
     if (totalAmount <= 0) {
-      alert("Please select at least one payable to generate a bill.");
+      toast.info("Please select at least one payable to generate a bill.");
       return;
     }
     // Logic to generate the bill would go here

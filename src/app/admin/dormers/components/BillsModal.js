@@ -125,14 +125,14 @@ export default function BillsModal({
                             {bill.status}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-right ">
                           {(bill.status === "Unpaid" ||
                             bill.status === "Partially Paid" ||
                             bill.status === "Overdue") && (
                             <Button
                               size="sm"
                               onClick={() => onRecordPayment(bill)}
-                              className="h-8"
+                              className="h-8 bg-green-600 hover:bg-green-700 text-white"
                             >
                               <CreditCard className="h-4 w-4 mr-1" /> Pay
                             </Button>

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea"; // Using Textarea for description is better
+import { toast } from "sonner";
 
 /**
  * A modal for adding or editing a payable.
@@ -28,23 +29,32 @@ export default function AddPayableModal({ isOpen, onClose, onSave, payable }) {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
 
+  const isEditing = Boolean(payable);
+
   // When the 'payable' prop changes (i.e., when opening to edit),
   // populate the form fields with its data.
   useEffect(() => {
-    setTitle("");
-    setAmount("");
-    setDescription("");
-  }, [isOpen]); // Rerun effect when the payable or open state changes
+    if (isOpen && isEditing) {
+      setTitle(payable.name || "");
+      setAmount(payable.amount || "");
+      setDescription(payable.description || "");
+    } else if (isOpen) {
+      setTitle("");
+      setAmount("");
+      setDescription("");
+    }
+  }, [isOpen, payable, isEditing]); // Rerun effect when the payable or open state changes
 
   const handleSave = () => {
     // Basic validation
     if (!title || !amount) {
-      alert("Title and Amount are required.");
+      toast.info("Title and Amount are required.");
       return;
     }
 
     // Construct the payable data object
     const payableData = {
+      ...(isEditing && { id: payable.id }),
       name: title,
       amount: parseFloat(amount), // Ensure amount is a number
       description,
@@ -71,9 +81,13 @@ export default function AddPayableModal({ isOpen, onClose, onSave, payable }) {
         }}
       >
         <DialogHeader>
-          <DialogTitle>Add New Payable</DialogTitle>
+          <DialogTitle>
+            {isEditing ? "Edit Payable" : "Add New Payable"}
+          </DialogTitle>
           <DialogDescription>
-            Enter the details for the new payable.
+            {isEditing
+              ? "Update the details of this payable."
+              : "Fill in the details to add a new payable."}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -120,7 +134,7 @@ export default function AddPayableModal({ isOpen, onClose, onSave, payable }) {
             Cancel
           </Button>
           <Button type="button" onClick={handleSave}>
-            Add Payable
+            {isEditing ? "Update Payable" : "Add Payable"}
           </Button>
         </DialogFooter>
       </DialogContent>

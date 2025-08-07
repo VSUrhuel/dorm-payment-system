@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
 /**
  * @param {{
@@ -40,7 +41,7 @@ export default function AddDormerModal({ isOpen, onClose, onSave }) {
   // 3. Create a handler to gather data and call the onSave prop
   const handleSave = () => {
     if (!firstName || !lastName || !email || !phone || !role || !roomNumber) {
-      alert("All fields are required.");
+      toast.info("All fields are required.");
       return;
     }
     const dormerData = {

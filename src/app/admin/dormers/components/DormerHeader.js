@@ -18,10 +18,6 @@ export default function DormerHeader({ onAddDormer }) {
         </p>
       </div>
       <div className="flex gap-2">
-        <Button variant="outline" className="border-gray-200 hover:bg-gray-50">
-          <FileDown className="h-4 w-4 mr-2" />
-          Export
-        </Button>
         <Button
           className="bg-green-600 hover:bg-green-700 text-white"
           onClick={onAddDormer}

@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Upload, X, Edit, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 /**
  * A modal for viewing and editing expense details.
@@ -112,7 +113,7 @@ export default function ViewEditExpenseModal({
       setIsEditing(false); // Switch back to view mode on success
     } catch (error) {
       console.error("Failed to save expense:", error);
-      alert(`Error: ${error.message}`);
+      toast.info(`Error: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }

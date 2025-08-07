@@ -1,9 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { FileDown, Plus } from "lucide-react";
+import { FileDown, Plus, Mail } from "lucide-react";
 
-export default function ExpensesHeader({ setAddExpenseModalOpen }) {
+export default function ExpensesHeader({
+  setAddExpenseModalOpen,
+  onExport,
+  onEmailReport,
+}) {
   return (
     <div className="flex flex-col md:flex-row justify-between gap-4">
       <div className="space-y-1">
@@ -15,9 +19,21 @@ export default function ExpensesHeader({ setAddExpenseModalOpen }) {
         </p>
       </div>
       <div className="flex gap-2">
-        <Button variant="outline" className="border-gray-200 hover:bg-gray-50">
+        <Button
+          variant="outline"
+          className="border-gray-200 hover:bg-gray-50"
+          onClick={onExport}
+        >
           <FileDown className="h-4 w-4 mr-2" />
-          Export
+          Export CSV
+        </Button>
+        <Button
+          variant="outline"
+          className="border-gray-200 hover:bg-gray-50"
+          onClick={onEmailReport}
+        >
+          <Mail className="h-4 w-4 mr-2" />
+          Email Report
         </Button>
         <Button
           className="bg-green-600 hover:bg-green-700 text-white"

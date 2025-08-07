@@ -23,6 +23,7 @@ import {
 import { Upload, X } from "lucide-react";
 import { serverTimestamp } from "firebase/firestore";
 import { supabase } from "@/lib/supabaseClient";
+import { toast } from "sonner";
 
 /**
  * @param {{
@@ -97,7 +98,7 @@ export default function AddExpenseModal({ isOpen, onClose, onSave }) {
       !formData.expenseDate ||
       !formData.category
     ) {
-      alert("Please fill in all required fields");
+      toast.info("Please fill in all required fields");
       return;
     }
 
@@ -145,7 +146,7 @@ export default function AddExpenseModal({ isOpen, onClose, onSave }) {
       handleClose(); // Close and reset the modal on success
     } catch (error) {
       console.error("Error saving expense:", error);
-      alert(`Failed to save expense: ${error.message}`);
+      toast.info(`Failed to save expense: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }

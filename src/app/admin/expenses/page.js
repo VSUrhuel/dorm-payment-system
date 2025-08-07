@@ -130,6 +130,7 @@ export default function ExpensesContent() {
   const [isOpenViewEditExpenseModal, setIsOpenViewEditExpenseModal] =
     useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -163,6 +164,125 @@ export default function ExpensesContent() {
       unsubscribeDormers();
     };
   }, []);
+
+  const convertToCSV = (data) => {
+    if (!data || data.length === 0) return "";
+
+    const header = [
+      "ID",
+      "Title",
+      "Category",
+      "Amount",
+      "Description",
+      "Receipt URL",
+      "Expense Date",
+      "Recorded By",
+    ];
+
+    const rows = data.map((expense) =>
+      [
+        expense.id,
+        `"${expense.title.replace(/"/g, '""')}"`, // Escape quotes
+        `"${expense.description.replace(/"/g, '""')}"`,
+        expense.amount,
+        expense.category,
+        expense.receiptImageUrl || "N/A",
+        expense.expenseDate,
+        `"${expense.recordedBy?.firstName || "N/A"} ${
+          expense.recordedBy?.lastName || ""
+        }"`,
+      ].join(",")
+    );
+
+    const summaryRow = [
+      "Total Expenses",
+      "",
+      "",
+      data.reduce((sum, expense) => sum + expense.amount, 0),
+      "",
+      "",
+      "",
+      "",
+    ].join(",");
+
+    rows.push(summaryRow);
+
+    return [header.join(","), ...rows].join("\n");
+  };
+
+  const handleExport = () => {
+    if (filteredExpenses.length === 0) {
+      toast.info("No expense data to export.");
+      return;
+    }
+    const csvData = convertToCSV(filteredExpenses);
+    const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `expenses-report-${new Date().toISOString().split("T")[0]}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Expense report exported successfully!");
+  };
+
+  // --- 3. FUNCTION TO HANDLE SENDING THE EMAIL REPORT ---
+  const handleSendExpenseReport = async () => {
+    if (!dormersData || dormersData.length === 0) {
+      toast.error("No dormer emails available to send the report to.");
+      return;
+    }
+    if (filteredExpenses.length === 0) {
+      toast.info("No expense data to send.");
+      return;
+    }
+
+    setIsSendingEmail(true);
+    toast.info("Sending expense report...");
+    try {
+      // Get all dormer emails, filtering out any invalid ones
+      const recipientEmails = dormersData
+        .map((dormer) => dormer.email)
+        .filter(Boolean);
+
+      const csvData = convertToCSV(filteredExpenses);
+
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: recipientEmails.join(", "), // Send to all dormers
+          subject: "Dormitory Expense Report",
+          html: `
+            <h1>Dormitory Expense Report</h1>
+            <p>Hello everyone,</p>
+            <p>Please find the latest expense report attached to this email.</p>
+            <p>Thank you!</p>
+          `,
+          attachments: [
+            {
+              filename: `expenses-report-${
+                new Date().toISOString().split("T")[0]
+              }.csv`,
+              content: csvData,
+              contentType: "text/csv",
+            },
+          ],
+        }),
+      });
+
+      toast.success("Expense report has been emailed to all dormers!");
+    } catch (error) {
+      console.error("Failed to email report:", error);
+      toast.error("There was a problem sending the email report.");
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
 
   const combinedBillUserData = useMemo(() => {
     if (!dormersData || !expensesData) return [];
@@ -290,7 +410,11 @@ export default function ExpensesContent() {
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
-      <ExpensesHeader setAddExpenseModalOpen={setAddExpenseModalOpen} />
+      <ExpensesHeader
+        setAddExpenseModalOpen={setAddExpenseModalOpen}
+        onExport={handleExport}
+        onEmailReport={handleSendExpenseReport}
+      />
 
       {/* Summary Cards */}
       <SummaryExpense

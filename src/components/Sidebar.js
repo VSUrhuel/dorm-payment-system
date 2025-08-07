@@ -50,7 +50,6 @@ const menuItems = [
     title: "Dormers",
     url: "/admin/dormers",
     icon: Users,
-    badge: "32",
   },
   {
     title: "Payments",
@@ -61,17 +60,6 @@ const menuItems = [
     title: "Expenses",
     url: "/admin/expenses",
     icon: Receipt,
-  },
-  {
-    title: "Events",
-    url: "/admin/events",
-    icon: CalendarPlus,
-    badge: "4",
-  },
-  {
-    title: "Settings",
-    url: "/admin/settings",
-    icon: Settings,
   },
 ];
 

@@ -24,6 +24,9 @@ import {
   Wallet,
   Users,
   PlusIcon,
+  Edit,
+  FileDown,
+  Mail,
 } from "lucide-react";
 
 import { firestore as db, auth } from "@/lib/firebase";
@@ -58,19 +61,28 @@ function SkeletonCard() {
   );
 }
 
-function PayableItem({ name, amount, description }) {
+function PayableItem({ payable, onEdit }) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+    <div className="group relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
       <div className="flex items-start justify-between">
         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          {name}
+          {payable.name || "Untitled Payable"}
         </h3>
+        {/* Edit button appears on hover */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-2 right-2 h-7 w-7 opacity-0 transition-opacity group-hover:opacity-100"
+          onClick={() => onEdit(payable)}
+        >
+          <Edit className="h-4 w-4" />
+        </Button>
       </div>
       <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
-        ₱ {amount.toFixed(2)}
+        ₱ {payable.amount.toFixed(2)}
       </p>
       <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-        {description}
+        {payable.description}
       </p>
     </div>
   );
@@ -96,6 +108,8 @@ export default function Dashboard() {
   const [totalDormers, setTotalDormers] = useState(0);
 
   const [recentTransactions, setRecentTransactions] = useState([]);
+
+  const [payableToEdit, setPayableToEdit] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -278,6 +292,130 @@ export default function Dashboard() {
     },
   ];
 
+  const convertToCSV = (data) => {
+    const header = [
+      "Total Funds",
+      "Total Collectibles",
+      "Total Expenses",
+      "Total Dormers",
+    ];
+
+    const rows = [
+      totalFunds.toFixed(2),
+      totalCollectibles.toFixed(2),
+      totalExpenses.toFixed(2),
+      totalDormers,
+    ];
+
+    return header.join(",") + "\n" + rows.join(",");
+  };
+
+  // New helper function to create an HTML table from your data
+  const convertToHTMLTable = (data) => {
+    if (!data || data.length === 0) {
+      return "<p>No summary data available for this period.</p>";
+    }
+
+    // Get headers from the keys of the first object
+    const headers = ["title", "value", "description"];
+
+    // Start building the HTML table with inline styles for email client compatibility
+    let table = `
+    <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif;">
+      <thead>
+        <tr>
+  `;
+
+    // Add table headers
+    headers.forEach((header) => {
+      table += `<th style="background-color: #4CAF50; color: white; padding: 12px; border: 1px solid #ddd; text-align: left;">${header}</th>`;
+    });
+
+    table += `
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+    // Add table rows
+    data.forEach((row, index) => {
+      // Style for alternating row colors
+      const backgroundColor = index % 2 === 0 ? "#f2f2f2" : "#ffffff";
+      table += `<tr style="background-color: ${backgroundColor};">`;
+      headers.forEach((header) => {
+        table += `<td style="padding: 12px; border: 1px solid #ddd; text-align: left;">${row[header]}</td>`;
+      });
+      table += `</tr>`;
+    });
+
+    table += `
+      </tbody>
+    </table>
+  `;
+
+    return table;
+  };
+
+  // Your updated function to send the report via email
+  const handleEmailReport = async () => {
+    try {
+      toast.info("Preparing to send summary report...");
+
+      const recipientEmails = dormersData
+        .map((dormer) => dormer.email)
+        .filter(Boolean);
+
+      // If there are no valid recipients, stop here
+      if (recipientEmails.length === 0) {
+        toast.warn("No valid recipient emails found.");
+        return;
+      }
+
+      // Convert your KPI data directly to an HTML table string
+      const reportTable = convertToHTMLTable(kpiData);
+
+      // Modern and formal HTML email template
+      const emailHtml = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 700px; margin: 20px auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+        <div style="background-color: #4CAF50; color: white; padding: 20px; text-align: center;">
+          <h1 style="margin: 0; font-size: 24px;">Dormitory Summary Report</h1>
+        </div>
+        <div style="padding: 20px;">
+          <p>Hello everyone,</p>
+          <p>Please see below for the latest dormitory summary report. This data provides key insights into our recent performance.</p>
+          <br>
+          ${reportTable}
+          <br>
+          <p>If you have any questions, please don't hesitate to reach out.</p>
+          <p>Thank you!</p>
+          <p><strong>Dormitory Management</strong></p>
+        </div>
+        <div style="background-color: #f2f2f2; color: #777; padding: 10px; text-align: center; font-size: 12px;">
+          <p>This is an automated report. Generated on ${new Date().toLocaleDateString()}.</p>
+        </div>
+      </div>
+    `;
+
+      // The export sheet feature (`handleExportCSV`) is removed.
+      // The email is now sent with the data embedded in the body.
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: recipientEmails.join(", "),
+          subject: "Dormitory Summary Report",
+          html: emailHtml,
+          // The 'attachments' key is completely removed
+        }),
+      });
+
+      toast.success("Summary report has been emailed to all dormers!");
+    } catch (error) {
+      console.error("Failed to email report:", error);
+      toast.error("There was a problem sending the summary report.");
+    }
+  };
+
   useEffect(() => {
     // Fetch data from API
     async function fetchPayables() {
@@ -298,6 +436,16 @@ export default function Dashboard() {
     }
     fetchPayables();
   }, []);
+
+  const handleAddPayable = () => {
+    setPayableToEdit(null); // Clear any existing payable to edit
+    setIsAddModalOpen(true); // Open the modal for adding a new payable
+  };
+
+  const handleEditPayable = (payable) => {
+    setPayableToEdit(payable); // Set the payable to edit
+    setIsAddModalOpen(true); // Open the modal for editing
+  };
 
   const handleSavePayable = async (payableData) => {
     try {
@@ -326,7 +474,7 @@ export default function Dashboard() {
         </div>
 
         {/* KPI Cards Skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <SkeletonCard />
           <SkeletonCard />
           <SkeletonCard />
@@ -339,7 +487,7 @@ export default function Dashboard() {
             <Skeleton className="h-6 w-1/4" />
             <Skeleton className="h-4 w-2/5 mt-2" />
           </CardHeader>
-          <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <Skeleton className="h-24 w-full rounded-lg" />
             <Skeleton className="h-24 w-full rounded-lg" />
             <Skeleton className="h-24 w-full rounded-lg" />
@@ -375,13 +523,25 @@ export default function Dashboard() {
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-          Dashboard Overview
-        </h1>
-        <p className="text-sm md:text-base text-gray-500 dark:text-gray-400">
-          Real-time financial status of your dormitory
-        </p>
+      <div className="space-y-1 justify-between flex flex-col md:flex-row">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+            Dashboard Overview
+          </h1>
+          <p className="text-sm md:text-base text-gray-500 dark:text-gray-400">
+            Real-time financial status of your dormitory
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            className="border-gray-200 hover:bg-gray-50"
+            onClick={handleEmailReport}
+          >
+            <Mail className="h-4 w-4 mr-2" />
+            Email Report
+          </Button>
+        </div>
       </div>
 
       {/* KPI Cards */}
@@ -450,9 +610,13 @@ export default function Dashboard() {
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 ">
             {payables.map((payable) => (
-              <PayableItem key={payable.id} {...payable} />
+              <PayableItem
+                key={payable.id}
+                payable={payable}
+                onEdit={handleEditPayable} // Pass the edit handler
+              />
             ))}
           </div>
         </CardContent>
@@ -462,6 +626,7 @@ export default function Dashboard() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSave={handleSavePayable}
+        payable={payableToEdit}
       />
 
       {/* Recent Activity */}

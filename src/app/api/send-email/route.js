@@ -5,7 +5,7 @@ import nodemailer from "nodemailer";
 
 export async function POST(request) {
   try {
-    const { to, subject, html } = await request.json();
+    const { to, subject, html, attachments } = await request.json();
 
     // Create a transporter object using the default SMTP transport
     // We use environment variables to keep credentials secure
@@ -23,6 +23,7 @@ export async function POST(request) {
       to: to, // list of receivers
       subject: subject, // Subject line
       html: html, // html body
+      attachments: attachments || [], // Optional: Attachments if needed
     };
 
     // Send mail with defined transport object

@@ -26,7 +26,7 @@ export default function PaymentsFilter({
   return (
     <Card className="border-gray-200">
       <CardContent className="pt-6">
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="flex flex-col md:flex-row gap-4 ">
           {/* Search Input */}
           <div className="flex-1">
             <div className="relative">
