@@ -238,61 +238,58 @@ export default function DormersPage() {
   const saveDormer = async (dormerData) => {
     if (!user) {
       console.error("Authentication error: Cannot save dormer.");
+      toast.error("Authentication error. Please sign in again.");
       return;
     }
     try {
-      // Check if dormer email already exists
       const existingDormer = dormers.find((d) => d.email === dormerData.email);
       if (existingDormer) {
-        alert("A dormer with this email already exists.");
+        toast.error("A dormer with this email already exists.");
         return;
       }
-      if (dormerData.role == "Admin") {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          dormerData.email,
-          "defaultAdminPassword123" // NOTE: Use a more secure temporary password strategy
-        );
-        const newAdminUid = userCredential.user.uid;
 
-        // Use the new UID as the document ID in Firestore
-        await setDoc(doc(db, "dormers", newAdminUid), {
-          ...dormerData,
-          createdBy: user.uid, // The admin who created this account
-          createdAt: serverTimestamp(),
-        });
+      // --- MODIFIED LOGIC ---
+      if (dormerData.role === "Admin") {
+        // 2. Get a reference to your cloud function
+        const functions = getFunctions();
+        const createAdmin = httpsCallable(functions, "createAdminDormer");
+
+        // 3. Call the function and pass the dormer data
+        // The current admin's auth token is sent automatically and securely.
+        await createAdmin(dormerData);
 
         toast.success("Admin dormer added successfully!");
+        // The welcome email can now be sent from the Cloud Function for consistency
         await sendEmail({
           to: dormerData.email,
           subject: "Welcome to Mabolo Payment System",
           html: `
-            <h1>Welcome, ${dormerData.firstName}!</h1>
-            <p>We're inviting you to be the admin of the site. You can now log in with the following credentials:</p>
-            <p>Email: ${dormerData.email}</p>
-            <p>Password: defaultAdminPassword123</p>
-            <p>Thank you for joining us!</p>
-          `,
+              <h1>Welcome, ${dormerData.firstName}!</h1>
+              <p>An admin account has been created for you. You can now log in with the following credentials:</p>
+              <p>Email: ${dormerData.email}</p>
+              <p>Password: defaultAdminPassword123</p>
+              <p>Thank you for joining us!</p>
+            `,
         });
-        return;
+      } else {
+        // This part for creating regular users remains unchanged
+        await addDoc(collection(db, "dormers"), {
+          ...dormerData,
+          createdBy: user.uid,
+          createdAt: serverTimestamp(),
+        });
+        toast.success("Dormer added successfully!");
+        await sendEmail({
+          to: dormerData.email,
+          subject: "Welcome to Mabolo Payment System",
+          html: `
+              <h1>Welcome, ${dormerData.firstName}!</h1>
+              <p>Your dormer account has been created successfully. This is where you will receive your bills and payment confirmations!</p>
+              <p>Room Number: ${dormerData.roomNumber}</p>
+              <p>Thank you for joining us!</p>
+            `,
+        });
       }
-      await addDoc(collection(db, "dormers"), {
-        ...dormerData,
-        createdBy: user.uid,
-        createdAt: serverTimestamp(),
-      });
-
-      toast.success("Dormer added successfully!");
-      await sendEmail({
-        to: dormerData.email,
-        subject: "Welcome to Mabolo Payment System",
-        html: `
-          <h1>Welcome, ${dormerData.firstName}!</h1>
-          <p>Your dormer account has been created successfully. This is where you will received your bills and sucessfully payment!</p>
-          <p>Room Number: ${dormerData.roomNumber}</p>
-          <p>Thank you for joining us!</p>
-        `,
-      });
     } catch (error) {
       console.error("Error adding dormer: ", error);
       toast.error(`Failed to add dormer: ${error.message}`);
