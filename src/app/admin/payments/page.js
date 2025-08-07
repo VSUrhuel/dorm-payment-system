@@ -22,7 +22,7 @@ import PaymentHeader from "./components/PaymentHeader";
 import SummaryCards from "./components/SummaryCards";
 import PaymentsFilter from "./components/PaymentsFilter";
 import { onAuthStateChanged } from "firebase/auth";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import {
@@ -163,7 +163,7 @@ export default function PaymentsContent() {
         },
         (error) => {
           console.error(`Error fetching ${key}:`, error);
-           toast.error(`Failed to load ${key} data.`);
+          toast.error(`Failed to load ${key} data.`);
           setLoading(false); // Stop loading on error to prevent infinite spinners
         }
       );
@@ -204,7 +204,10 @@ export default function PaymentsContent() {
           (sum, p) => sum + p.amount,
           0
         );
-        const remainingBalance = bill.totalAmountDue - totalPaidForBill;
+        const remainingBalance =
+          bill.totalAmountDue - totalPaidForBill < 0
+            ? 0
+            : bill.totalAmountDue - totalPaidForBill;
 
         return {
           ...bill,
