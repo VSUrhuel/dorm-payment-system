@@ -18,7 +18,7 @@ export default function ExpensesHeader({
           Manage and track all expenses for the dormitory
         </p>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-col md:flex-row gap-2 ">
         <Button
           variant="outline"
           className="border-gray-200 hover:bg-gray-50"

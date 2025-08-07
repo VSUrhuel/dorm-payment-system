@@ -143,7 +143,7 @@ export default function ExpensesTable({ expenses, onViewDetails }) {
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
                       <div className="flex items-center gap-2">
-                        <Avatar className="h-6 w-6">
+                        <Avatar className="h-8 w-8">
                           <AvatarFallback className="bg-green-100 text-green-800 text-xs">
                             {expense.recordedBy.firstName[0]}
                             {expense.recordedBy.lastName[0]}
