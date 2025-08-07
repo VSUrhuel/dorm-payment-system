@@ -359,7 +359,10 @@ export default function DormersPage() {
         }
 
         const currentBillData = billDoc.data();
-        const currentAmountPaid = currentBillData.amountPaid || 0;
+        const currentAmountPaid =
+          currentBillData.amountPaid > currentBillData.totalAmountDue
+            ? currentBillData.totalAmountDue
+            : currentBillData.amountPaid || 0;
         const totalAmountDue = currentBillData.totalAmountDue; // This should not change
 
         // 2. Calculate the new total amount paid

@@ -204,10 +204,7 @@ export default function PaymentsContent() {
           (sum, p) => sum + p.amount,
           0
         );
-        const remainingBalance =
-          bill.totalAmountDue - totalPaidForBill < 0
-            ? 0
-            : bill.totalAmountDue - totalPaidForBill;
+        const remainingBalance = bill.totalAmountDue - totalPaidForBill;
 
         return {
           ...bill,
