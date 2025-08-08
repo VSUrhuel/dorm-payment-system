@@ -189,8 +189,6 @@ export default function Dashboard() {
     // 5. Calculate Total Fund Balance
     // The total money collected (total paid) minus the total sum of expenses.
     const funds = totalAmountPaid - expensesSum;
-    console.log("Total Funds:", funds);
-    console.log("Total collectibles", collectibles);
     setTotalFunds(funds);
   }, [expensesData, dormersData, billsData, paymentsData]); // Dependencies for recalculation
 
@@ -427,7 +425,6 @@ export default function Dashboard() {
             ...doc.data(),
           }));
           setPayables(payablesData);
-          console.log("Payables data fetched:", payablesData);
         });
         return () => unsubscribe();
       } catch (error) {

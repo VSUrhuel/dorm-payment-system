@@ -171,9 +171,9 @@ export default function ExpensesContent() {
     const header = [
       "ID",
       "Title",
-      "Category",
-      "Amount",
       "Description",
+      "Amount",
+      "Category",
       "Receipt URL",
       "Expense Date",
       "Recorded By",
@@ -366,7 +366,6 @@ export default function ExpensesContent() {
   };
 
   const handleAddExpense = async (expenseData) => {
-    console.log("Add new expense:", expenseData);
     if (!user) {
       toast.error("You must be logged in to add an expense.");
       return;

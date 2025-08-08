@@ -195,10 +195,12 @@ export default function PaymentsContent() {
         const dormer = dormersMap.get(bill.dormerId);
         if (!dormer) return null; // Skip bill if dormer not found
 
-        const associatedPayments = (paymentsByBill[bill.id] || []).map((p) => ({
-          ...p,
-          recordedByUser: dormersMap.get(p.recordedBy), // Attach user info to each payment
-        }));
+        const associatedPayments = (paymentsByBill[bill.id] || [])
+          .map((p) => ({
+            ...p,
+            recordedByUser: dormersMap.get(p.recordedBy), // Attach user info to each payment
+          }))
+          .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
         const totalPaidForBill = associatedPayments.reduce(
           (sum, p) => sum + p.amount,
@@ -216,7 +218,8 @@ export default function PaymentsContent() {
           payments: associatedPayments,
         };
       })
-      .filter(Boolean); // Remove any null entries
+      .filter(Boolean)
+      .sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt)); // Remove any null entries
   }, [loading, payments, bills, dormers]);
 
   const uniqueBillingPeriods = useMemo(() => {
@@ -305,7 +308,6 @@ export default function PaymentsContent() {
       }
 
       const data = await response.json();
-      console.log("Email sent successfully:", data);
     } catch (error) {
       console.error("Error sending email:", error);
       toast.error("Failed to send payment confirmation email.");

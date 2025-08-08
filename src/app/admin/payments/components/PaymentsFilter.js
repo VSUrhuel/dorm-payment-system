@@ -57,7 +57,7 @@ export default function PaymentsFilter({
           </div>
 
           {/* NEW: Billing Period Filter */}
-          <div className="w-full md:w-36">
+          <div className="w-full md:w-36 ">
             <Select
               value={billingPeriodFilter}
               onValueChange={setBillingPeriodFilter}

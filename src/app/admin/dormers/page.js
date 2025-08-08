@@ -158,7 +158,6 @@ export default function DormersPage() {
       }
 
       const data = await response.json();
-      console.log("Email sent successfully:", data);
     } catch (error) {
       console.error("Error sending email:", error);
       toast.error("Failed to send notification email.");
@@ -232,7 +231,9 @@ export default function DormersPage() {
     if (!dormers.length) return [];
     return dormers.map((dormer) => ({
       ...dormer,
-      bills: bills.filter((bill) => bill.dormerId === dormer.id),
+      bills: bills
+        .filter((bill) => bill.dormerId === dormer.id)
+        .sort((a, b) => b.billingPeriod.localeCompare(a.billingPeriod)),
     }));
   }, [dormers, bills]);
 
@@ -415,6 +416,8 @@ export default function DormersPage() {
           updatedAt: serverTimestamp(),
         });
       });
+
+      toast.success("Payment recorded successfully!");
 
       const dormerInfo = dormers.find((d) => d.id === paymentData.dormerId);
       if (dormerInfo) {
