@@ -599,7 +599,7 @@ export default function Dashboard() {
           </div>
           <Button
             variant="outline"
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={() => handleAddPayable()}
             className="gap-2 bg-green-50 hover:bg-green-100 dark:bg-green-900/30 dark:hover:bg-green-800/50"
           >
             <PlusIcon className="h-4 w-4 text-green-600 dark:text-green-400" />
@@ -607,7 +607,7 @@ export default function Dashboard() {
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 ">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 ">
             {payables.map((payable) => (
               <PayableItem
                 key={payable.id}
