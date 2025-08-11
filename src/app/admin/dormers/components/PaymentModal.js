@@ -40,6 +40,7 @@ export default function PaymentModal({
   const [amount, setAmount] = useState("");
   const [notes, setNotes] = useState("");
   const [paymentDate, setPaymentDate] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Effect to set default date when modal opens
   useEffect(() => {
@@ -64,7 +65,10 @@ export default function PaymentModal({
       paymentMethod: paymentMethod,
       notes: notes,
     };
-    onSavePayment(paymentData);
+    setLoading(true);
+    onSavePayment(paymentData).finally(() => {
+      setLoading(false);
+    });
   };
 
   const handleClose = () => {
@@ -209,9 +213,9 @@ export default function PaymentModal({
           <Button
             className="bg-green-600 hover:bg-green-700 text-white"
             onClick={handlePayment}
-            disabled={!amount || parseFloat(amount) <= 0}
+            disabled={!amount || parseFloat(amount) <= 0 || loading}
           >
-            Confirm Payment
+            {loading ? "Processing..." : "Confirm Payment"}
           </Button>
         </DialogFooter>
       </DialogContent>
