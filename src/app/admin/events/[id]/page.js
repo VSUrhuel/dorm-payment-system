@@ -304,7 +304,7 @@ export default function EventDetailsContent() {
       const dormerInfo = dormers.find((d) => d.id === paymentData.dormerId);
       await sendEmail({
         to: dormerInfo.email,
-        subject: `[TEST] ${event.name} Event Payment ${
+        subject: `${event.name} Event Payment ${
           existingPaymentId ? "Updated" : "Recorded"
         }`,
         html: `
@@ -323,7 +323,6 @@ export default function EventDetailsContent() {
           event.amountDue - paymentData.amount
         ).toFixed(2)}</strong></p>
         <p>Status: <strong>${status}</strong></p>
-        <p>THIS IS A TEST EMAIL, DISREGARD THIS - RHUEL</p>
 
         <p style="margin-top: 25px;">Best regards,<br><strong>Mabolo Management</strong></p>
         <div style="border-top: 1px solid #eeeeee; margin-top: 30px; padding-top: 20px; color: #888888; text-align: center; font-size: 12px; line-height: 1.5;">

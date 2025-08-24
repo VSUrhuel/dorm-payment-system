@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DollarSign, User, Calendar } from "lucide-react";
+import { toast } from "sonner";
 
 /**
  * @param {{
@@ -54,13 +55,13 @@ export default function AddEventPaymentModal({
     try {
       // Validate required fields
       if (!paymentAmount || !paymentMethod || !paymentDate) {
-        alert("Please fill in all required fields");
+        toast.error("Please fill in all required fields");
         return;
       }
 
       const amount = Number.parseFloat(paymentAmount);
       if (amount <= 0 || amount > event.amountDue) {
-        alert(
+        toast.error(
           `Payment amount must be between ₱0.01 and ₱${event.amountDue.toFixed(
             2
           )}`
@@ -93,7 +94,7 @@ export default function AddEventPaymentModal({
       setPaymentNotes("");
     } catch (error) {
       console.error("Error saving payment:", error);
-      alert("Failed to save payment. Please try again.");
+      toast.error("Failed to save payment. Please try again.");
     } finally {
       setIsSubmitting(false);
       handleClose();

@@ -171,7 +171,7 @@ export default function EventsContent() {
 
       await sendEmail({
         to: recipientEmails.join(", "),
-        subject: `[TEST] ${eventData.name} Event Created`,
+        subject: `${eventData.name} Event Created`,
         html: `
               <h1>New Event Created</h1>
               <p>Hi dormers,</p>
@@ -180,7 +180,6 @@ export default function EventsContent() {
               <p>Pay this amount on or before <strong>${
                 eventData.dueDate
               }</strong> to the Dormitory Treasurer.</p>
-              <p>THIS IS A TEST EMAIL, DISREGARD THIS - RHUEL</p>
 
                <p style="margin-top: 25px;">Best regards,<br><strong>Mabolo Management</strong></p>
                 <div style="border-top: 1px solid #eeeeee; margin-top: 30px; padding-top: 20px; color: #888888; text-align: center; font-size: 12px; line-height: 1.5;">
