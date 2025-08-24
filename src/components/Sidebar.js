@@ -61,6 +61,11 @@ const menuItems = [
     url: "/admin/expenses",
     icon: Receipt,
   },
+  {
+    title: "Events",
+    url: "/admin/events",
+    icon: Receipt,
+  },
 ];
 
 export function AppSidebar() {

@@ -79,7 +79,7 @@ function PayableItem({ payable, onEdit }) {
         </Button>
       </div>
       <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
-        ₱ {payable.amount.toFixed(2)}
+        ₱{payable.amount.toFixed(2)}
       </p>
       <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
         {payable.description}

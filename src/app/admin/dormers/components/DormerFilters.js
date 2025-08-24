@@ -26,6 +26,7 @@ export default function DormerFilters({
   statusFilter,
   onStatusChange,
   count,
+  resetFilter,
 }) {
   return (
     <Card className="border-gray-200">
@@ -68,10 +69,7 @@ export default function DormerFilters({
           {(searchTerm || statusFilter !== "All") && (
             <div className="w-full md:w-26">
               <Button
-                onClick={() => {
-                  onSearchChange("");
-                  onStatusChange("All");
-                }}
+                onClick={resetFilter}
                 className="mt-2 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 Reset Filters

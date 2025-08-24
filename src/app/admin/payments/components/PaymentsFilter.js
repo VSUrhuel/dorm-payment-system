@@ -22,6 +22,7 @@ export default function PaymentsFilter({
   billingPeriods, // New prop for the list of available periods
   paginatedBills,
   filteredBills,
+  setCurrentPage,
 }) {
   return (
     <Card className="border-gray-200">
@@ -34,7 +35,10 @@ export default function PaymentsFilter({
               <Input
                 placeholder="Search by resident name, room, or period..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="pl-10 border-gray-300"
               />
             </div>
@@ -42,7 +46,13 @@ export default function PaymentsFilter({
 
           {/* Status Filter */}
           <div className="w-full md:w-36">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select
+              value={statusFilter}
+              onValueChange={(value) => {
+                setStatusFilter(value);
+                setCurrentPage(1);
+              }}
+            >
               <SelectTrigger className="border-gray-300">
                 <Filter className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Filter by status" />
@@ -60,7 +70,10 @@ export default function PaymentsFilter({
           <div className="w-full md:w-36 ">
             <Select
               value={billingPeriodFilter}
-              onValueChange={setBillingPeriodFilter}
+              onValueChange={(value) => {
+                setBillingPeriodFilter(value);
+                setCurrentPage(1);
+              }}
             >
               <SelectTrigger className="border-gray-300">
                 <CalendarDays className="h-4 w-4 mr-2" />

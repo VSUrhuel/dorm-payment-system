@@ -119,7 +119,11 @@ export default function ExpensesTable({ expenses, onViewDetails }) {
                     </TableCell>
                     <TableCell>
                       <div className="font-bold text-red-600 text-lg">
-                        {formatCurrency(expense.amount)}
+                        ₱
+                        {expense.amount
+                          .toFixed(2)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                       </div>
                     </TableCell>
                     <TableCell>

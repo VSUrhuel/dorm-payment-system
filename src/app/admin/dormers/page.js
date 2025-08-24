@@ -609,6 +609,10 @@ export default function DormersPage() {
         statusFilter={statusFilter}
         onStatusChange={setStatusFilter}
         count={paginatedDormers.length}
+        resetFilter={() => {
+          setSearchTerm("");
+          setStatusFilter("All");
+        }}
       />
 
       <DormersTable

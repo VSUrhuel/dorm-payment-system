@@ -421,6 +421,7 @@ export default function PaymentsContent() {
         billingPeriods={uniqueBillingPeriods}
         paginatedBills={paginatedBills}
         filteredBills={filteredBills}
+        setCurrentPage={setCurrentPage}
       />
 
       {/* --- 5. FIXED: Props passed to table --- */}
