@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import Image from "next/image";
+import { formatAmount } from "../utils";
 
 /**
  * @param {{
@@ -119,11 +120,7 @@ export default function ExpensesTable({ expenses, onViewDetails }) {
                     </TableCell>
                     <TableCell>
                       <div className="font-bold text-red-600 text-lg">
-                        ₱
-                        {expense.amount
-                          .toFixed(2)
-                          .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        ₱{formatAmount(parseFloat(expense.amount) || 0)}
                       </div>
                     </TableCell>
                     <TableCell>

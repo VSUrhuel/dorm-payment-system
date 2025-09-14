@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatAmount } from "../utils";
 
 export default function SummaryExpense({
   totalExpenses,
@@ -18,11 +19,7 @@ export default function SummaryExpense({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-red-600">
-            ₱
-            {totalExpenses
-              .toFixed(2)
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            ₱{formatAmount(totalExpenses || 0)}
           </div>
           <p className="text-xs text-gray-500 mt-1">All recorded expenses</p>
         </CardContent>
@@ -35,11 +32,7 @@ export default function SummaryExpense({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-orange-600">
-            ₱
-            {monthlyExpenses
-              .toFixed(2)
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            ₱ {formatAmount(monthlyExpenses || 0)}
           </div>
           <p className="text-xs text-gray-500 mt-1">Current month expenses</p>
         </CardContent>
@@ -53,11 +46,7 @@ export default function SummaryExpense({
         <CardContent>
           <div className="text-2xl font-bold text-blue-600">{topCategory}</div>
           <p className="text-xs text-gray-500 mt-1">
-            ₱
-            {(expensesByCategory[topCategory] || 0)
-              .toFixed(2)
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            ₱ {formatAmount(expensesByCategory[topCategory] || 0)} spent
           </p>
         </CardContent>
       </Card>

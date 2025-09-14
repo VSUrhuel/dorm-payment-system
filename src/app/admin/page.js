@@ -45,6 +45,7 @@ import AddPayableModal from "./dormers/components/AddPayabaleModal";
 import { onAuthStateChanged } from "firebase/auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { formatAmount } from "./expenses/utils";
 
 function SkeletonCard() {
   return (
@@ -161,7 +162,7 @@ export default function Dashboard() {
     // 1. Calculate Total Expenses
     // Sums the 'expenseAmount' from all documents in the expensesData array.
     const expensesSum = expensesData.reduce(
-      (total, expense) => total + (expense.amount || 0),
+      (total, expense) => total + parseFloat(expense.amount || 0),
       0
     );
     setTotalExpenses(expensesSum);
@@ -253,30 +254,23 @@ export default function Dashboard() {
   const kpiData = [
     {
       title: "Dorm Fund Balance",
-      value: `₱${totalFunds
-        .toFixed(2)
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
+      value: `₱${formatAmount(totalFunds || 0)}`,
       description: "Current available funds",
       icon: Wallet,
       trend: "up",
     },
     {
       title: "Total Collectibles",
-      value: `₱${totalCollectibles
-        .toFixed(2)
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
+      value: `₱${formatAmount(totalCollectibles || 0)}`,
       description: "Remaining collectibles",
       icon: TrendingUp,
       trend: "up",
     },
     {
       title: "Total Expenses",
-      value: `₱${totalExpenses
-        .toFixed(2)
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
+      value: `₱${
+        formatAmount(totalExpenses || 0)
+      }`,
       description: "Overall expenses this semester",
       icon: TrendingDown,
       trend: "down",

@@ -148,6 +148,7 @@ export default function ExpensesContent() {
         ...doc.data(),
       }));
       setExpensesData(expenses);
+      console.log("Fetched expenses:", expenses);
       setLoading(false);
     });
 
@@ -333,11 +334,14 @@ export default function ExpensesContent() {
     }
   };
 
-  // Calculate summary statistics
   const totalExpenses = combinedBillUserData.reduce(
-    (sum, expense) => sum + expense.amount,
+    (sum, expense) => sum + parseFloat(expense.amount),
     0
   );
+
+  console.log("Total Expenses:", totalExpenses);
+  console.log("Combined Bill User Data:", combinedBillUserData);
+
   const monthlyExpenses = combinedBillUserData
     .filter((expense) => {
       const expenseDate = new Date(expense.expenseDate);
@@ -351,7 +355,8 @@ export default function ExpensesContent() {
     .reduce((sum, expense) => sum + expense.amount, 0);
 
   const expensesByCategory = combinedBillUserData.reduce((acc, expense) => {
-    acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+    acc[expense.category] =
+      (acc[expense.category] || 0) + parseFloat(expense.amount);
     return acc;
   }, {});
 
