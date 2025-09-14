@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "./../../../../components/ui/button";
 import { FileDown, Plus, Mail } from "lucide-react";
 
 export default function ExpensesHeader({

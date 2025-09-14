@@ -1,8 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "./../../../../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "./../../../../components/ui/card";
+import { Badge } from "./../../../../components/ui/badge";
 import {
   Table,
   TableBody,
@@ -10,14 +15,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "./../../../../components/ui/table";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "./../../../../components/ui/dialog";
 import {
   CreditCard,
   DollarSign,
@@ -25,9 +30,14 @@ import {
   CheckCircle,
   AlertCircle,
 } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "./../../../../components/ui/label";
+import { Avatar, AvatarFallback } from "./../../../../components/ui/avatar";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "./../../../../components/ui/tabs";
 export default function BillsModal({
   isOpen,
   onClose,

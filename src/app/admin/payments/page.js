@@ -10,11 +10,11 @@ import {
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { auth, firestore } from "@/lib/firebase"; // Assuming 'db' is exported as 'firestore'
+import { auth, firestore } from "./../../../lib/firebase"; // Assuming 'db' is exported as 'firestore'
 // import { useAuth } from "@/hooks/useAuth"; // Assuming you have an auth hook for the user
 // import { sendEmail } from "@/utils/email"; // Assuming you have an email utility
 
-import { Button } from "@/components/ui/button";
+import { Button } from "./../../../components/ui/button";
 import PaymentsTable from "./components/PaymentsTable";
 import PaymentDetailsModal from "./components/ListOfPaymentsModal";
 import PaymentModal from "../dormers/components/PaymentModal";
@@ -23,7 +23,7 @@ import SummaryCards from "./components/SummaryCards";
 import PaymentsFilter from "./components/PaymentsFilter";
 import { onAuthStateChanged } from "firebase/auth";
 import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "./../../../components/ui/skeleton";
 
 import {
   TableCell,
@@ -32,7 +32,7 @@ import {
   TableRow,
   TableBody,
   TableHead,
-} from "@/components/ui/table";
+} from "./../../../components/ui/table";
 
 function PaymentsPageSkeleton() {
   const skeletonRows = Array(6).fill(0);

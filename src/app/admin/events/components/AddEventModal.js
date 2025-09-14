@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react"; // 1. Import useState
-import { Button } from "@/components/ui/button";
+import { Button } from "./../../../../components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,11 +9,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "./../../../../components/ui/dialog";
+import { Input } from "./../../../../components/ui/input";
+import { Label } from "./../../../../components/ui/label";
 import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "./../../../../components/ui/textarea";
 
 /**
  * @param {{

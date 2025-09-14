@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { supabase } from "@/lib/supabaseClient"; // Your Supabase client
+import { supabase } from "./../../../../lib/supabaseClient"; // Your Supabase client
 
-import { Button } from "@/components/ui/button";
+import { Button } from "./../../../../components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -12,17 +12,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+} from "./../../../../components/ui/dialog";
+import { Input } from "./../../../../components/ui/input";
+import { Label } from "./../../../../components/ui/label";
+import { Textarea } from "./../../../../components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "./../../../../components/ui/select";
 import { Upload, X, Edit, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 

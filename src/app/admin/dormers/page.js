@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { firestore as db, auth } from "@/lib/firebase";
+import { firestore as db, auth } from "./../../../lib/firebase";
 import {
   collection,
   addDoc,
@@ -32,11 +32,10 @@ import {
   DialogDescription,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog"; // Assuming this is the correct path for shadcn/ui
-import { Button } from "@/components/ui/button";
+} from "./../../../components/ui/dialog"; // Assuming this is the correct path for shadcn/ui
 import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
-
+import { Skeleton } from "./../../../components/ui/skeleton";
+import { Button } from "./../../../components/ui/button";
 import {
   TableCell,
   Table,
@@ -44,7 +43,7 @@ import {
   TableRow,
   TableBody,
   TableHead,
-} from "@/components/ui/table";
+} from "./../../../components/ui/table";
 
 function DormersPageSkeleton() {
   const skeletonRows = Array(6).fill(0); // Create 6 skeleton rows for the table

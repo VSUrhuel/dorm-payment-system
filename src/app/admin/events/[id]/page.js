@@ -1,9 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { Button } from "./../../../../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "./../../../../components/ui/card";
+import { Badge } from "./../../../../components/ui/badge";
 import {
   ArrowLeft,
   Users,
@@ -17,7 +21,7 @@ import AddEventPaymentModal from "../components/AddEventPaymentModal";
 import DormerFilters from "../../dormers/components/DormerFilters";
 
 import { useEffect, useMemo, useState } from "react";
-import { firestore as db, auth } from "@/lib/firebase";
+import { firestore as db, auth } from "./../../../../lib/firebase";
 import {
   collection,
   addDoc,

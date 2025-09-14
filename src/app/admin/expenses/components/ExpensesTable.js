@@ -1,8 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "./../../../../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "./../../../../components/ui/card";
+import { Badge } from "./../../../../components/ui/badge";
 import {
   Table,
   TableBody,
@@ -10,15 +15,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+} from "./../../../../components/ui/table";
+import { Avatar, AvatarFallback } from "./../../../../components/ui/avatar";
 import { Eye, Edit, Calendar, ImageIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "./../../../../components/ui/dialog";
 import { useState } from "react";
 import Image from "next/image";
 import { formatAmount } from "../utils";

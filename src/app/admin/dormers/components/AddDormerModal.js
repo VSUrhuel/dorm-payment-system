@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react"; // 1. Import useState
-import { Button } from "@/components/ui/button";
+
 import {
   Dialog,
   DialogContent,
@@ -9,18 +9,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "./../../../../components/ui/dialog";
+import { Input } from "./../../../../components/ui/input";
+import { Label } from "./../../../../components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
+} from "./../../../../components/ui/select";
+import { Separator } from "./../../../../components/ui/separator";
 import { toast } from "sonner";
+import { Button } from "./../../../../components/ui/button";
 
 /**
  * @param {{

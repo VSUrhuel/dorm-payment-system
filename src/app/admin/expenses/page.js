@@ -1,16 +1,21 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Button } from "./../../../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "./../../../components/ui/card";
+import { Input } from "./../../../components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "./../../../components/ui/select";
 import { FileDown, Search, Filter, Plus } from "lucide-react";
 import ExpensesTable from "./components/ExpensesTable";
 import AddExpenseModal from "./components/AddExpenseModal";
@@ -18,7 +23,7 @@ import ExpensesHeader from "./components/ExpensesHeader";
 import SummaryExpense from "./components/SummaryExpenses";
 import ExpensesFilter from "./components/ExpensesFilter";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth } from "./../../../lib/firebase";
 import { ServerInsertedHtml } from "next/dist/server/route-modules/app-page/vendored/contexts/entrypoints";
 import {
   addDoc,
@@ -29,10 +34,10 @@ import {
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
-import { firestore as db } from "@/lib/firebase";
+import { firestore as db } from "./../../../lib/firebase";
 import ViewEditExpenseModal from "./components/ViewEditExpenseModal";
 import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "./../../../components/ui/skeleton";
 import {
   TableCell,
   Table,
@@ -40,7 +45,7 @@ import {
   TableRow,
   TableBody,
   TableHead,
-} from "@/components/ui/table";
+} from "./../../../components/ui/table";
 
 function ExpensesPageSkeleton() {
   const skeletonRows = Array(6).fill(0); // Create 6 skeleton rows for the table

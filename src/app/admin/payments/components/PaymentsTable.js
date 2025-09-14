@@ -1,8 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "./../../../../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "./../../../../components/ui/card";
+import { Badge } from "./../../../../components/ui/badge";
 import {
   Table,
   TableBody,
@@ -10,8 +15,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+} from "./../../../../components/ui/table";
+import { Avatar, AvatarFallback } from "./../../../../components/ui/avatar";
 import { Eye, CreditCard, Calendar } from "lucide-react";
 
 /**

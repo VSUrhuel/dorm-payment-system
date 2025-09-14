@@ -7,9 +7,9 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+} from "./../../components/ui/card";
+import { Button } from "./../../components/ui/button";
+import { Badge } from "./../../components/ui/badge";
 import {
   Table,
   TableBody,
@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "./../../components/ui/table";
 import {
   TrendingUp,
   TrendingDown,
@@ -29,7 +29,7 @@ import {
   Mail,
 } from "lucide-react";
 
-import { firestore as db, auth } from "@/lib/firebase";
+import { firestore as db, auth } from "./../../lib/firebase";
 import {
   collection,
   addDoc,
@@ -43,7 +43,7 @@ import {
 import AddPayableModal from "./dormers/components/AddPayabaleModal";
 
 import { onAuthStateChanged } from "firebase/auth";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "./../../components/ui/skeleton";
 import { toast } from "sonner";
 import { formatAmount } from "./expenses/utils";
 
@@ -268,9 +268,7 @@ export default function Dashboard() {
     },
     {
       title: "Total Expenses",
-      value: `₱${
-        formatAmount(totalExpenses || 0)
-      }`,
+      value: `₱${formatAmount(totalExpenses || 0)}`,
       description: "Overall expenses this semester",
       icon: TrendingDown,
       trend: "down",

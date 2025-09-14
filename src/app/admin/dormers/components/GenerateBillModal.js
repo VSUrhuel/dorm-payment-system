@@ -8,21 +8,21 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+} from "./../../../../components/ui/dialog";
+import { Button } from "./../../../../components/ui/button";
+import { Input } from "./../../../../components/ui/input";
+import { Label } from "./../../../../components/ui/label";
+import { Textarea } from "./../../../../components/ui/textarea";
+import { Avatar, AvatarFallback } from "./../../../../components/ui/avatar";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
+} from "./../../../../components/ui/select";
+import { Checkbox } from "./../../../../components/ui/checkbox";
+import { Separator } from "./../../../../components/ui/separator";
 import { toast } from "sonner";
 
 const generateBillingPeriods = () => {

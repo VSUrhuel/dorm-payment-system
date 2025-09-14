@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
+    "baseUrl": ".", // <-- Add this line
     "paths": {
       "@/*": ["./src/*"]
     }
+    // ... all your other options
   }
+  // ... rest of the file
 }

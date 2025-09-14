@@ -1,8 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "./../../../../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "./../../../../components/ui/card";
+import { Badge } from "./../../../../components/ui/badge";
 import {
   Table,
   TableBody,
@@ -10,8 +15,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+} from "./../../../../components/ui/table";
+import { Avatar, AvatarFallback } from "./../../../../components/ui/avatar";
 import { CreditCard, CheckCircle, Clock, Calendar } from "lucide-react";
 
 /**
@@ -127,7 +132,8 @@ export default function EventDormersTable({
                     </Badge>
                     {dormer.paymentMethod && (
                       <div className="text-xs text-gray-500 mt-1">
-                        {dormer.paymentMethod[0].toUpperCase()}{dormer.paymentMethod.slice(1).toLowerCase()}
+                        {dormer.paymentMethod[0].toUpperCase()}
+                        {dormer.paymentMethod.slice(1).toLowerCase()}
                       </div>
                     )}
                   </TableCell>

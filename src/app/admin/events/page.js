@@ -1,13 +1,18 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Button } from "./../../../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "./../../../components/ui/card";
+import { Progress } from "./../../../components/ui/progress";
 import { Plus, Eye, CreditCard } from "lucide-react";
 import Link from "next/link";
 import AddEventModal from "./components/AddEventModal";
 import { useEffect, useState } from "react";
-import { firestore as db, auth } from "@/lib/firebase";
+import { firestore as db, auth } from "./../../../lib/firebase";
 
 import {
   collection,
