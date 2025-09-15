@@ -106,7 +106,7 @@ export default function AuthPage() {
             <h2 className="text-2xl font-bold text-center text-gray-800">
               Welcome to DormPay
             </h2>
-            <p className="text-center text-gray-500 mt-1">Admin Sign In</p>
+            <p className="text-center text-gray-500 mt-1">User Sign In</p>
           </div>
 
           {error && (
