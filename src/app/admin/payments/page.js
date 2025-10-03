@@ -158,11 +158,6 @@ export default function PaymentsContent() {
             ...doc.data(),
           }));
 
-          // Filter dormers by userRole if key is 'User'
-          if (key === "dormers") {
-            data = data.filter((d) => d.role === "User");
-          }
-
           collections[key].setter(data);
           collections[key].loaded = true;
           checkAllLoaded();
