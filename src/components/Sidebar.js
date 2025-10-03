@@ -14,7 +14,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation"; // 2. Import useRouter
 import { auth } from "@/lib/firebase"; // 3. Import Firebase auth instance
-import { signOut as firebaseSignOut } from "firebase/auth";
+import { signOut as firebaseSignOut, onAuthStateChanged } from "firebase/auth";
 import {
   Sidebar,
   SidebarContent,
@@ -73,30 +73,30 @@ export function AppSidebar() {
   const [user, setUser] = useState(null);
   const [dormerData, setDormerData] = useState(null);
 
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-  //     setUser(currentUser);
-  //   });
-  //   return () => unsubscribe();
-  // }, []);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
-  // useEffect(() => {
-  //   console.log("user", user);
-  //   if (user) {
-  //     // Only run the query if the user is logged in
-  //     // Query to find the dormer document where 'authUid' matches the logged-in user's uid
-  //     const fetchDormerData = async () => {
-  //       const docRef = doc(db, "dormers", user.uid);
-  //       const docSnap = await getDoc(docRef);
-  //       const dormerData = docSnap.data();
-  //       setDormerData(dormerData);
-  //       console.log(dormerData);
-  //     };
+  useEffect(() => {
+    console.log("user", user);
+    if (user) {
+      // Only run the query if the user is logged in
+      // Query to find the dormer document where 'authUid' matches the logged-in user's uid
+      const fetchDormerData = async () => {
+        const docRef = doc(db, "dormers", user.uid);
+        const docSnap = await getDoc(docRef);
+        const dormerData = docSnap.data();
+        setDormerData(dormerData);
+        console.log(dormerData);
+      };
 
-  //     fetchDormerData();
-  //     console.log(dormerData);
-  //   }
-  // }, [user]);
+      fetchDormerData();
+      console.log(dormerData);
+    }
+  }, [user]);
 
   const handleSignOut = async () => {
     try {
@@ -165,7 +165,7 @@ export function AppSidebar() {
 
         <SidebarFooter className="p-4 border-t border-gray-100">
           {dormerData && (
-            <SidebarHeader class="flex items-start gap-2 pb-2">
+            <SidebarHeader className="flex items-start gap-2 pb-2">
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-green-100 text-green-800 text-sm font-medium">
                   {dormerData.firstName[0]}
