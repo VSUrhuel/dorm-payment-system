@@ -189,10 +189,12 @@ export default function DormersPage() {
     setLoading(true);
     const qDormers = query(collection(db, "dormers"));
     const unsubscribeDormers = onSnapshot(qDormers, (snapshot) => {
-      const dormerData = snapshot.docs.map((doc) => ({
+      const dormerData = snapshot.docs
+      .map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      }));
+      }))
+      .filter((dormer) => dormer.role === "User");
       setDormers(dormerData);
       setLoading(false);
     });

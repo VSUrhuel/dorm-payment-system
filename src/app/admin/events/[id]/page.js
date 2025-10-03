@@ -107,10 +107,12 @@ export default function EventDetailsContent() {
     // 1. Fetch ALL dormers
     const dormersQuery = query(collection(db, "dormers"));
     const unsubscribeDormers = onSnapshot(dormersQuery, (snapshot) => {
-      const dormerData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const dormerData = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter((dormer) => dormer.role === "User"); // Only include users with role 'User'
       setDormers(dormerData);
     });
 

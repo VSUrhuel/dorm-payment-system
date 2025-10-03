@@ -153,10 +153,16 @@ export default function PaymentsContent() {
       return onSnapshot(
         q,
         (snapshot) => {
-          const data = snapshot.docs.map((doc) => ({
+          let data = snapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
           }));
+
+          // Filter dormers by userRole if key is 'User'
+          if (key === "dormers") {
+            data = data.filter((d) => d.role === "User");
+          }
+
           collections[key].setter(data);
           collections[key].loaded = true;
           checkAllLoaded();

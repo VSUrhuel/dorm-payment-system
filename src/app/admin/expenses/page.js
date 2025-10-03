@@ -159,10 +159,12 @@ export default function ExpensesContent() {
 
     const qDormers = query(collection(db, "dormers"));
     const unsubscribeDormers = onSnapshot(qDormers, (snapshot) => {
-      const dormers = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const dormers = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter((dormer) => dormer.role === "User");
       setDormersData(dormers);
     });
     return () => {
