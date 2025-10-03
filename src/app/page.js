@@ -17,24 +17,26 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState(""); // For success messages like password reset
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [authActionLoading, setAuthActionLoading] = useState(false);
 
-  // Effect to check auth state and redirect if already logged in
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        // If user is found, redirect to the admin dashboard
-        router.push("/admin");
-      } else {
-        setUser(null);
-        setLoading(false); // Only stop loading if there's no user
-      }
-    });
+  // // Effect to check auth state and redirect if already logged in
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+  //     if (currentUser) {
+  //       setUser(currentUser);
+  //       // If user is found, redirect to the admin dashboard
+  //       console.log("in");
+  //       router.push("/admin/dormers");
+  //     } else {
+  //       console.log("no user");
+  //       setUser(null);
+  //       setLoading(false); // Only stop loading if there's no user
+  //     }
+  //   });
 
-    return () => unsubscribe();
-  }, [router]);
+  //   return () => unsubscribe();
+  // }, [router]);
 
   // Handler for the sign-in form submission
   const handleSignIn = async (event) => {
@@ -44,16 +46,58 @@ export default function AuthPage() {
     setAuthActionLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // The onAuthStateChanged listener will handle the redirect
-    } catch (err) {
-      setError(
-        err.code.includes("auth/invalid-credential")
-          ? "Invalid email or password."
-          : "An error occurred. Please try again."
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
       );
+      const user = userCredential.user;
+
+      const idToken = await user.getIdToken();
+
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to log in on the server.");
+      }
+
+      router.push("/admin");
+    } catch (err) {
+      switch (err.code) {
+        case "auth/user-not-found":
+          setError("No user found with this email.");
+          break;
+        case "auth/wrong-password":
+          setError("Incorrect password. Please try again.");
+          break;
+        case "auth/invalid-email":
+          setError("Invalid email format. Please check and try again.");
+          break;
+        case "auth/too-many-requests":
+          setError(
+            "Too many failed attempts. Please try again later or reset your password."
+          );
+          break;
+        case "auth/network-request-failed":
+          setError(
+            "Network error. Please check your connection and try again."
+          );
+          break;
+        case "auth/user-disabled":
+          setError("This user account has been disabled.");
+          break;
+        default:
+          setError("Failed to sign in. Please check your credentials.");
+      }
     } finally {
       setAuthActionLoading(false);
+      setLoading(false); // Ensure loading is false after the attempt
     }
   };
 
@@ -76,11 +120,12 @@ export default function AuthPage() {
       );
     } finally {
       setAuthActionLoading(false);
+      setLoading(false); // Ensure loading is false after the attempt
     }
   };
 
   // 3. Improved loading/redirecting state
-  if (loading || user) {
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-600">
         <img

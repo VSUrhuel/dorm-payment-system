@@ -114,7 +114,12 @@ export default function Dashboard() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      if (!currentUser) {
+        // If no user is found, redirect to the login page
+        window.location.href = "/";
+      } else {
+        setUser(currentUser);
+      }
     });
     return () => unsubscribe();
   }, []);
