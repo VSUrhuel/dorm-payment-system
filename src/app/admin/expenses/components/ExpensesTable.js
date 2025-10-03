@@ -66,10 +66,6 @@ export default function ExpensesTable({ expenses, onViewDetails }) {
     return categoryConfig[category] || categoryConfig["Other"];
   };
 
-  const formatCurrency = (amount) => {
-    return `₱${amount.toFixed(2)}`;
-  };
-
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
@@ -209,7 +205,7 @@ export default function ExpensesTable({ expenses, onViewDetails }) {
                   {formatDate(selectedReceipt.expenseDate)}
                 </p>
                 <p className="text-lg font-bold text-red-600">
-                  {formatCurrency(selectedReceipt.amount)}
+                  {formatAmount(selectedReceipt.amount)}
                 </p>
               </div>
               <div className="border rounded-lg overflow-hidden">

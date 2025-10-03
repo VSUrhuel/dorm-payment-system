@@ -72,7 +72,6 @@ export default function EventDetailsContent() {
   }, []);
 
   useEffect(() => {
-    console.log(user);
     if (!user || !user.uid) {
       setUserData(null);
       return;
@@ -96,12 +95,10 @@ export default function EventDetailsContent() {
   // Effect for fetching data from Firestore
   useEffect(() => {
     if (!eventId) {
-      console.log("No eventId provided");
       setLoading(false);
       return;
     }
 
-    console.log("Fetching data for eventId:", eventId);
     setLoading(true);
 
     // 1. Fetch ALL dormers
@@ -121,7 +118,6 @@ export default function EventDetailsContent() {
     const unsubscribeEvent = onSnapshot(eventDocRef, (doc) => {
       if (doc.exists()) {
         setEvent({ id: doc.id, ...doc.data() });
-        console.log("Event data:", doc.data());
       } else {
         console.error("No such event found!");
         setEvent(null);
@@ -140,7 +136,6 @@ export default function EventDetailsContent() {
         ...doc.data(),
       }));
       setPayments(paymentData);
-      console.log("Payments fetched:", paymentData.length);
     });
 
     // Cleanup function
@@ -277,7 +272,6 @@ export default function EventDetailsContent() {
             : "Partial"
           : "Unpaid";
 
-      console.log("Recording event payment:", paymentData);
       paymentData.amount = updatedAmount;
 
       const paymentRecord = {

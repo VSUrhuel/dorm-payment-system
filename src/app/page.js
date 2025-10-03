@@ -20,24 +20,6 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [authActionLoading, setAuthActionLoading] = useState(false);
 
-  // // Effect to check auth state and redirect if already logged in
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-  //     if (currentUser) {
-  //       setUser(currentUser);
-  //       // If user is found, redirect to the admin dashboard
-  //       console.log("in");
-  //       router.push("/admin/dormers");
-  //     } else {
-  //       console.log("no user");
-  //       setUser(null);
-  //       setLoading(false); // Only stop loading if there's no user
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [router]);
-
   // Handler for the sign-in form submission
   const handleSignIn = async (event) => {
     event.preventDefault();

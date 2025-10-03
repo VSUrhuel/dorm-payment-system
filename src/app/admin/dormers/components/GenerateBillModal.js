@@ -95,7 +95,6 @@ export default function GenerateBillModal({
   };
 
   const handleBillingPeriodChange = (value) => {
-    console.log("Selected billing period:", value);
     setBillingPeriod(value);
   };
 

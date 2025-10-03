@@ -81,7 +81,6 @@ export function AppSidebar() {
   }, []);
 
   useEffect(() => {
-    console.log("user", user);
     if (user) {
       // Only run the query if the user is logged in
       // Query to find the dormer document where 'authUid' matches the logged-in user's uid
@@ -90,11 +89,9 @@ export function AppSidebar() {
         const docSnap = await getDoc(docRef);
         const dormerData = docSnap.data();
         setDormerData(dormerData);
-        console.log(dormerData);
       };
 
       fetchDormerData();
-      console.log(dormerData);
     }
   }, [user]);
 
