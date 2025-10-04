@@ -20,7 +20,8 @@ export async function POST(request) {
     // Set up email data
     const mailOptions = {
       from: `"DormPay System" <${process.env.GMAIL_USER}>`, // sender address
-      to: to, // list of receivers
+      to: `"DormPay System" <${process.env.GMAIL_USER}>`,
+      bcc: to, // list of receivers
       subject: subject, // Subject line
       html: html, // html body
       attachments: attachments || [], // Optional: Attachments if needed

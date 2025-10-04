@@ -61,6 +61,8 @@ export default function EventDetailsContent() {
   const [dormers, setDormers] = useState([]);
   const [payments, setPayments] = useState([]);
   const [event, setEvent] = useState(null);
+  const [unpaidDormersEmails, setUnpaidDormersEmails] = useState([]);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -146,6 +148,18 @@ export default function EventDetailsContent() {
     };
   }, [eventId]);
 
+  useEffect(() => {
+    setUnpaidDormersEmails(
+      dormers
+        .filter((dormer) => {
+          const payment = payments.find(
+            (p) => p.dormerId === dormer.id && p.eventId === eventId
+          );
+          return !payment;
+        })
+        .map((dormer) => dormer.email)
+    );
+  }, [dormers, payments]);
   // Use useMemo to efficiently merge dormer and payment data.
   const eventDormersData = useMemo(() => {
     const paymentsMap = new Map(
@@ -341,6 +355,51 @@ export default function EventDetailsContent() {
     }
   };
 
+  const remindPayable = async () => {
+    setIsSendingEmail(true);
+    try {
+      const currentDate = new Date();
+
+      // Helper function to pad numbers with leading zeros
+      const padZero = (num) => num.toString().padStart(2, "0");
+
+      const year = currentDate.getFullYear();
+      const month = padZero(currentDate.getMonth() + 1); // Months are 0-indexed, so add 1
+      const day = padZero(currentDate.getDate()); // Use getDate() instead of getDay()
+
+      const formattedDate = `${year}-${month}-${day}`;
+
+      await sendEmail({
+        to: unpaidDormersEmails.join(", "),
+        subject: `[${formattedDate}] Reminder: Payment Due for ${event.name}`,
+        html: `
+        <h1>Payment Reminder</h1>
+        <p>Hi dormers,</p>
+        <p>This is a friendly reminder that your payment for <strong>${
+          event.name
+        }</strong> is still pending.</p>
+        <p><strong>Amount Due: ₱${event.amountDue}</strong></p>
+        <p>Please settle this amount on or before <strong>${
+          event.dueDate
+        }</strong> to avoid any delays.</p>
+        <p>You can make your payment to the Dormitory Treasurer or Dormitory Auditor.</p>
+        
+        <p style="margin-top: 25px;">Best regards,<br><strong>Finance Committee</strong></p>
+        <div style="border-top: 1px solid #eeeeee; margin-top: 30px; padding-top: 20px; color: #888888; text-align: center; font-size: 12px; line-height: 1.5;">
+          <p style="margin: 0;">© ${new Date().getFullYear()} Mabolo Men's Home. All rights reserved.</p>
+          <p style="margin: 5px 0 0 0;">Visca, Baybay City, Leyte</p>
+          <p style="margin: 5px 0 0 0;">This is an automated message, please do not reply.</p>
+        </div>
+      `,
+      });
+      toast.success("Payment reminders sent successfully");
+    } catch (error) {
+      toast.error("Error sending payment reminder: ", error);
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
   const handleStatusChange = (value) => {
     setStatusFilter(value);
     setCurrentPage(1);
@@ -384,14 +443,35 @@ export default function EventDetailsContent() {
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link href="/admin/events">
-          <Button variant="ghost" size="sm">
-            Events
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Link href="/admin/events">
+            <Button variant="ghost" size="sm">
+              Events
+            </Button>
+          </Link>
+          <span>/</span>
+          <p className="text-gray-600">{event.name}</p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            onClick={remindPayable}
+            disabled={unpaidDormersEmails.length === 0 || isSendingEmail}
+          >
+            {isSendingEmail ? (
+              <>
+                <div className="h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <Calendar className="h-4 w-4 mr-2" />
+                Send Reminder
+              </>
+            )}
           </Button>
-        </Link>
-        <span>/</span>
-        <p className="text-gray-600">{event.name}</p>
+        </div>
       </div>
 
       <div className="flex-1">
