@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "./../../../../components/ui/button";
+import { Button } from "../../../../components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardDescription,
-} from "./../../../../components/ui/card";
+} from "../../../../components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -15,41 +15,49 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "./../../../../components/ui/dialog";
-import { Input } from "./../../../../components/ui/input";
-import { Label } from "./../../../../components/ui/label";
-import { Textarea } from "./../../../../components/ui/textarea";
+} from "../../../../components/ui/dialog";
+import { Input } from "../../../../components/ui/input";
+import { Label } from "../../../../components/ui/label";
+import { Textarea } from "../../../../components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./../../../../components/ui/select";
-import { Avatar, AvatarFallback } from "./../../../../components/ui/avatar";
-import { Separator } from "./../../../../components/ui/separator";
+} from "../../../../components/ui/select";
+import { Avatar, AvatarFallback } from "../../../../components/ui/avatar";
+import { Separator } from "../../../../components/ui/separator";
+import { Dormer, Bill } from "../types";
 
+// --- Type Definitions ---
+interface PaymentModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  dormer: Dormer | null;
+  bill: Bill | null;
+  onSavePayment: (paymentData: any) => Promise<void>;
+}
+
+// --- Component ---
 export default function PaymentModal({
   isOpen,
   onClose,
   dormer,
   bill,
   onSavePayment,
-}) {
+}: PaymentModalProps) {
   const [paymentMethod, setPaymentMethod] = useState("Cash");
   const [amount, setAmount] = useState("");
   const [notes, setNotes] = useState("");
   const [paymentDate, setPaymentDate] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Effect to set default date when modal opens
   useEffect(() => {
     if (isOpen) {
-      // Set the default date to today in YYYY-MM-DD format
       const today = new Date().toISOString().split("T")[0];
       setPaymentDate(today);
 
-      // Reset other fields
       setAmount("");
       setNotes("");
       setPaymentMethod("Cash");
@@ -57,6 +65,8 @@ export default function PaymentModal({
   }, [isOpen]);
 
   const handlePayment = () => {
+    if (!dormer || !bill) return;
+
     const paymentData = {
       dormerId: dormer.id,
       billId: bill.id,
@@ -79,22 +89,17 @@ export default function PaymentModal({
 
   if (!dormer || !bill) return null;
 
-  // Calculate the remaining balance to suggest as the payment amount
   const remainingBalance = bill.totalAmountDue - (bill.amountPaid || 0);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      {/* FIX 1: Apply scrolling classes here on DialogContent.
-        - `max-h-[90vh]` limits the modal height.
-        - `overflow-y-auto` adds a vertical scrollbar only when needed.
-      */}
       <DialogContent
         className="max-h-[90vh] overflow-y-auto"
         onInteractOutside={(e) => {
           e.preventDefault();
         }}
       >
-        <DialogHeader>
+        <DialogHeader className={undefined}>
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
               <AvatarFallback className="bg-green-100 text-green-800">
@@ -103,8 +108,8 @@ export default function PaymentModal({
               </AvatarFallback>
             </Avatar>
             <div>
-              <DialogTitle>Record Payment</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className={undefined}>Record Payment</DialogTitle>
+              <DialogDescription className={undefined}>
                 {dormer.firstName} {dormer.lastName} • Room {dormer.roomNumber}
               </DialogDescription>
             </div>
@@ -112,13 +117,13 @@ export default function PaymentModal({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <Card>
+          <Card className={undefined}>
             <CardHeader className="pb-2">
               <CardDescription className="text-sm">
                 Bill Summary
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className={undefined}>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <Label className="text-xs text-gray-500">
@@ -148,11 +153,13 @@ export default function PaymentModal({
             </CardContent>
           </Card>
 
-          <Separator />
+          <Separator className={undefined} />
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="paymentAmount">Payment Amount</Label>
+              <Label htmlFor="paymentAmount" className={undefined}>
+                Payment Amount
+              </Label>
               <Input
                 id="paymentAmount"
                 type="number"
@@ -165,7 +172,9 @@ export default function PaymentModal({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="paymentDate">Payment Date</Label>
+                <Label htmlFor="paymentDate" className={undefined}>
+                  Payment Date
+                </Label>
                 <Input
                   id="paymentDate"
                   type="date"
@@ -175,26 +184,35 @@ export default function PaymentModal({
                 />
               </div>
               <div>
-                <Label htmlFor="paymentMethod">Payment Method</Label>
-                {/* FIX 2: Correctly handle state for the Select component.
-                  - `value` and `onValueChange` props are moved to the parent <Select>.
-                */}
+                <Label htmlFor="paymentMethod" className={undefined}>
+                  Payment Method
+                </Label>
                 <Select onValueChange={setPaymentMethod} value={paymentMethod}>
                   <SelectTrigger className="mt-1">
                     <SelectValue placeholder="Select method" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Cash">Cash</SelectItem>
-                    <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
-                    <SelectItem value="GCash">GCash</SelectItem>
-                    <SelectItem value="PayMaya">PayMaya (Maya)</SelectItem>
+                  <SelectContent className={undefined}>
+                    <SelectItem value="Cash" className={undefined}>
+                      Cash
+                    </SelectItem>
+                    <SelectItem value="Bank Transfer" className={undefined}>
+                      Bank Transfer
+                    </SelectItem>
+                    <SelectItem value="GCash" className={undefined}>
+                      GCash
+                    </SelectItem>
+                    <SelectItem value="PayMaya" className={undefined}>
+                      PayMaya (Maya)
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
             <div>
-              <Label htmlFor="paymentNotes">Notes (Optional)</Label>
+              <Label htmlFor="paymentNotes" className={undefined}>
+                Notes (Optional)
+              </Label>
               <Textarea
                 id="paymentNotes"
                 placeholder="e.g., Partial payment for September"
@@ -206,14 +224,21 @@ export default function PaymentModal({
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>
+        <DialogFooter className={undefined}>
+          <Button
+            variant="outline"
+            onClick={handleClose}
+            className={undefined}
+            size={undefined}
+          >
             Cancel
           </Button>
           <Button
             className="bg-green-600 hover:bg-green-700 text-white"
             onClick={handlePayment}
             disabled={!amount || parseFloat(amount) <= 0 || loading}
+            variant={undefined}
+            size={undefined}
           >
             {loading ? "Processing..." : "Confirm Payment"}
           </Button>

@@ -8,70 +8,76 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "./../../../../components/ui/dialog";
-import { Button } from "./../../../../components/ui/button";
-import { Input } from "./../../../../components/ui/input";
-import { Label } from "./../../../../components/ui/label";
-import { Textarea } from "./../../../../components/ui/textarea"; // Using Textarea for description is better
+} from "../../../../components/ui/dialog";
+import { Button } from "../../../../components/ui/button";
+import { Input } from "../../../../components/ui/input";
+import { Label } from "../../../../components/ui/label";
+import { Textarea } from "../../../../components/ui/textarea";
 import { toast } from "sonner";
+import { Payable } from "../types";
+
+/**
+ * --- Type Definitions ---
+ * Defines the shape of the props for the AddPayableModal component.
+ */
+interface AddPayableModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (payableData: Partial<Payable>) => void;
+  payable: Payable | null;
+}
 
 /**
  * A modal for adding or editing a payable.
- *
- * @param {boolean} isOpen - Controls if the modal is visible.
- * @param {function} onClose - Function to call when the modal should be closed.
- * @param {function} onSave - Function to call with the payable data when saving.
- * @param {object|null} payable - The payable object to edit. If null, the modal is in "add" mode.
  */
-export default function AddPayableModal({ isOpen, onClose, onSave, payable }) {
-  // State for the form fields
-  const [title, setTitle] = useState("");
+export default function AddPayableModal({
+  isOpen,
+  onClose,
+  onSave,
+  payable,
+}: AddPayableModalProps) {
+  const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
 
   const isEditing = Boolean(payable);
 
-  // When the 'payable' prop changes (i.e., when opening to edit),
-  // populate the form fields with its data.
   useEffect(() => {
-    if (isOpen && isEditing) {
-      setTitle(payable.name || "");
-      setAmount(payable.amount || "");
+    if (isOpen && isEditing && payable) {
+      setName(payable.name || "");
+      setAmount(String(payable.amount) || "");
       setDescription(payable.description || "");
     } else if (isOpen) {
-      setTitle("");
+      setName("");
       setAmount("");
       setDescription("");
     }
-  }, [isOpen, payable, isEditing]); // Rerun effect when the payable or open state changes
+  }, [isOpen, payable, isEditing]);
 
   const handleSave = () => {
-    // Basic validation
-    if (!title || !amount) {
+    if (!name || !amount) {
       toast.info("Title and Amount are required.");
       return;
     }
 
-    // Construct the payable data object
-    const payableData = {
-      ...(isEditing && { id: payable.id }),
-      name: title,
-      amount: parseFloat(amount), // Ensure amount is a number
+    const payableData: Partial<Payable> = {
+      ...(isEditing && { id: payable?.id }),
+      name: name,
+      amount: parseFloat(amount),
       description,
     };
 
-    // Call the onSave prop from the parent with the data
     onSave(payableData);
-    onClose(); // Close the modal after saving
+    onClose();
   };
 
   const handleClose = () => {
-    // Reset form fields when closing the modal
-    setTitle("");
+    setName("");
     setAmount("");
     setDescription("");
-    onClose(); // Call the parent's onClose function
+    onClose();
   };
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
@@ -80,11 +86,11 @@ export default function AddPayableModal({ isOpen, onClose, onSave, payable }) {
           e.preventDefault();
         }}
       >
-        <DialogHeader>
-          <DialogTitle>
+        <DialogHeader className={undefined}>
+          <DialogTitle className={undefined}>
             {isEditing ? "Edit Payable" : "Add New Payable"}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className={undefined}>
             {isEditing
               ? "Update the details of this payable."
               : "Fill in the details to add a new payable."}
@@ -92,15 +98,16 @@ export default function AddPayableModal({ isOpen, onClose, onSave, payable }) {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right">
-              Title
+            <Label htmlFor="name" className="text-right">
+              Name
             </Label>
             <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="col-span-3"
               placeholder="e.g., Monthly Rent"
+              type={undefined}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -129,11 +136,23 @@ export default function AddPayableModal({ isOpen, onClose, onSave, payable }) {
             />
           </div>
         </div>
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={handleClose}>
+        <DialogFooter className={undefined}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleClose}
+            className={undefined}
+            size={undefined}
+          >
             Cancel
           </Button>
-          <Button type="button" onClick={handleSave}>
+          <Button
+            type="button"
+            onClick={handleSave}
+            className={undefined}
+            variant={undefined}
+            size={undefined}
+          >
             {isEditing ? "Update Payable" : "Add Payable"}
           </Button>
         </DialogFooter>
