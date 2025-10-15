@@ -174,6 +174,7 @@ export function usePaymentsData() {
     paginatedBills,
     uniqueBillingPeriods,
     filteredBills,
+    combinedBillData,
     summaryStats,
     searchTerm,
     setSearchTerm,

@@ -15,6 +15,7 @@ import { usePaymentsData } from "./hooks/usePaymentsData";
 import { usePaymentActions } from "./hooks/usePaymentActions";
 import { BillData } from "./types";
 import { Dormer } from "../dormers/types";
+import { handleExport } from "./utils/csvExport";
 
 export default function PaymentsContent() {
   const [user, setUser] = useState<User | null>(null);
@@ -23,6 +24,7 @@ export default function PaymentsContent() {
     paginatedBills,
     uniqueBillingPeriods,
     filteredBills,
+    combinedBillData,
     summaryStats,
     searchTerm,
     setSearchTerm,
@@ -72,7 +74,7 @@ export default function PaymentsContent() {
 
   return (
     <div className="p-4 md:p-6 space-y-6">
-      <PaymentHeader />
+      <PaymentHeader onExport={() => handleExport(filteredBills)} />
 
       <SummaryCards
         totalAmountDue={summaryStats.totalAmountDue}
