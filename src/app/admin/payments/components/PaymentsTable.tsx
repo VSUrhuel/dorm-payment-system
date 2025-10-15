@@ -1,13 +1,8 @@
 "use client";
 
-import { Button } from "../../../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../../../components/ui/card";
-import { Badge } from "../../../../components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -15,10 +10,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../../../components/ui/table";
-import { Avatar, AvatarFallback } from "../../../../components/ui/avatar";
+} from "@/components/ui/table";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Eye, CreditCard, Calendar } from "lucide-react";
 import { Bill } from "../../dormers/types";
+import { getStatusBadgeInfo } from "../../dormers/utils/badgeUtils";
 
 /**
  * @param {{
@@ -39,25 +35,6 @@ export default function billsTable({
   onViewDetails,
   onRecordPayment,
 }: billsTableProps) {
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      Paid: {
-        className: "bg-green-100 text-green-800 hover:bg-green-100",
-        variant: "default",
-      },
-      "Partially Paid": {
-        className: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
-        variant: "secondary",
-      },
-      Unpaid: {
-        className: "bg-red-100 text-red-800 hover:bg-red-100",
-        variant: "destructive",
-      },
-    };
-
-    return statusConfig[status] || statusConfig["Unpaid"];
-  };
-
   const formatCurrency = (amount: any) => {
     return `₱${amount.toFixed(2)}`;
   };
@@ -86,7 +63,7 @@ export default function billsTable({
           </TableHeader>
           <TableBody className={undefined}>
             {bills.map((bill) => {
-              const statusConfig = getStatusBadge(bill.status);
+              const { className, Icon } = getStatusBadgeInfo(bill.status);
 
               return (
                 <TableRow className="hover:bg-gray-50" key={bill.id}>
@@ -139,10 +116,8 @@ export default function billsTable({
                     </div>
                   </TableCell>
                   <TableCell className={undefined}>
-                    <Badge
-                      variant={statusConfig.variant}
-                      className={statusConfig.className}
-                    >
+                    <Badge className={className} variant={undefined}>
+                      {Icon && <Icon className="h-4 w-4 mr-1" />}
                       {bill.status}
                     </Badge>
                   </TableCell>
