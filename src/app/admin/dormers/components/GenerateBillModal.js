@@ -27,15 +27,9 @@ import { toast } from "sonner";
 
 const generateBillingPeriods = () => {
   const periods = [];
-  // 1. Added parentheses for clarity and standard practice
-  const currentDate = new Date();
 
   for (let i = 0; i < 12; i++) {
-    const date = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + i,
-      1
-    );
+    const date = new Date(2025, i + 7, 1);
 
     const year = date.getFullYear();
     // Format month for the 'value' (e.g., "2025-08")
@@ -101,7 +95,6 @@ export default function GenerateBillModal({
   };
 
   const handleBillingPeriodChange = (value) => {
-    console.log("Selected billing period:", value);
     setBillingPeriod(value);
   };
 

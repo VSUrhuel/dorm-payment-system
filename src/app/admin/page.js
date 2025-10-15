@@ -114,7 +114,12 @@ export default function Dashboard() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      if (!currentUser) {
+        // If no user is found, redirect to the login page
+        window.location.href = "/";
+      } else {
+        setUser(currentUser);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -140,8 +145,14 @@ export default function Dashboard() {
               id: doc.id,
               ...doc.data(),
             }));
-            setter(data);
+            // If fetching dormers, filter by role 'User'
+            if (collectionName === "dormers") {
+              setter(data.filter((d) => d.role === "User"));
+            } else {
+              setter(data);
+            }
           },
+
           (error) => {
             console.error(`Error fetching ${collectionName}: `, error);
             toast.error(`Failed to load ${collectionName}.`); // ✨ Error toast

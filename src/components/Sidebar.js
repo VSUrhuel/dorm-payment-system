@@ -14,8 +14,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation"; // 2. Import useRouter
 import { auth } from "@/lib/firebase"; // 3. Import Firebase auth instance
-import { onAuthStateChanged, signOut } from "firebase/auth"; // 4. Import signOut function
-
+import { signOut as firebaseSignOut, onAuthStateChanged } from "firebase/auth";
 import {
   Sidebar,
   SidebarContent,
@@ -82,7 +81,6 @@ export function AppSidebar() {
   }, []);
 
   useEffect(() => {
-    console.log("user", user);
     if (user) {
       // Only run the query if the user is logged in
       // Query to find the dormer document where 'authUid' matches the logged-in user's uid
@@ -91,21 +89,26 @@ export function AppSidebar() {
         const docSnap = await getDoc(docRef);
         const dormerData = docSnap.data();
         setDormerData(dormerData);
-        console.log(dormerData);
       };
 
       fetchDormerData();
-      console.log(dormerData);
     }
   }, [user]);
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
-      router.push("/"); // Redirect to the login page after sign-out
+      // Sign out from Firebase
+      await firebaseSignOut(auth);
+
+      // Call your API to clear the session cookie
+      await fetch("/api/auth/signout", {
+        method: "POST",
+      });
+
+      // Redirect to login page
+      router.push("/");
     } catch (error) {
-      console.error("Error signing out: ", error);
-      // You could add an error notification here
+      console.error("Sign out error:", error);
     }
   };
   return (
@@ -159,7 +162,7 @@ export function AppSidebar() {
 
         <SidebarFooter className="p-4 border-t border-gray-100">
           {dormerData && (
-            <SidebarHeader class="flex items-start gap-2 pb-2">
+            <SidebarHeader className="flex items-start gap-2 pb-2">
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-green-100 text-green-800 text-sm font-medium">
                   {dormerData.firstName[0]}

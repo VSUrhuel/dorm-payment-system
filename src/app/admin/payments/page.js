@@ -153,10 +153,11 @@ export default function PaymentsContent() {
       return onSnapshot(
         q,
         (snapshot) => {
-          const data = snapshot.docs.map((doc) => ({
+          let data = snapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
           }));
+
           collections[key].setter(data);
           collections[key].loaded = true;
           checkAllLoaded();

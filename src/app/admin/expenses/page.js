@@ -153,7 +153,6 @@ export default function ExpensesContent() {
         ...doc.data(),
       }));
       setExpensesData(expenses);
-      console.log("Fetched expenses:", expenses);
       setLoading(false);
     });
 
@@ -343,9 +342,6 @@ export default function ExpensesContent() {
     (sum, expense) => sum + parseFloat(expense.amount),
     0
   );
-
-  console.log("Total Expenses:", totalExpenses);
-  console.log("Combined Bill User Data:", combinedBillUserData);
 
   const monthlyExpenses = combinedBillUserData
     .filter((expense) => {
