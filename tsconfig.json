@@ -28,7 +28,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/app/admin/dormers/components/AddDormerModal.js"
+    "src/app/admin/dormers/components/AddDormerModal.tsx"
   ],
   "exclude": ["node_modules"]
 }

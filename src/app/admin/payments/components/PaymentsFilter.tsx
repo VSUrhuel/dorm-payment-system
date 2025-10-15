@@ -1,29 +1,45 @@
 "use client";
-import { Button } from "./../../../../components/ui/button";
-import { Card, CardContent } from "./../../../../components/ui/card";
-import { Input } from "./../../../../components/ui/input";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./../../../../components/ui/select";
-// Added CalendarDays for the new filter's icon
+} from "@/components/ui/select";
 import { Filter, Search, CalendarDays } from "lucide-react";
+import { BillData } from "../types";
 
+// --- Type Definitions ---
+interface PaymentsFilterProps {
+  searchTerm: string;
+  setSearchTerm: (value: string) => void;
+  statusFilter: string;
+  setStatusFilter: (value: string) => void;
+  billingPeriodFilter: string;
+  setBillingPeriodFilter: (value: string) => void;
+  billingPeriods: string[];
+  paginatedBills: BillData[];
+  filteredBills: BillData[];
+  setCurrentPage: (page: number) => void;
+}
+
+// --- Component ---
 export default function PaymentsFilter({
   searchTerm,
   setSearchTerm,
   statusFilter,
   setStatusFilter,
-  billingPeriodFilter, // New prop for billing period value
-  setBillingPeriodFilter, // New prop to set the billing period
-  billingPeriods, // New prop for the list of available periods
+  billingPeriodFilter,
+  setBillingPeriodFilter,
+  billingPeriods,
   paginatedBills,
   filteredBills,
   setCurrentPage,
-}) {
+}: PaymentsFilterProps) {
   return (
     <Card className="border-gray-200">
       <CardContent className="pt-6">
@@ -40,6 +56,7 @@ export default function PaymentsFilter({
                   setCurrentPage(1);
                 }}
                 className="pl-10 border-gray-300"
+                type={undefined}
               />
             </div>
           </div>
@@ -57,16 +74,24 @@ export default function PaymentsFilter({
                 <Filter className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All Statuses</SelectItem>
-                <SelectItem value="Paid">Paid</SelectItem>
-                <SelectItem value="Partially Paid">Partially Paid</SelectItem>
-                <SelectItem value="Unpaid">Unpaid</SelectItem>
+              <SelectContent className={undefined}>
+                <SelectItem value="All" className={undefined}>
+                  All Statuses
+                </SelectItem>
+                <SelectItem value="Paid" className={undefined}>
+                  Paid
+                </SelectItem>
+                <SelectItem value="Partially Paid" className={undefined}>
+                  Partially Paid
+                </SelectItem>
+                <SelectItem value="Unpaid" className={undefined}>
+                  Unpaid
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* NEW: Billing Period Filter */}
+          {/* Billing Period Filter */}
           <div className="w-full md:w-36 ">
             <Select
               value={billingPeriodFilter}
@@ -79,11 +104,12 @@ export default function PaymentsFilter({
                 <CalendarDays className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Filter by period" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All Periods</SelectItem>
-                {/* Dynamically populate periods from props */}
+              <SelectContent className={undefined}>
+                <SelectItem value="All" className={undefined}>
+                  All Periods
+                </SelectItem>
                 {billingPeriods?.map((period) => (
-                  <SelectItem key={period} value={period}>
+                  <SelectItem key={period} value={period} className={undefined}>
                     {period}
                   </SelectItem>
                 ))}
@@ -102,6 +128,8 @@ export default function PaymentsFilter({
                   setBillingPeriodFilter("All");
                 }}
                 className="mt-2 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white"
+                variant={undefined}
+                size={undefined}
               >
                 Reset Filters
               </Button>

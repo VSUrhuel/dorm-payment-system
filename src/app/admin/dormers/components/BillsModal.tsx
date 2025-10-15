@@ -1,13 +1,9 @@
 "use client";
 
-import { Button } from "./../../../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "./../../../../components/ui/card";
-import { Badge } from "./../../../../components/ui/badge";
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -15,66 +11,35 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./../../../../components/ui/table";
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./../../../../components/ui/dialog";
-import {
-  CreditCard,
-  DollarSign,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-} from "lucide-react";
-import { Label } from "./../../../../components/ui/label";
-import { Avatar, AvatarFallback } from "./../../../../components/ui/avatar";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "./../../../../components/ui/tabs";
+} from "@/components/ui/dialog";
+import { CreditCard } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dormer, Bill } from "../types";
+import { getStatusBadgeInfo } from "../utils/badgeUtils";
+
+interface BillsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  dormer: Dormer | null;
+  onRecordPayment: (bill: Bill) => void;
+}
+
 export default function BillsModal({
   isOpen,
   onClose,
   dormer,
   onRecordPayment,
-}) {
+}: BillsModalProps) {
   if (!dormer) return null;
-
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case "Paid":
-        return {
-          className: "bg-green-100 text-green-800",
-          icon: <CheckCircle className="h-4 w-4 mr-1" />,
-        };
-      case "Unpaid":
-        return {
-          className: "bg-yellow-100 text-yellow-800",
-          icon: <Clock className="h-4 w-4 mr-1" />,
-        };
-      case "Partially Paid":
-        return {
-          className: "bg-blue-100 text-blue-800",
-          icon: <DollarSign className="h-4 w-4 mr-1" />,
-        };
-      case "Overdue":
-        return {
-          className: "bg-red-100 text-red-800",
-          icon: <AlertCircle className="h-4 w-4 mr-1" />,
-        };
-      default:
-        return {
-          className: "bg-gray-100 text-gray-800",
-          icon: null,
-        };
-    }
-  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -84,54 +49,66 @@ export default function BillsModal({
           e.preventDefault();
         }}
       >
-        <DialogHeader>
+        <DialogHeader className={undefined}>
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
               <AvatarFallback className="bg-green-100 text-green-800">
-                {dormer.firstName[0]}
-                {dormer.lastName[0]}
+                {dormer.firstName?.[0]}
+                {dormer.lastName?.[0]}
               </AvatarFallback>
             </Avatar>
             <div>
-              <DialogTitle>
+              <DialogTitle className={undefined}>
                 {dormer.firstName} {dormer.lastName}
               </DialogTitle>
-              <DialogDescription>Room {dormer.roomNumber}</DialogDescription>
+              <DialogDescription className={undefined}>
+                Room {dormer.roomNumber}
+              </DialogDescription>
             </div>
           </div>
         </DialogHeader>
         <div className="mt-4 overflow-x-auto">
           <Tabs defaultValue="bills" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="bills">Bills</TabsTrigger>
-              <TabsTrigger value="details">Details</TabsTrigger>
+              <TabsTrigger value="bills" className={undefined}>
+                Bills
+              </TabsTrigger>
+              <TabsTrigger value="details" className={undefined}>
+                Details
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent
               value="bills"
               className="py-4 max-h-[60vh] overflow-y-auto"
             >
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Period</TableHead>
-                    <TableHead>Amount Due</TableHead>
-                    <TableHead>Amount Paid</TableHead>
-                    <TableHead>Status</TableHead>
+              <Table className={undefined}>
+                <TableHeader className={undefined}>
+                  <TableRow className={undefined}>
+                    <TableHead className={undefined}>Period</TableHead>
+                    <TableHead className={undefined}>Amount Due</TableHead>
+                    <TableHead className={undefined}>Amount Paid</TableHead>
+                    <TableHead className={undefined}>Status</TableHead>
                     <TableHead className="text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className={undefined}>
                   {dormer.bills.map((bill) => {
-                    const status = getStatusBadge(bill.status);
+                    const { className, Icon } = getStatusBadgeInfo(bill.status);
                     return (
-                      <TableRow key={bill.id}>
-                        <TableCell>{bill.billingPeriod}</TableCell>
-                        <TableCell>₱{bill.totalAmountDue.toFixed(2)}</TableCell>
-                        <TableCell>₱{bill.amountPaid.toFixed(2)}</TableCell>
-                        <TableCell>
-                          <Badge className={status.className}>
-                            {status.icon}
+                      <TableRow key={bill.id} className={undefined}>
+                        <TableCell className={undefined}>
+                          {bill.billingPeriod}
+                        </TableCell>
+                        <TableCell className={undefined}>
+                          ₱{bill.totalAmountDue.toFixed(2)}
+                        </TableCell>
+                        <TableCell className={undefined}>
+                          ₱{(bill.amountPaid || 0).toFixed(2)}
+                        </TableCell>
+                        <TableCell className={undefined}>
+                          <Badge className={className} variant={undefined}>
+                            {Icon && <Icon className="h-4 w-4 mr-1" />}
                             {bill.status}
                           </Badge>
                         </TableCell>
@@ -143,6 +120,7 @@ export default function BillsModal({
                               size="sm"
                               onClick={() => onRecordPayment(bill)}
                               className="h-8 bg-green-600 hover:bg-green-700 text-white"
+                              variant={undefined}
                             >
                               <CreditCard className="h-4 w-4 mr-1" /> Pay
                             </Button>
@@ -157,7 +135,7 @@ export default function BillsModal({
 
             <TabsContent value="details" className="py-4 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card>
+                <Card className={undefined}>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-gray-500">
                       Contact Information
@@ -175,7 +153,7 @@ export default function BillsModal({
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className={undefined}>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-gray-500">
                       Dormitory Details
@@ -193,9 +171,11 @@ export default function BillsModal({
                         Date Added
                       </Label>
                       <p>
-                        {new Date(
-                          dormer.createdAt.toDate()
-                        ).toLocaleDateString()}
+                        {dormer.createdAt
+                          ? new Date(
+                              dormer.createdAt.toDate()
+                            ).toLocaleDateString()
+                          : "N/A"}
                       </p>
                     </div>
                   </CardContent>

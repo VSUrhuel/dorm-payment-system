@@ -1,12 +1,13 @@
 "use client";
 
-import { Button } from "./../../../../components/ui/button";
-import { FileDown, Plus } from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import { Plus } from "lucide-react";
 
-/**
- * @param {{ onAddDormer: () => void; }} props
- */
-export default function DormerHeader({ onAddDormer }) {
+interface DormerHeaderProps {
+  onAddDormer: () => void;
+}
+
+export default function DormerHeader({ onAddDormer }: DormerHeaderProps) {
   return (
     <div className="flex flex-col md:flex-row justify-between gap-4">
       <div className="space-y-1">
@@ -21,6 +22,8 @@ export default function DormerHeader({ onAddDormer }) {
         <Button
           className="bg-green-600 hover:bg-green-700 text-white"
           onClick={onAddDormer}
+          variant={undefined}
+          size={undefined}
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Dormer

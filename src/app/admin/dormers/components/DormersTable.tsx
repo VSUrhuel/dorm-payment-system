@@ -1,13 +1,8 @@
 "use client";
 
-import { Button } from "./../../../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "./../../../../components/ui/card";
-import { Badge } from "./../../../../components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -15,35 +10,41 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./../../../../components/ui/table";
-import { Avatar, AvatarFallback } from "./../../../../components/ui/avatar";
-import { FileText, Eye } from "lucide-react";
+} from "@/components/ui/table";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { FileText, Eye, Trash } from "lucide-react";
+import { Dormer } from "../types";
 
-/**
- * @param {{
- * dormers: any[];
- * onGenerateBill: (dormer: any) => void;
- * onViewBills: (dormer: any) => void;
- * }} props
- */
-export default function DormersTable({ dormers, onGenerateBill, onViewBills }) {
+interface DormersTableProps {
+  dormers: Dormer[];
+  onGenerateBill: (dormer: Dormer) => void;
+  onViewBills: (dormer: Dormer) => void;
+  onDelete: (dormer: Dormer) => void;
+}
+
+export default function DormersTable({
+  dormers,
+  onGenerateBill,
+  onViewBills,
+  onDelete,
+}: DormersTableProps) {
   return (
     <Card className="border-gray-200 shadow-sm">
-      <CardHeader>
+      <CardHeader className={undefined}>
         <CardTitle className="text-lg font-semibold">Dormer Records</CardTitle>
       </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Resident</TableHead>
-              <TableHead>Room</TableHead>
-              <TableHead>Role</TableHead>
+      <CardContent className={undefined}>
+        <Table className={undefined}>
+          <TableHeader className={undefined}>
+            <TableRow className={undefined}>
+              <TableHead className={undefined}>Resident</TableHead>
+              <TableHead className={undefined}>Room</TableHead>
+              <TableHead className={undefined}>Role</TableHead>
               <TableHead className="hidden md:table-cell">Email</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className={undefined}>
             {dormers.map((dormer) => (
               <TableRow className="hover:bg-gray-50" key={dormer.id}>
                 <TableCell className="font-medium">
@@ -64,8 +65,8 @@ export default function DormersTable({ dormers, onGenerateBill, onViewBills }) {
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>{dormer.roomNumber}</TableCell>
-                <TableCell>
+                <TableCell className={undefined}>{dormer.roomNumber}</TableCell>
+                <TableCell className={undefined}>
                   <Badge
                     variant={dormer.role === "Admin" ? "default" : "secondary"}
                     className={
@@ -94,8 +95,17 @@ export default function DormersTable({ dormers, onGenerateBill, onViewBills }) {
                       size="sm"
                       onClick={() => onViewBills(dormer)}
                       className="bg-blue-600 hover:bg-blue-700 text-white"
+                      variant={undefined}
                     >
                       <Eye className="h-4 w-4 mr-1" /> View
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => onDelete(dormer)}
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                      variant={undefined}
+                    >
+                      <Trash className="h-4 w-4 mr-1" /> Delete
                     </Button>
                   </div>
                 </TableCell>

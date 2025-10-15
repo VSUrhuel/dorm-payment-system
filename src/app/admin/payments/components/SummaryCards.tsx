@@ -5,13 +5,20 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "./../../../../components/ui/card";
+} from "../../../../components/ui/card";
+import { formatAmount } from "../utils/formatAmount";
+
+interface SummaryCardsProps {
+  totalAmountDue: number;
+  totalAmountPaid: number;
+  totalRemainingBalance: number;
+}
 
 export default function SummaryCards({
   totalAmountDue,
   totalAmountPaid,
   totalRemainingBalance,
-}) {
+}: SummaryCardsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <Card className="border-gray-200">
@@ -20,13 +27,9 @@ export default function SummaryCards({
             Total Amount Due
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className={undefined}>
           <div className="text-2xl font-bold text-gray-900">
-            ₱
-            {totalAmountDue
-              .toFixed(2)
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            ₱{formatAmount(totalAmountDue)}
           </div>
         </CardContent>
       </Card>
@@ -36,13 +39,9 @@ export default function SummaryCards({
             Total Amount Paid
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className={undefined}>
           <div className="text-2xl font-bold text-green-600">
-            ₱
-            {totalAmountPaid
-              .toFixed(2)
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            ₱{formatAmount(totalAmountPaid)}
           </div>
         </CardContent>
       </Card>
@@ -52,13 +51,9 @@ export default function SummaryCards({
             Total Remaining Balance
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className={undefined}>
           <div className="text-2xl font-bold text-red-600">
-            ₱
-            {totalRemainingBalance
-              .toFixed(2)
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            ₱{formatAmount(totalRemainingBalance)}
           </div>
         </CardContent>
       </Card>
