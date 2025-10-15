@@ -6,7 +6,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./../../../../components/ui/dialog";
+} from "../../../../components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -14,25 +14,33 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./../../../../components/ui/table";
+} from "../../../../components/ui/table";
+import { BillData } from "../types";
 
-export default function PaymentDetailsModal({ isOpen, onClose, bill }) {
+interface PaymentDetailsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  bill: BillData | null;
+}
+
+export default function PaymentDetailsModal({
+  isOpen,
+  onClose,
+  bill,
+}: PaymentDetailsModalProps) {
   if (!isOpen || !bill) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      {/* This makes the modal content vertically scrollable if the list is too long,
-        which is a good practice for mobile responsiveness.
-      */}
       <DialogContent
         className="sm:max-w-2xl max-h-[90vh] overflow-y-auto"
         onInteractOutside={(e) => {
           e.preventDefault();
         }}
       >
-        <DialogHeader>
-          <DialogTitle>Payment Details</DialogTitle>
-          <DialogDescription>
+        <DialogHeader className={undefined}>
+          <DialogTitle className={undefined}>Payment Details</DialogTitle>
+          <DialogDescription className={undefined}>
             A detailed breakdown of payments for bill{" "}
             <span className="font-mono">{bill.billingPeriod}</span> for{" "}
             <span className="font-medium text-gray-900 dark:text-gray-100">
@@ -42,27 +50,24 @@ export default function PaymentDetailsModal({ isOpen, onClose, bill }) {
           </DialogDescription>
         </DialogHeader>
 
-        {/* FIX: This container makes the table horizontally scrollable on small screens
-          without affecting the dialog header.
-        */}
         <div className="mt-4 overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Amount Paid</TableHead>
-                <TableHead>Payment Date</TableHead>
-                <TableHead>Method</TableHead>
-                <TableHead>Recorded By</TableHead>
+          <Table className={undefined}>
+            <TableHeader className={undefined}>
+              <TableRow className={undefined}>
+                <TableHead className={undefined}>Amount Paid</TableHead>
+                <TableHead className={undefined}>Payment Date</TableHead>
+                <TableHead className={undefined}>Method</TableHead>
+                <TableHead className={undefined}>Recorded By</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody className={undefined}>
               {bill.payments && bill.payments.length > 0 ? (
                 bill.payments.map((payment) => (
-                  <TableRow key={payment.id}>
+                  <TableRow key={payment.id} className={undefined}>
                     <TableCell className="font-medium">
                       ₱{payment.amount.toFixed(2)}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className={undefined}>
                       {new Date(payment.paymentDate).toLocaleDateString(
                         "en-US",
                         {
@@ -72,18 +77,19 @@ export default function PaymentDetailsModal({ isOpen, onClose, bill }) {
                         }
                       )}
                     </TableCell>
-                    <TableCell>{payment.paymentMethod}</TableCell>
-                    <TableCell>
-                      {/* Added optional chaining to prevent errors if user is missing */}
+                    <TableCell className={undefined}>
+                      {payment.paymentMethod}
+                    </TableCell>
+                    <TableCell className={undefined}>
                       {payment.recordedByUser?.firstName ?? "N/A"}{" "}
                       {payment.recordedByUser?.lastName ?? ""}
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
-                <TableRow>
+                <TableRow className={undefined}>
                   <TableCell
-                    colSpan="4"
+                    colSpan={4}
                     className="text-center h-24 text-gray-500"
                   >
                     No payments have been recorded for this bill yet.

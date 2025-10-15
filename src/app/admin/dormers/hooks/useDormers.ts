@@ -19,7 +19,9 @@ export function useDormers() {
       (snapshot) => {
         const dormerData = snapshot.docs
           .map((doc) => ({ id: doc.id, ...doc.data() } as Dormer))
-          .filter((dormer) => dormer.role === "User");
+          .filter(
+            (dormer) => dormer.role === "User" && dormer.isDeleted !== true
+          );
         setDormers(dormerData);
         setLoading(false);
       }

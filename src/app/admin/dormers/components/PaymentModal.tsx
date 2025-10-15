@@ -69,6 +69,12 @@ export default function PaymentModal({
 
     const paymentData = {
       dormerId: dormer.id,
+      dormerDetails: {
+        firstName: dormer.firstName,
+        lastName: dormer.lastName,
+        roomNumber: dormer.roomNumber,
+        email: dormer.email,
+      },
       billId: bill.id,
       amount: parseFloat(amount) || 0,
       paymentDate: paymentDate,

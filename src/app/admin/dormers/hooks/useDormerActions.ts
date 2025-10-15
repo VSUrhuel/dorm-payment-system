@@ -7,6 +7,7 @@ import {
   runTransaction,
   serverTimestamp,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
@@ -20,6 +21,7 @@ import { welcomeAdminTemplate } from "../email-templates/welcomeAdmin";
 import { welcomeUserTemplate } from "../email-templates/welcomeUser";
 import { paymentConfirmationTemplate } from "../email-templates/paymentConfirmation";
 import { newBillTemplate } from "../email-templates/newBill";
+import { writeBatch, getDocs } from "firebase/firestore";
 
 export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -189,6 +191,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
   };
 
   const saveBill = async (billData: Bill, user: User | null) => {
+    // await updatePaymentIncludeDormerDetails();
     if (!user || !billData) {
       toast.error("Authentication error or missing bill data.");
       return;
@@ -240,11 +243,39 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
     }
 
     try {
-      await deleteDoc(doc(db, "dormers", dormerId));
+      // soft delete implementation
+      updateDoc(doc(db, "dormers", dormerId), {
+        isDeleted: true,
+        deletedAt: serverTimestamp(),
+      });
+      // hard delete implementation
+      // await deleteDoc(doc(db, "dormers", dormerId));
       toast.success("Dormer deleted successfully.");
     } catch (error) {
       toast.error("Failed to delete dormer.");
     }
+  };
+  const updatePaymentIncludeDormerDetails = async () => {
+    const paymentsRef = collection(db, "payments");
+    const snapshot = await getDocs(paymentsRef);
+    const batch = writeBatch(db);
+    snapshot.forEach((docSnap) => {
+      const paymentData = docSnap.data();
+      const dormerInfo = dormers.find((d) => d.id === paymentData.dormerId);
+      if (dormerInfo) {
+        const paymentRef = doc(db, "payments", docSnap.id);
+        batch.update(paymentRef, {
+          dormerDetails: {
+            firstName: dormerInfo.firstName,
+            lastName: dormerInfo.lastName,
+            roomNumber: dormerInfo.roomNumber,
+            email: dormerInfo.email,
+          },
+        });
+      }
+    });
+    await batch.commit();
+    toast.success("Payment documents updated with dormer details.");
   };
 
   return {

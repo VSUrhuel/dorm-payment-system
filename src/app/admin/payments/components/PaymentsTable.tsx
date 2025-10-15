@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "./../../../../components/ui/button";
+import { Button } from "../../../../components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "./../../../../components/ui/card";
-import { Badge } from "./../../../../components/ui/badge";
+} from "../../../../components/ui/card";
+import { Badge } from "../../../../components/ui/badge";
 import {
   Table,
   TableBody,
@@ -15,9 +15,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./../../../../components/ui/table";
-import { Avatar, AvatarFallback } from "./../../../../components/ui/avatar";
+} from "../../../../components/ui/table";
+import { Avatar, AvatarFallback } from "../../../../components/ui/avatar";
 import { Eye, CreditCard, Calendar } from "lucide-react";
+import { Bill } from "../../dormers/types";
 
 /**
  * @param {{
@@ -26,8 +27,19 @@ import { Eye, CreditCard, Calendar } from "lucide-react";
  * onRecordbill: (bill: any) => void;
  * }} props
  */
-export default function billsTable({ bills, onViewDetails, onRecordPayment }) {
-  const getStatusBadge = (status) => {
+
+interface billsTableProps {
+  bills: Bill[];
+  onViewDetails: (bill: Bill) => void;
+  onRecordPayment: (bill: Bill) => void;
+}
+
+export default function billsTable({
+  bills,
+  onViewDetails,
+  onRecordPayment,
+}: billsTableProps) {
+  const getStatusBadge = (status: string) => {
     const statusConfig = {
       Paid: {
         className: "bg-green-100 text-green-800 hover:bg-green-100",
@@ -46,33 +58,33 @@ export default function billsTable({ bills, onViewDetails, onRecordPayment }) {
     return statusConfig[status] || statusConfig["Unpaid"];
   };
 
-  const formatCurrency = (amount) => {
+  const formatCurrency = (amount: any) => {
     return `₱${amount.toFixed(2)}`;
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString();
   };
 
   return (
     <Card className="border-gray-200 shadow-sm">
-      <CardHeader>
+      <CardHeader className={undefined}>
         <CardTitle className="text-lg font-semibold">Bill Records</CardTitle>
       </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Resident</TableHead>
-              <TableHead>Total Amount Due</TableHead>
-              <TableHead>Amount Paid</TableHead>
-              <TableHead>Remaining Balance</TableHead>
-              <TableHead>Status</TableHead>
+      <CardContent className={undefined}>
+        <Table className={undefined}>
+          <TableHeader className={undefined}>
+            <TableRow className={undefined}>
+              <TableHead className={undefined}>Resident</TableHead>
+              <TableHead className={undefined}>Total Amount Due</TableHead>
+              <TableHead className={undefined}>Amount Paid</TableHead>
+              <TableHead className={undefined}>Remaining Balance</TableHead>
+              <TableHead className={undefined}>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className={undefined}>
             {bills.map((bill) => {
               const statusConfig = getStatusBadge(bill.status);
 
@@ -96,7 +108,7 @@ export default function billsTable({ bills, onViewDetails, onRecordPayment }) {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className={undefined}>
                     <div className="font-medium">
                       {formatCurrency(bill.totalAmountDue)}
                     </div>
@@ -104,7 +116,7 @@ export default function billsTable({ bills, onViewDetails, onRecordPayment }) {
                       {bill.billingPeriod}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className={undefined}>
                     <div className="font-medium text-green-600">
                       {formatCurrency(bill.amountPaid)}
                     </div>
@@ -115,7 +127,7 @@ export default function billsTable({ bills, onViewDetails, onRecordPayment }) {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className={undefined}>
                     <div
                       className={`font-medium ${
                         bill.remainingBalance > 0
@@ -126,7 +138,7 @@ export default function billsTable({ bills, onViewDetails, onRecordPayment }) {
                       {formatCurrency(bill.remainingBalance)}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className={undefined}>
                     <Badge
                       variant={statusConfig.variant}
                       className={statusConfig.className}
@@ -151,6 +163,7 @@ export default function billsTable({ bills, onViewDetails, onRecordPayment }) {
                           size="sm"
                           onClick={() => onRecordPayment(bill)}
                           className="bg-green-600 hover:bg-green-700 text-white"
+                          variant={undefined}
                         >
                           <CreditCard className="h-4 w-4 mr-1" />
                           Pay

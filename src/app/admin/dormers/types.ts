@@ -7,10 +7,14 @@ export interface Dormer {
   role: string;
   roomNumber: string;
   createdAt: any;
+  isDeleted?: boolean;
   bills: Bill[];
 }
 
 export interface Bill {
+  dormer: any;
+  billDate: any;
+  remainingBalance: number;
   id: string;
   dormerId: string;
   billingPeriod: string;
@@ -18,6 +22,7 @@ export interface Bill {
   totalAmountDue: number;
   amountPaid: number;
   description: string;
+  updatedAt: any;
 }
 
 export interface Payable {
