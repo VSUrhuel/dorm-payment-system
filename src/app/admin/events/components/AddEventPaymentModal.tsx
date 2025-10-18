@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "./../../../../components/ui/button";
+import { useState, useEffect, FormEvent } from "react";
+import { Button } from "../../../../components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,29 +9,41 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "./../../../../components/ui/dialog";
-import { Input } from "./../../../../components/ui/input";
-import { Label } from "./../../../../components/ui/label";
-import { Textarea } from "./../../../../components/ui/textarea";
+} from "../../../../components/ui/dialog";
+import { Input } from "../../../../components/ui/input";
+import { Label } from "../../../../components/ui/label";
+import { Textarea } from "../../../../components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./../../../../components/ui/select";
+} from "../../../../components/ui/select";
 import { DollarSign, User, Calendar } from "lucide-react";
 import { toast } from "sonner";
+import { Event, EventDormerData } from "../types";
+import { User as FirebaseUser } from "firebase/auth";
 
-/**
- * @param {{
- * isOpen: boolean;
- * onClose: () => void;
- * dormer: any;
- * event: any;
- * onSave: (paymentData: any) => void;
- * }} props
- */
+// --- Type Definitions ---
+interface AddEventPaymentModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  dormer: EventDormerData | null;
+  event: Event | null;
+  currentUser:
+    | {
+        name: string;
+        email: string | null;
+        id: string;
+        uid: string;
+      }
+    | FirebaseUser
+    | null;
+  onSave: (paymentData: any) => void;
+}
+
+// --- Component ---
 export default function AddEventPaymentModal({
   isOpen,
   onClose,
@@ -39,74 +51,70 @@ export default function AddEventPaymentModal({
   event,
   currentUser,
   onSave,
-}) {
+}: AddEventPaymentModalProps) {
   const [paymentAmount, setPaymentAmount] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const [paymentDate, setPaymentDate] = useState(
     new Date().toISOString().split("T")[0]
   );
   const [paymentNotes, setPaymentNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    if (isOpen) {
+      setPaymentAmount("");
+      setPaymentMethod("cash");
+      setPaymentDate(new Date().toISOString().split("T")[0]);
+      setPaymentNotes("");
+    }
+  }, [isOpen]);
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      // Validate required fields
-      if (!paymentAmount || !paymentMethod || !paymentDate) {
-        toast.error("Please fill in all required fields");
+      if (!paymentAmount || !paymentMethod || !paymentDate || !event) {
+        toast.error("Please fill in all required fields.");
+        setIsSubmitting(false);
         return;
       }
 
       const amount = Number.parseFloat(paymentAmount);
-      if (amount <= 0 || amount > event.amountDue) {
+      if (isNaN(amount) || amount <= 0 || amount > event.amountDue) {
         toast.error(
           `Payment amount must be between ₱0.01 and ₱${event.amountDue.toFixed(
             2
           )}`
         );
+        setIsSubmitting(false);
         return;
       }
 
-      // Create payment data object
       const paymentData = {
         eventId: event.id,
-        dormerId: dormer.id,
+        dormerId: dormer?.id,
         amount: amount,
         paymentMethod: paymentMethod,
         paymentDate: paymentDate,
         notes: paymentNotes,
         recordedBy: {
-          name: currentUser.name,
-          email: currentUser.email,
-          id: currentUser.id,
+          name:
+            (currentUser as any)?.name ||
+            (currentUser as FirebaseUser)?.displayName ||
+            "Admin",
+          email: currentUser?.email,
+          id: currentUser?.uid,
         },
         createdAt: new Date().toISOString(),
       };
 
-      onSave(paymentData);
-
-      // Reset form
-      setPaymentAmount("");
-      setPaymentMethod("");
-      setPaymentDate(new Date().toISOString().split("T")[0]);
-      setPaymentNotes("");
+      await onSave(paymentData);
     } catch (error) {
       console.error("Error saving payment:", error);
       toast.error("Failed to save payment. Please try again.");
     } finally {
       setIsSubmitting(false);
-      handleClose();
-    }
-  };
-
-  const handleClose = () => {
-    if (!isSubmitting) {
-      setPaymentAmount("");
-      setPaymentMethod("");
-      setPaymentDate(new Date().toISOString().split("T")[0]);
-      setPaymentNotes("");
       onClose();
     }
   };
@@ -114,20 +122,19 @@ export default function AddEventPaymentModal({
   if (!dormer || !event) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+        <DialogHeader className={undefined}>
           <DialogTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
             Log Event Payment
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className={undefined}>
             Record payment for <strong>{event.name}</strong>
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Dormer Info */}
           <div className="bg-gray-50 p-3 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
               <User className="h-4 w-4 text-gray-500" />
@@ -155,10 +162,11 @@ export default function AddEventPaymentModal({
             </div>
           </div>
 
-          {/* Payment Details */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="paymentAmount">Amount *</Label>
+              <Label htmlFor="paymentAmount" className={undefined}>
+                Amount *
+              </Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
                   ₱
@@ -178,7 +186,9 @@ export default function AddEventPaymentModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="paymentDate">Payment Date *</Label>
+              <Label htmlFor="paymentDate" className={undefined}>
+                Payment Date *
+              </Label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
@@ -194,38 +204,54 @@ export default function AddEventPaymentModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="paymentMethod">Payment Method *</Label>
+            <Label htmlFor="paymentMethod" className={undefined}>
+              Payment Method *
+            </Label>
             <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-              <SelectTrigger>
+              <SelectTrigger className={undefined}>
                 <SelectValue placeholder="Select payment method" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="cash">Cash</SelectItem>
-                <SelectItem value="gcash">GCash</SelectItem>
-                <SelectItem value="paymaya">PayMaya</SelectItem>
-                <SelectItem value="bank-transfer">Bank Transfer</SelectItem>
-                <SelectItem value="check">Check</SelectItem>
+              <SelectContent className={undefined}>
+                <SelectItem value="cash" className={undefined}>
+                  Cash
+                </SelectItem>
+                <SelectItem value="gcash" className={undefined}>
+                  GCash
+                </SelectItem>
+                <SelectItem value="paymaya" className={undefined}>
+                  PayMaya
+                </SelectItem>
+                <SelectItem value="bank-transfer" className={undefined}>
+                  Bank Transfer
+                </SelectItem>
+                <SelectItem value="check" className={undefined}>
+                  Check
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="paymentNotes">Notes (Optional)</Label>
+            <Label htmlFor="paymentNotes" className={undefined}>
+              Notes (Optional)
+            </Label>
             <Textarea
               id="paymentNotes"
-              placeholder="Add any additional notes about this payment..."
+              placeholder="Add any additional notes..."
               value={paymentNotes}
               onChange={(e) => setPaymentNotes(e.target.value)}
               className="min-h-[60px]"
             />
           </div>
 
-          <DialogFooter>
+          <DialogFooter className={undefined}>
             <Button
               type="button"
               variant="outline"
-              onClick={handleClose}
+              onClick={onClose}
               disabled={isSubmitting}
+              className={undefined}
+              size={undefined}
             >
               Cancel
             </Button>
@@ -233,6 +259,8 @@ export default function AddEventPaymentModal({
               type="submit"
               className="bg-green-600 hover:bg-green-700 text-white"
               disabled={isSubmitting}
+              variant={undefined}
+              size={undefined}
             >
               {isSubmitting ? "Recording..." : "Record Payment"}
             </Button>
