@@ -1,3 +1,5 @@
+import { Key } from "react";
+
 export interface Dormer {
   id: string;
   firstName: string;
@@ -41,6 +43,12 @@ export type ModalType =
   | null;
 
 export interface DormerData {
+  paymentStatus(paymentStatus: any): unknown;
+  id: Key;
+  amountPaid(amountPaid: any): import("react").ReactNode;
+  paymentMethod: any;
+  paymentDate: any;
+  recordedBy: any;
   firstName: string;
   lastName: string;
   email: string;

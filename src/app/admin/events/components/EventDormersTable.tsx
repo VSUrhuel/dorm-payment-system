@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "./../../../../components/ui/button";
+import { Button } from "../../../../components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "./../../../../components/ui/card";
-import { Badge } from "./../../../../components/ui/badge";
+} from "../../../../components/ui/card";
+import { Badge } from "../../../../components/ui/badge";
 import {
   Table,
   TableBody,
@@ -15,22 +15,22 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./../../../../components/ui/table";
-import { Avatar, AvatarFallback } from "./../../../../components/ui/avatar";
+} from "../../../../components/ui/table";
+import { Avatar, AvatarFallback } from "../../../../components/ui/avatar";
 import { CreditCard, CheckCircle, Clock, Calendar } from "lucide-react";
+import { EventDormerData } from "../types";
 
-/**
- * @param {{
- * dormers: any[];
- * onLogPayment: (dormer: any) => void;
- * eventAmount: number;
- * }} props
- */
+interface EventDormersTableProps {
+  dormers: EventDormerData[];
+  onLogPayment: (dormer: EventDormerData) => void;
+  eventAmount: number;
+}
+
 export default function EventDormersTable({
   dormers,
   onLogPayment,
   eventAmount,
-}) {
+}: EventDormersTableProps) {
   const getStatusBadge = (status) => {
     const statusConfig = {
       Paid: {
@@ -64,18 +64,18 @@ export default function EventDormersTable({
 
   return (
     <Card className="border-gray-200 shadow-sm">
-      <CardHeader>
+      <CardHeader className={undefined}>
         <CardTitle className="text-lg font-semibold">
           Dormer Payment Status
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Dormer</TableHead>
-              <TableHead>Amount Paid</TableHead>
-              <TableHead>Payment Status</TableHead>
+      <CardContent className={undefined}>
+        <Table className={undefined}>
+          <TableHeader className={undefined}>
+            <TableRow className={undefined}>
+              <TableHead className={undefined}>Dormer</TableHead>
+              <TableHead className={undefined}>Amount Paid</TableHead>
+              <TableHead className={undefined}>Payment Status</TableHead>
               <TableHead className="hidden md:table-cell">
                 Payment Date
               </TableHead>
@@ -85,7 +85,7 @@ export default function EventDormersTable({
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className={undefined}>
             {dormers.map((dormer) => {
               const statusConfig = getStatusBadge(dormer.paymentStatus);
               const StatusIcon = statusConfig.icon;
@@ -110,7 +110,7 @@ export default function EventDormersTable({
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className={undefined}>
                     <div className="font-semibold text-gray-900">
                       {formatCurrency(dormer.amountPaid)}
                     </div>
@@ -122,7 +122,7 @@ export default function EventDormersTable({
                       </div>
                     )}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className={undefined}>
                     <Badge
                       variant={statusConfig.variant}
                       className={statusConfig.className}
@@ -169,6 +169,7 @@ export default function EventDormersTable({
                         size="sm"
                         onClick={() => onLogPayment(dormer)}
                         className="bg-green-600 hover:bg-green-700 text-white"
+                        variant={undefined}
                       >
                         <CreditCard className="h-4 w-4 mr-1" />
                         Log Payment

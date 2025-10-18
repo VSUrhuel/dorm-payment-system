@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "./../../../../components/ui/button";
+import { Button } from "../../../../components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,183 +9,147 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "./../../../../components/ui/dialog";
-import { Input } from "./../../../../components/ui/input";
-import { Label } from "./../../../../components/ui/label";
-import { Textarea } from "./../../../../components/ui/textarea";
+} from "../../../../components/ui/dialog";
+import { Input } from "../../../../components/ui/input";
+import { Label } from "../../../../components/ui/label";
+import { Textarea } from "../../../../components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./../../../../components/ui/select";
+} from "../../../../components/ui/select";
 import { Upload, X } from "lucide-react";
-import { serverTimestamp } from "firebase/firestore";
-import { supabase } from "./../../../../lib/supabaseClient";
 import { toast } from "sonner";
+import { supabase } from "../../../../lib/supabaseClient";
+import { Expense } from "../types";
 
-/**
- * @param {{
- * isOpen: boolean;
- * onClose: () => void;
- * onSave: (expenseData: any) => void;
- * }} props
- */
-export default function AddExpenseModal({ isOpen, onClose, onSave }) {
+interface AddExpenseModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (
+    expenseData: Omit<Expense, "id" | "recordedBy" | "createdAt">
+  ) => void;
+}
+
+export default function AddExpenseModal({
+  isOpen,
+  onClose,
+  onSave,
+}: AddExpenseModalProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     amount: "",
-    expenseDate: "",
+    expenseDate: new Date().toISOString().split("T")[0],
     category: "",
-    receiptImage: null,
   });
-  const [receiptPreview, setReceiptPreview] = useState(null);
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      // Set the default date to today in YYYY-MM-DD format
-      const today = new Date().toISOString().split("T")[0];
-      setFormData((prev) => ({
-        ...prev,
-        expenseDate: today,
-      }));
+      // Reset form on open
+      setFormData({
+        title: "",
+        description: "",
+        amount: "",
+        expenseDate: new Date().toISOString().split("T")[0],
+        category: "",
+      });
+      setReceiptFile(null);
+      setReceiptPreview(null);
     }
   }, [isOpen]);
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const handleInputChange = (
+    eOrId: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | string,
+    maybeValue?: string
+  ) => {
+    if (typeof eOrId === "string") {
+      const id = eOrId;
+      const value = maybeValue ?? "";
+      setFormData((prev) => ({ ...prev, [id]: value }));
+      return;
+    }
+    const e = eOrId;
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        receiptImage: file,
-      }));
+  const handleSelectChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, category: value }));
+  };
 
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setReceiptPreview(e.target.result);
-      };
-      reader.readAsDataURL(file);
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setReceiptFile(file);
+      setReceiptPreview(URL.createObjectURL(file));
     }
   };
 
   const removeReceipt = () => {
-    setFormData((prev) => ({
-      ...prev,
-      receiptImage: null,
-    }));
+    setReceiptFile(null);
     setReceiptPreview(null);
   };
 
-  // This is the only function that needs changes.
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validate required fields first
-    if (
-      !formData.title ||
-      !formData.amount ||
-      !formData.expenseDate ||
-      !formData.category
-    ) {
-      toast.info("Please fill in all required fields");
+    if (!formData.title || !formData.amount || !formData.category) {
+      toast.info("Please fill in all required fields.");
       return;
     }
 
     setIsSubmitting(true);
-
     try {
-      let receiptImageUrl = null;
-
-      // --- SUPABASE UPLOAD LOGIC ---
-      // 1. Check if a receipt image file exists
-      if (formData.receiptImage) {
-        const file = formData.receiptImage;
-        // 2. Create a unique file path to avoid overwriting files
-        const filePath = `public/${Date.now()}-${file.name}`;
-
-        // 3. Upload the file to your Supabase Storage bucket
-        //    NOTE: Ensure you have a bucket named 'receipts' in your Supabase project.
+      let receiptImageUrl: string | null = null; // Changed to null
+      if (receiptFile) {
+        const filePath = `public/${Date.now()}-${receiptFile.name}`;
         const { error: uploadError } = await supabase.storage
-          .from("receipt-images") // Your bucket name
-          .upload(filePath, file);
+          .from("receipt-images")
+          .upload(filePath, receiptFile);
+        if (uploadError) throw uploadError;
 
-        if (uploadError) {
-          throw uploadError; // Throw an error if upload fails
-        }
-
-        // 4. If upload is successful, get the public URL for the file
         const { data } = supabase.storage
-          .from("receipt-images") // Your bucket name
+          .from("receipt-images")
           .getPublicUrl(filePath);
-
         receiptImageUrl = data.publicUrl;
       }
 
-      // Create the final expense data object with the image URL
-      const expenseData = {
+      onSave({
         title: formData.title,
         description: formData.description,
-        amount: Number.parseFloat(formData.amount),
         expenseDate: formData.expenseDate,
-        category: formData.category,
-        receiptImageUrl: receiptImageUrl, // Use the URL from Supabase
-      };
-
-      onSave(expenseData); // Pass the final data to the parent
-      handleClose(); // Close and reset the modal on success
-    } catch (error) {
-      console.error("Error saving expense:", error);
-      toast.info(`Failed to save expense: ${error.message}`);
+        category: formData.category as Expense["category"],
+        amount: parseFloat(formData.amount),
+        receiptImageUrl: receiptImageUrl || null, // Ensure it's null, not undefined
+      });
+      onClose();
+    } catch (error: any) {
+      toast.error(`Failed to save expense: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleClose = () => {
-    if (!isSubmitting) {
-      setFormData({
-        title: "",
-        description: "",
-        amount: "",
-        expenseDate: "",
-        category: "",
-        receiptImage: null,
-      });
-      setReceiptPreview(null);
-      onClose();
-    }
-  };
-
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent
-        className="sm:max-w-lg max-h-[90vh] overflow-y-auto"
-        onInteractOutside={(e) => {
-          e.preventDefault();
-        }}
-      >
-        <DialogHeader>
-          <DialogTitle>Add New Expense</DialogTitle>
-          <DialogDescription>
-            Record a new expense for the dormitory. All fields marked with * are
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader className={undefined}>
+          <DialogTitle className={undefined}>Add New Expense</DialogTitle>
+          <DialogDescription className={undefined}>
+            Record a new expense for the dormitory. Fields marked with * are
             required.
           </DialogDescription>
         </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Title *</Label>
+            <Label htmlFor="title" className={undefined}>
+              Title *
+            </Label>
             <Input
               id="title"
               placeholder="e.g., Dorm Cleaning Materials"
@@ -193,11 +157,14 @@ export default function AddExpenseModal({ isOpen, onClose, onSave }) {
               onChange={(e) => handleInputChange("title", e.target.value)}
               className="border-gray-300"
               required
+              type={undefined}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className={undefined}>
+              Description
+            </Label>
             <Textarea
               id="description"
               placeholder="Provide details about this expense..."
@@ -209,7 +176,9 @@ export default function AddExpenseModal({ isOpen, onClose, onSave }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount *</Label>
+              <Label htmlFor="amount" className={undefined}>
+                Amount *
+              </Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
                   ₱
@@ -228,7 +197,9 @@ export default function AddExpenseModal({ isOpen, onClose, onSave }) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="expenseDate">Expense Date *</Label>
+              <Label htmlFor="expenseDate" className={undefined}>
+                Expense Date *
+              </Label>
               <Input
                 id="expenseDate"
                 type="date"
@@ -243,7 +214,9 @@ export default function AddExpenseModal({ isOpen, onClose, onSave }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category">Category *</Label>
+            <Label htmlFor="category" className={undefined}>
+              Category *
+            </Label>
             <Select
               value={formData.category}
               onValueChange={(value) => handleInputChange("category", value)}
@@ -251,18 +224,30 @@ export default function AddExpenseModal({ isOpen, onClose, onSave }) {
               <SelectTrigger className="border-gray-300">
                 <SelectValue placeholder="Select expense category" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Utilities">Utilities</SelectItem>
-                <SelectItem value="Maintenance">Maintenance</SelectItem>
-                <SelectItem value="Security">Security</SelectItem>
-                <SelectItem value="Supplies">Supplies</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
+              <SelectContent className={undefined}>
+                <SelectItem value="Utilities" className={undefined}>
+                  Utilities
+                </SelectItem>
+                <SelectItem value="Maintenance" className={undefined}>
+                  Maintenance
+                </SelectItem>
+                <SelectItem value="Security" className={undefined}>
+                  Security
+                </SelectItem>
+                <SelectItem value="Supplies" className={undefined}>
+                  Supplies
+                </SelectItem>
+                <SelectItem value="Other" className={undefined}>
+                  Other
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="receipt">Receipt Image</Label>
+            <Label htmlFor="receipt" className={undefined}>
+              Receipt Image
+            </Label>
             {!receiptPreview ? (
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
                 <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
@@ -307,13 +292,14 @@ export default function AddExpenseModal({ isOpen, onClose, onSave }) {
               </div>
             )}
           </div>
-
-          <DialogFooter>
+          <DialogFooter className={undefined}>
             <Button
               type="button"
               variant="outline"
-              onClick={handleClose}
+              onClick={onClose}
               disabled={isSubmitting}
+              className={undefined}
+              size={undefined}
             >
               Cancel
             </Button>
@@ -321,6 +307,8 @@ export default function AddExpenseModal({ isOpen, onClose, onSave }) {
               type="submit"
               className="bg-green-600 hover:bg-green-700 text-white"
               disabled={isSubmitting}
+              variant={undefined}
+              size={undefined}
             >
               {isSubmitting ? "Saving..." : "Save Expense"}
             </Button>
