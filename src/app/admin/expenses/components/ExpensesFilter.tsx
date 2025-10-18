@@ -1,21 +1,27 @@
 "use client";
 
-import { Button } from "./../../../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "./../../../../components/ui/card";
-import { Input } from "./../../../../components/ui/input";
+import React from "react";
+import { Button } from "../../../../components/ui/button";
+import { Card, CardContent } from "../../../../components/ui/card";
+import { Input } from "../../../../components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./../../../../components/ui/select";
-import { FileDown, Search, Filter, Plus } from "lucide-react";
+} from "../../../../components/ui/select";
+import { Search, Filter } from "lucide-react";
+import { ExpenseData } from "../types";
+
+interface ExpensesFilterProps {
+  searchTerm: string;
+  setSearchTerm: (value: string) => void;
+  categoryFilter: string;
+  setCategoryFilter: (value: string) => void;
+  paginatedExpenses: ExpenseData[];
+  filteredExpenses: ExpenseData[];
+}
 
 export default function ExpensesFilter({
   setSearchTerm,
@@ -24,7 +30,7 @@ export default function ExpensesFilter({
   categoryFilter,
   paginatedExpenses,
   filteredExpenses,
-}) {
+}: ExpensesFilterProps) {
   return (
     <Card className="border-gray-200">
       <CardContent className="pt-6">
@@ -37,6 +43,7 @@ export default function ExpensesFilter({
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 border-gray-300"
+                type={undefined}
               />
             </div>
           </div>
@@ -46,17 +53,28 @@ export default function ExpensesFilter({
                 <Filter className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Filter by category" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All Categories</SelectItem>
-                <SelectItem value="Utilities">Utilities</SelectItem>
-                <SelectItem value="Maintenance">Maintenance</SelectItem>
-                <SelectItem value="Security">Security</SelectItem>
-                <SelectItem value="Supplies">Supplies</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
+              <SelectContent className={undefined}>
+                <SelectItem value="All" className={undefined}>
+                  All Categories
+                </SelectItem>
+                <SelectItem value="Utilities" className={undefined}>
+                  Utilities
+                </SelectItem>
+                <SelectItem value="Maintenance" className={undefined}>
+                  Maintenance
+                </SelectItem>
+                <SelectItem value="Security" className={undefined}>
+                  Security
+                </SelectItem>
+                <SelectItem value="Supplies" className={undefined}>
+                  Supplies
+                </SelectItem>
+                <SelectItem value="Other" className={undefined}>
+                  Other
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
-
           {(searchTerm || categoryFilter !== "All") && (
             <div className="w-full md:w-26">
               <Button
@@ -65,6 +83,8 @@ export default function ExpensesFilter({
                   setCategoryFilter("All");
                 }}
                 className="mt-2 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white"
+                variant={undefined}
+                size={undefined}
               >
                 Reset Filters
               </Button>
