@@ -55,6 +55,7 @@ export default function AddDormerModal({
       phone,
       role,
       roomNumber,
+      id: "",
     };
     onSave(dormerData);
     handleClose();
