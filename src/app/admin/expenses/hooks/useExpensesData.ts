@@ -97,7 +97,7 @@ export function useExpensesData() {
 
   const summaryStats: SummaryStats = useMemo(() => {
     const totalExpenses = combinedExpensesData.reduce(
-      (sum, exp) => sum + exp.amount,
+      (sum, exp) => sum + Number(exp.amount || 0),
       0
     );
     const monthlyExpenses = combinedExpensesData
@@ -109,13 +109,12 @@ export function useExpensesData() {
           expenseDate.getFullYear() === now.getFullYear()
         );
       })
-      .reduce((sum, exp) => sum + exp.amount, 0);
+      .reduce((sum, exp) => sum + Number(exp.amount || 0), 0);
 
     const expensesByCategory = combinedExpensesData.reduce((acc, exp) => {
       acc[exp.category] = (acc[exp.category] || 0) + exp.amount;
       return acc;
     }, {} as Record<string, number>);
-
     const topCategory = Object.keys(expensesByCategory).reduce(
       (a, b) => (expensesByCategory[a] > expensesByCategory[b] ? a : b),
       "N/A"
