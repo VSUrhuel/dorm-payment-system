@@ -1,17 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  collection,
-  addDoc,
-  doc,
-  updateDoc,
-  serverTimestamp,
-} from "firebase/firestore";
-import { firestore as db } from "../../../../lib/firebase";
 import { User } from "firebase/auth";
 import { toast } from "sonner";
 import { Expense } from "../types";
+import { addExpense, updateExpense } from "@/lib/admin/expense";
 
 export function useExpenseActions(expenses: Expense[]) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,11 +24,8 @@ export function useExpenseActions(expenses: Expense[]) {
         toast.error("An expense with this title already exists.");
         return;
       }
-      await addDoc(collection(db, "expenses"), {
-        ...expenseData,
-        recordedBy: user.uid,
-        createdAt: serverTimestamp(),
-      });
+
+      await addExpense(expenseData, user.uid);
       toast.success("Expense added successfully!");
     } catch (error: any) {
       console.log(error.message);
@@ -55,12 +45,7 @@ export function useExpenseActions(expenses: Expense[]) {
     }
     setIsSubmitting(true);
     try {
-      const expenseRef = doc(db, "expenses", expenseData.id);
-      await updateDoc(expenseRef, {
-        ...expenseData,
-        updatedAt: serverTimestamp(),
-        updatedBy: user.uid,
-      });
+      await updateExpense(expenseData, user.uid);
       toast.success("Expense updated successfully!");
     } catch (error: any) {
       toast.error(`Failed to update expense: ${error.message}`);

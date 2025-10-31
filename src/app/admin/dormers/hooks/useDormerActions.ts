@@ -1,27 +1,19 @@
 import { useState } from "react";
-import {
-  collection,
-  addDoc,
-  doc,
-  setDoc,
-  runTransaction,
-  serverTimestamp,
-  deleteDoc,
-  updateDoc,
-} from "firebase/firestore";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  User,
-} from "firebase/auth";
 import { firestore as db, auth } from "@/lib/firebase";
 import { toast } from "sonner";
 import { Dormer, Bill, DormerData } from "../types";
 import { welcomeAdminTemplate } from "../email-templates/welcomeAdmin";
 import { welcomeUserTemplate } from "../email-templates/welcomeUser";
-import { paymentConfirmationTemplate } from "../email-templates/paymentConfirmation";
 import { newBillTemplate } from "../email-templates/newBill";
-import { writeBatch, getDocs } from "firebase/firestore";
+import {
+  createAdminDormer,
+  createUserDormer,
+  recordPaymentTransaction,
+  softDeleteDormer,
+} from "@/lib/admin/dormer";
+import { User } from "firebase/auth";
+import { createBill, getBill, updateBill } from "@/lib/admin/bill";
+import { paymentConfirmationEmailTemplate } from "../../payments/utils/email";
 
 export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -80,22 +72,12 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
           return;
         }
 
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          dormerData.email,
-          "defaultAdminPassword123"
+        await createAdminDormer(
+          dormerData,
+          currentAdmin,
+          adminEmail,
+          adminPassword
         );
-        const newAdminUid = userCredential.user.uid;
-
-        if (adminEmail) {
-          await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
-        }
-
-        await setDoc(doc(db, "dormers", newAdminUid), {
-          ...dormerData,
-          createdBy: currentAdmin.uid,
-          createdAt: serverTimestamp(),
-        });
 
         toast.success("Admin dormer added successfully!");
         await sendEmail({
@@ -104,11 +86,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
           html: welcomeAdminTemplate(dormerData.firstName, dormerData.email),
         });
       } else {
-        await addDoc(collection(db, "dormers"), {
-          ...dormerData,
-          createdBy: user.uid,
-          createdAt: serverTimestamp(),
-        });
+        await createUserDormer(dormerData, user);
 
         toast.success("Dormer added successfully!");
         await sendEmail({
@@ -136,52 +114,21 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
       return;
     }
 
-    const billRef = doc(db, "bills", paymentData.billId);
-
     try {
-      await runTransaction(db, async (transaction) => {
-        const billDoc = await transaction.get(billRef);
-        if (!billDoc.exists()) {
-          throw "Bill document does not exist!";
-        }
-        const currentBillData = billDoc.data();
-        const totalAmountDue = currentBillData.totalAmountDue;
-        const amountAlreadyPaid = currentBillData.amountPaid || 0;
-        const newTotalPaid = amountAlreadyPaid + paymentData.amount;
-        const finalAmountPaidForBill = Math.min(newTotalPaid, totalAmountDue);
-        let newStatus = "Unpaid";
-
-        if (finalAmountPaidForBill >= totalAmountDue) {
-          newStatus = "Paid";
-        } else if (finalAmountPaidForBill > 0) {
-          newStatus = "Partially Paid";
-        }
-
-        await addDoc(collection(db, "payments"), {
-          ...paymentData,
-          recordedBy: user.uid,
-          createdAt: serverTimestamp(),
-        });
-
-        transaction.update(billRef, {
-          amountPaid: finalAmountPaidForBill,
-          status: newStatus,
-          updatedBy: user.uid,
-          updatedAt: serverTimestamp(),
-        });
-      });
+      await recordPaymentTransaction(paymentData, user);
 
       toast.success("Payment recorded successfully!");
 
       const dormerInfo = dormers.find((d) => d.id === paymentData.dormerId);
       if (dormerInfo) {
+        const billData = await getBill(paymentData.billId);
         await sendEmail({
           to: dormerInfo.email,
           subject: `Payment Confirmation - ${paymentData.billId}`,
-          html: paymentConfirmationTemplate(
+          html: paymentConfirmationEmailTemplate(
             dormerInfo.firstName,
-            paymentData.amount,
-            paymentData.billId
+            paymentData,
+            billData
           ),
         });
       }
@@ -201,19 +148,10 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
       const { id, ...dataToSave } = billData;
 
       if (id) {
-        const billRef = doc(db, "bills", id);
-        await setDoc(billRef, {
-          ...dataToSave,
-          updatedBy: user.uid,
-          updatedAt: serverTimestamp(),
-        });
+        await updateBill(billData, user);
         toast.success("Bill overwritten successfully!");
       } else {
-        await addDoc(collection(db, "bills"), {
-          ...dataToSave,
-          createdBy: user.uid,
-          createdAt: serverTimestamp(),
-        });
+        await createBill(billData, user);
         toast.success("New bill generated successfully!");
       }
 
@@ -243,40 +181,36 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
     }
 
     try {
-      // soft delete implementation
-      updateDoc(doc(db, "dormers", dormerId), {
-        isDeleted: true,
-        deletedAt: serverTimestamp(),
-      });
-      // hard delete implementation
-      // await deleteDoc(doc(db, "dormers", dormerId));
+      await softDeleteDormer(dormerId);
       toast.success("Dormer deleted successfully.");
     } catch (error) {
       toast.error("Failed to delete dormer.");
     }
   };
-  const updatePaymentIncludeDormerDetails = async () => {
-    const paymentsRef = collection(db, "payments");
-    const snapshot = await getDocs(paymentsRef);
-    const batch = writeBatch(db);
-    snapshot.forEach((docSnap) => {
-      const paymentData = docSnap.data();
-      const dormerInfo = dormers.find((d) => d.id === paymentData.dormerId);
-      if (dormerInfo) {
-        const paymentRef = doc(db, "payments", docSnap.id);
-        batch.update(paymentRef, {
-          dormerDetails: {
-            firstName: dormerInfo.firstName,
-            lastName: dormerInfo.lastName,
-            roomNumber: dormerInfo.roomNumber,
-            email: dormerInfo.email,
-          },
-        });
-      }
-    });
-    await batch.commit();
-    toast.success("Payment documents updated with dormer details.");
-  };
+
+  // ONLY CREATED FOR A UTILITY TASK
+  // const updatePaymentIncludeDormerDetails = async () => {
+  //   const paymentsRef = collection(db, "payments");
+  //   const snapshot = await getDocs(paymentsRef);
+  //   const batch = writeBatch(db);
+  //   snapshot.forEach((docSnap) => {
+  //     const paymentData = docSnap.data();
+  //     const dormerInfo = dormers.find((d) => d.id === paymentData.dormerId);
+  //     if (dormerInfo) {
+  //       const paymentRef = doc(db, "payments", docSnap.id);
+  //       batch.update(paymentRef, {
+  //         dormerDetails: {
+  //           firstName: dormerInfo.firstName,
+  //           lastName: dormerInfo.lastName,
+  //           roomNumber: dormerInfo.roomNumber,
+  //           email: dormerInfo.email,
+  //         },
+  //       });
+  //     }
+  //   });
+  //   await batch.commit();
+  //   toast.success("Payment documents updated with dormer details.");
+  // };
 
   return {
     saveDormer,
