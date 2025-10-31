@@ -25,6 +25,7 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { dashboardData, recentBills } from "@/lib/user/dashboard";
 import { Bill } from "../admin/dormers/types";
+import { formatAmount } from "../admin/expenses/utils";
 
 const userPayments = [
   {
@@ -122,7 +123,7 @@ export default function UserDashboard() {
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
               <p className="text-slate-600 mt-2">
-                View your dormitory payment summary
+                View dormitory funds summary
               </p>
             </div>
 
@@ -151,7 +152,7 @@ export default function UserDashboard() {
                 </CardHeader>
                 <CardContent className={undefined}>
                   <p className="text-3xl font-bold text-green-600">
-                    ₱{totalPayments}
+                    ₱{formatAmount(totalPayments)}
                   </p>
                   <p className="text-xs text-slate-500 mt-1">
                     {userPayments.filter((p) => p.status === "Paid").length}{" "}
@@ -167,7 +168,7 @@ export default function UserDashboard() {
                 </CardHeader>
                 <CardContent className={undefined}>
                   <p className="text-3xl font-bold text-red-600">
-                    ₱{remainingBalance}
+                    ₱{formatAmount(remainingBalance)}
                   </p>
                   <p className="text-xs text-slate-500 mt-1">Available Money</p>
                 </CardContent>
@@ -180,7 +181,7 @@ export default function UserDashboard() {
                 </CardHeader>
                 <CardContent className={undefined}>
                   <p className="text-3xl font-bold text-green-600">
-                    ₱{totalExpenses}
+                    ₱{formatAmount(totalExpenses)}
                   </p>
                   <p className="text-xs text-slate-500 mt-1">
                     Overall Expenses
