@@ -46,7 +46,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
 
   const saveDormer = async (dormerData: DormerData, user: User | null) => {
     console.log("migration startss");
-    await migrateDormerAccounts();
+    // await migrateDormerAccounts();
     if (!user) {
       toast.error("Authentication error. Please log in again.");
       return;

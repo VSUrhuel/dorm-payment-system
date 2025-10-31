@@ -136,7 +136,7 @@ export default function UserDashboard() {
                 </CardHeader>
                 <CardContent className={undefined}>
                   <p className="text-3xl font-bold text-slate-900">
-                    ₱{totalDue.toFixed(2)}
+                    ₱{totalDue}
                   </p>
                   <p className="text-xs text-slate-500 mt-1">
                     Amount to be Paid
@@ -151,7 +151,7 @@ export default function UserDashboard() {
                 </CardHeader>
                 <CardContent className={undefined}>
                   <p className="text-3xl font-bold text-green-600">
-                    ₱{totalPayments.toFixed(2)}
+                    ₱{totalPayments}
                   </p>
                   <p className="text-xs text-slate-500 mt-1">
                     {userPayments.filter((p) => p.status === "Paid").length}{" "}
@@ -167,7 +167,7 @@ export default function UserDashboard() {
                 </CardHeader>
                 <CardContent className={undefined}>
                   <p className="text-3xl font-bold text-red-600">
-                    ₱{remainingBalance.toFixed(2)}
+                    ₱{remainingBalance}
                   </p>
                   <p className="text-xs text-slate-500 mt-1">Available Money</p>
                 </CardContent>
@@ -180,7 +180,7 @@ export default function UserDashboard() {
                 </CardHeader>
                 <CardContent className={undefined}>
                   <p className="text-3xl font-bold text-green-600">
-                    ₱{totalExpenses.toFixed(2)}
+                    ₱{totalExpenses}
                   </p>
                   <p className="text-xs text-slate-500 mt-1">
                     Overall Expenses
@@ -209,12 +209,12 @@ export default function UserDashboard() {
                           Period {bill.billingPeriod}
                         </p>
                         <p className="text-sm text-slate-500">
-                          Amount: {bill.totalAmountDue.toFixed(2)}
+                          Amount: {bill.totalAmountDue}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-medium text-slate-900">
-                          ₱{bill.amountPaid.toFixed(2)}
+                          ₱{bill.amountPaid}
                         </p>
                         <span
                           className={`text-sm px-2 py-1 rounded inline-block mt-1 ${

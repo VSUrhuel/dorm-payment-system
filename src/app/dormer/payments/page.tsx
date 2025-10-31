@@ -120,10 +120,10 @@ export default function PaymentsPage() {
                               {payment.billingPeriod}
                             </TableCell>
                             <TableCell className={undefined}>
-                              ₱{payment.totalAmountDue.toFixed(2)}
+                              ₱{payment.totalAmountDue}
                             </TableCell>
                             <TableCell className="text-green-600">
-                              ₱{payment.amount.toFixed(2)}
+                              ₱{payment.amount}
                             </TableCell>
                             <TableCell
                               className={
@@ -137,7 +137,7 @@ export default function PaymentsPage() {
                                 ? 0
                                 : (
                                     payment.totalAmountDue - payment.amountPaid
-                                  ).toFixed(2)}
+                                  )}
                             </TableCell>
                             <TableCell className={undefined}>
                               <span
@@ -166,7 +166,7 @@ export default function PaymentsPage() {
                               (sum, payment) => sum + payment.totalAmountDue,
                               0
                             )
-                            .toFixed(2)}
+                            }
                         </p>
                       </div>
                       <div>
@@ -175,7 +175,7 @@ export default function PaymentsPage() {
                           ₱
                           {userPayments
                             .reduce((sum, payment) => sum + payment.amount, 0)
-                            .toFixed(2)}
+                            }
                         </p>
                       </div>
                       <div>
@@ -189,7 +189,7 @@ export default function PaymentsPage() {
                                 (payment.totalAmountDue - payment.amountPaid),
                               0
                             )
-                            .toFixed(2)}
+                            }
                         </p>
                       </div>
                     </div>
