@@ -45,6 +45,8 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
   };
 
   const saveDormer = async (dormerData: DormerData, user: User | null) => {
+    console.log("migration startss");
+    await migrateDormerAccounts();
     if (!user) {
       toast.error("Authentication error. Please log in again.");
       return;
@@ -160,7 +162,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
       toast.error("Authentication error or missing bill data.");
       return;
     }
-    // await migrateDormerAccounts();
+
     console.log("existging");
     setIsSubmitting(true);
     try {
