@@ -49,7 +49,7 @@ export const totalBills = async () => {
   let total = 0;
   billsSnapshot.forEach((doc) => {
     const data = doc.data();
-    total += data.totalAmountDue || 0;
+    total += Number(data.totalAmountDue) || 0;
   });
   return total;
 };

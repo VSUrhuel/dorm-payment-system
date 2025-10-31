@@ -56,7 +56,7 @@ export const totalPayments = async () => {
   let total = 0;
   paymentsSnapshot.forEach((doc) => {
     const data = doc.data();
-    total += data.amount || 0;
+    total += Number(data.amount) || 0;
   });
   return total;
 };
