@@ -137,10 +137,10 @@ export default function UserDashboard() {
                 </CardHeader>
                 <CardContent className={undefined}>
                   <p className="text-3xl font-bold text-slate-900">
-                    ₱{totalDue}
+                    ₱{formatAmount(totalDue)}
                   </p>
                   <p className="text-xs text-slate-500 mt-1">
-                    Amount to be Paid
+                    Amount to be Paid by Dormers
                   </p>
                 </CardContent>
               </Card>
@@ -155,8 +155,7 @@ export default function UserDashboard() {
                     ₱{formatAmount(totalPayments)}
                   </p>
                   <p className="text-xs text-slate-500 mt-1">
-                    {userPayments.filter((p) => p.status === "Paid").length}{" "}
-                    completed
+                    Overall Payments
                   </p>
                 </CardContent>
               </Card>
