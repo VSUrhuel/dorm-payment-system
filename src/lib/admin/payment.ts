@@ -4,9 +4,13 @@ import {
   runTransaction,
   addDoc,
   serverTimestamp,
+  getDocs,
 } from "firebase/firestore";
 import { firestore as db } from "@/lib/firebase";
 import { User } from "firebase/auth";
+import { Payment } from "@/app/admin/payments/types";
+import { getBuiltinModule } from "process";
+import { getBill } from "./bill";
 
 export const recordPayment = async (paymentData: any, user: User) => {
   await runTransaction(db, async (transaction) => {
@@ -33,6 +37,7 @@ export const recordPayment = async (paymentData: any, user: User) => {
 
     await addDoc(collection(db, "payments"), {
       ...paymentData,
+      dormerId: currentBillData.dormerId,
       recordedBy: user.uid,
       createdAt: serverTimestamp(),
     });
@@ -44,4 +49,27 @@ export const recordPayment = async (paymentData: any, user: User) => {
       updatedAt: serverTimestamp(),
     });
   });
+};
+
+export const totalPayments = async () => {
+  const paymentsSnapshot = await getDocs(collection(db, "payments"));
+  let total = 0;
+  paymentsSnapshot.forEach((doc) => {
+    const data = doc.data();
+    total += data.amount || 0;
+  });
+  return total;
+};
+
+export const getUserPayments = async (dormerId: string) => {
+  const paymentsSnapshot = await getDocs(collection(db, "payments"));
+  const payments: any[] = [];
+  for (const docSnap of paymentsSnapshot.docs) {
+    const data = docSnap.data();
+    if (data.dormerId === dormerId) {
+      const bill = await getBill(data.billId);
+      payments.push({ id: docSnap.id, ...data, ...bill } as any);
+    }
+  }
+  return payments;
 };

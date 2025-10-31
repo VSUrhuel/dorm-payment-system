@@ -29,7 +29,9 @@
     "**/*.ts",
     "**/*.tsx",
     "src/app/admin/dormers/components/AddDormerModal.tsx",
-    "src/app/admin/expenses/components/ViewEditExpenseModal.js"
+    "src/app/admin/expenses/components/ViewEditExpenseModal.js",
+    "src/app/dormer/layout.js",
+    "src/app/user/userSidebBar/sidebar.js"
   ],
   "exclude": ["node_modules"]
 }

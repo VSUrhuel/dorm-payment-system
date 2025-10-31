@@ -20,18 +20,21 @@ export const createAdminDormer = async (
   dormerData: DormerData,
   currentAdmin: User,
   adminEmail: string,
-  adminPassword: string
+  adminPassword: string,
+  temporaryPassword: string
 ) => {
   const userCredential = await createUserWithEmailAndPassword(
     auth,
     dormerData.email,
-    "defaultAdminPassword123"
+    temporaryPassword
   );
   const newAdminUid = userCredential.user.uid;
 
   if (adminEmail && adminPassword) {
     await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
   }
+
+  dormerData.id = newAdminUid;
 
   await setDoc(doc(db, "dormers", newAdminUid), {
     ...dormerData,
@@ -44,14 +47,29 @@ export const createAdminDormer = async (
 
 export const createUserDormer = async (
   dormerData: DormerData,
-  currentAdmin: User
+  currentAdmin: User,
+  adminEmail: string,
+  adminPassword: string,
+  temporaryPassword: string
 ) => {
-  const docRef = await addDoc(collection(db, "dormers"), {
+  const userCredential = await createUserWithEmailAndPassword(
+    auth,
+    dormerData.email,
+    temporaryPassword
+  );
+  const newUserUid = userCredential.user.uid;
+
+  if (adminEmail && adminPassword) {
+    await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
+  }
+
+  dormerData.id = newUserUid;
+
+  await setDoc(doc(db, "dormers", newUserUid), {
     ...dormerData,
     createdAt: serverTimestamp(),
     createdBy: currentAdmin.uid,
   });
-  return docRef.id;
 };
 
 export const recordPaymentTransaction = async (

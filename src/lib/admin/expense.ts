@@ -4,6 +4,7 @@ import {
   doc,
   updateDoc,
   serverTimestamp,
+  getDocs,
 } from "firebase/firestore";
 import { firestore as db } from "@/lib/firebase";
 
@@ -23,4 +24,14 @@ export const updateExpense = async (expenseData: any, updatedBy: string) => {
     updatedBy,
     updatedAt: serverTimestamp(),
   });
+};
+
+export const totalExpenses = async () => {
+  const expensesSnapshot = await getDocs(collection(db, "expenses"));
+  let total = 0;
+  expensesSnapshot.forEach((doc) => {
+    const data = doc.data();
+    total += data.amount || 0;
+  });
+  return total;
 };

@@ -8,6 +8,7 @@ import {
   updateDoc,
   Transaction,
   getDoc,
+  getDocs,
 } from "firebase/firestore";
 import { firestore as db } from "@/lib/firebase";
 import { Bill } from "../../app/admin/dormers/types";
@@ -41,4 +42,14 @@ export const getBill = async (billId: string) => {
     throw new Error("Bill document does not exist!");
   }
   return billSnap.data() as Bill;
+};
+
+export const totalBills = async () => {
+  const billsSnapshot = await getDocs(collection(db, "bills"));
+  let total = 0;
+  billsSnapshot.forEach((doc) => {
+    const data = doc.data();
+    total += data.totalAmountDue || 0;
+  });
+  return total;
 };

@@ -14,6 +14,7 @@ import {
 import { User } from "firebase/auth";
 import { createBill, getBill, updateBill } from "@/lib/admin/bill";
 import { paymentConfirmationEmailTemplate } from "../../payments/utils/email";
+import { generateRandomPassword } from "../utils/generateRandomPass";
 
 export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,7 +55,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
       return;
     }
     const adminEmail = currentAdmin.email;
-
+    const temporaryPassword = generateRandomPassword();
     try {
       const existingDormer = dormers.find((d) => d.email === dormerData.email);
       if (existingDormer) {
@@ -62,37 +63,52 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
         return;
       }
 
+      const adminPassword = prompt(
+        "To add security, please enter your password:"
+      );
+
+      if (!adminPassword) {
+        toast.info("Admin creation canceled.");
+        return;
+      }
+
       if (dormerData.role === "Admin") {
-        const adminPassword = prompt(
-          "To keep your session active, please re-enter your password:"
-        );
-
-        if (!adminPassword) {
-          toast.info("Admin creation canceled.");
-          return;
-        }
-
         await createAdminDormer(
           dormerData,
           currentAdmin,
           adminEmail,
-          adminPassword
+          adminPassword,
+          temporaryPassword
         );
 
         toast.success("Admin dormer added successfully!");
         await sendEmail({
           to: dormerData.email,
           subject: "Welcome to Mabolo Payment System",
-          html: welcomeAdminTemplate(dormerData.firstName, dormerData.email),
+          html: welcomeAdminTemplate(
+            dormerData.firstName,
+            dormerData.email,
+            temporaryPassword
+          ),
         });
       } else {
-        await createUserDormer(dormerData, user);
+        await createUserDormer(
+          dormerData,
+          user,
+          adminEmail,
+          adminPassword,
+          temporaryPassword
+        );
 
         toast.success("Dormer added successfully!");
         await sendEmail({
           to: dormerData.email,
           subject: "Welcome to Mabolo Payment System",
-          html: welcomeUserTemplate(dormerData.firstName),
+          html: welcomeUserTemplate(
+            dormerData.firstName,
+            dormerData.email,
+            temporaryPassword
+          ),
         });
       }
     } catch (error: any) {

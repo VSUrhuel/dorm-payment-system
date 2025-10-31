@@ -116,6 +116,11 @@ export default function GenerateBillModal({
       toast.info("Please select at least one payable to generate a bill.");
       return;
     }
+    if (dormer.id === undefined || dormer.id === null) {
+      toast.error("Dormer ID is undefined.");
+      return;
+    }
+    console.log(dormer);
 
     const billData = {
       dormerId: dormer.id,

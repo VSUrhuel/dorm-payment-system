@@ -6,9 +6,16 @@ import { auth } from "./../lib/firebase";
 import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  sendPasswordResetEmail, // 1. Import for password reset
+  sendPasswordResetEmail,
 } from "firebase/auth";
-import { Building2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -16,12 +23,13 @@ export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [message, setMessage] = useState(""); // For success messages like password reset
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [authActionLoading, setAuthActionLoading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<"admin" | "user">("user");
 
   // Handler for the sign-in form submission
-  const handleSignIn = async (event) => {
+  const handleSignIn = async (event: React.FormEvent) => {
     event.preventDefault();
     setError("");
     setMessage("");
@@ -49,8 +57,13 @@ export default function AuthPage() {
         throw new Error("Failed to log in on the server.");
       }
 
-      router.push("/admin");
-    } catch (err) {
+      // Redirect based on selected role
+      if (selectedRole === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/dormer");
+      }
+    } catch (err: any) {
       switch (err.code) {
         case "auth/user-not-found":
           setError("No user found with this email.");
@@ -79,11 +92,11 @@ export default function AuthPage() {
       }
     } finally {
       setAuthActionLoading(false);
-      setLoading(false); // Ensure loading is false after the attempt
+      setLoading(false);
     }
   };
 
-  // 2. Handler for the "Forgot Password" action
+  // Handler for the "Forgot Password" action
   const handlePasswordReset = async () => {
     if (!email) {
       setError("Please enter your email address to reset your password.");
@@ -102,11 +115,11 @@ export default function AuthPage() {
       );
     } finally {
       setAuthActionLoading(false);
-      setLoading(false); // Ensure loading is false after the attempt
+      setLoading(false);
     }
   };
 
-  // 3. Improved loading/redirecting state
+  // Loading state
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-600">
@@ -124,34 +137,72 @@ export default function AuthPage() {
 
   return (
     <div className="bg-gray-100 flex items-center justify-center min-h-screen p-4">
-      <div className="w-full max-w-md mx-auto">
-        <div className="bg-white p-8 rounded-2xl shadow-lg">
-          <div className="flex flex-col items-center mb-6">
-            <div className="flex items-center justify-center w-16 h-16 bg-green-50 rounded-full mb-4">
-              <img src="/profile.ico" alt="Logo" width={62} height={62} />
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-2 text-center">
+          <div className="flex justify-center mb-4">
+            <img
+              src="/profile.ico"
+              alt="DormPay Logo"
+              width={64}
+              height={64}
+              className="rounded-full"
+            />
+          </div>
+          <CardTitle className="text-2xl">DormPay</CardTitle>
+          <CardDescription className={undefined}>
+            Payment System
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Role Selection */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Select Account Type
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant={selectedRole === "admin" ? "default" : "outline"}
+                onClick={() => setSelectedRole("admin")}
+                className={
+                  selectedRole === "admin"
+                    ? "bg-green-600 hover:bg-green-700"
+                    : ""
+                }
+                size={undefined}
+              >
+                Admin
+              </Button>
+              <Button
+                variant={selectedRole === "user" ? "default" : "outline"}
+                onClick={() => setSelectedRole("user")}
+                className={
+                  selectedRole === "user"
+                    ? "bg-green-600 hover:bg-green-700"
+                    : ""
+                }
+                size={undefined}
+              >
+                User
+              </Button>
             </div>
-            <h2 className="text-2xl font-bold text-center text-gray-800">
-              Welcome to DormPay
-            </h2>
-            <p className="text-center text-gray-500 mt-1">User Sign In</p>
           </div>
 
           {error && (
-            <div className="mb-4 text-center text-sm font-medium p-3 rounded-lg bg-red-100 text-red-700">
+            <div className="p-3 rounded-lg bg-red-100 text-red-700 text-sm">
               {error}
             </div>
           )}
           {message && (
-            <div className="mb-4 text-center text-sm font-medium p-3 rounded-lg bg-green-100 text-green-700">
+            <div className="p-3 rounded-lg bg-green-100 text-green-700 text-sm">
               {message}
             </div>
           )}
 
-          <form onSubmit={handleSignIn}>
-            <div className="mb-4">
+          <form onSubmit={handleSignIn} className="space-y-4">
+            <div className="space-y-2">
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-700"
               >
                 Email
               </label>
@@ -161,19 +212,25 @@ export default function AuthPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                 placeholder="you@example.com"
               />
             </div>
-            <div className="mb-4">
+            <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium text-gray-700"
                 >
                   Password
                 </label>
-                {/* 4. Forgot Password Button */}
+                <button
+                  type="button"
+                  onClick={handlePasswordReset}
+                  className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors"
+                >
+                  Forgot Password?
+                </button>
               </div>
               <input
                 type="password"
@@ -181,31 +238,28 @@ export default function AuthPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                 placeholder="••••••••"
               />
             </div>
-            <button
-              type="button"
-              onClick={handlePasswordReset}
-              className="text-sm font-medium text-blue-600 hover:underline flex items-end justify-end mb-4 w-full"
-            >
-              Forgot Password?
-            </button>
-            <button
+            <Button
               type="submit"
               disabled={authActionLoading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
+              className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400"
+              size="lg"
+              variant={undefined}
             >
-              {authActionLoading ? "Processing..." : "Sign In"}
-            </button>
+              {authActionLoading
+                ? "Processing..."
+                : `Sign In as ${selectedRole === "admin" ? "Admin" : "User"}`}
+            </Button>
           </form>
 
-          <p className="mt-3 text-xs text-gray-400 text-center ">
+          <p className="text-xs text-gray-500 text-center pt-4 border-t border-gray-200">
             Developed by Laurente, J.R. | Mabolo 2025
           </p>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
