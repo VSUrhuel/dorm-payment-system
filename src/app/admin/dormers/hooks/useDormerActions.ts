@@ -8,6 +8,7 @@ import { newBillTemplate } from "../email-templates/newBill";
 import {
   createAdminDormer,
   createUserDormer,
+  migrateDormerAccounts,
   recordPaymentTransaction,
   softDeleteDormer,
 } from "@/lib/admin/dormer";
@@ -159,6 +160,8 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
       toast.error("Authentication error or missing bill data.");
       return;
     }
+    // await migrateDormerAccounts();
+    console.log("existging");
     setIsSubmitting(true);
     try {
       const { id, ...dataToSave } = billData;

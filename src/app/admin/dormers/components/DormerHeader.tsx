@@ -1,13 +1,14 @@
 "use client";
 
 import { Button } from "../../../../components/ui/button";
-import { Plus } from "lucide-react";
+import { FileDown, Plus } from "lucide-react";
 
 interface DormerHeaderProps {
   onAddDormer: () => void;
+  onExport: () => void;
 }
 
-export default function DormerHeader({ onAddDormer }: DormerHeaderProps) {
+export default function DormerHeader({ onAddDormer, onExport }: DormerHeaderProps) {
   return (
     <div className="flex flex-col md:flex-row justify-between gap-4">
       <div className="space-y-1">
@@ -27,6 +28,15 @@ export default function DormerHeader({ onAddDormer }: DormerHeaderProps) {
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Dormer
+        </Button>
+        <Button
+          variant="outline"
+          onClick={onExport}
+          className="border-gray-200 hover:bg-gray-50"
+          size={undefined}
+        >
+          <FileDown className="h-4 w-4 mr-2" />
+          Export CSV
         </Button>
       </div>
     </div>

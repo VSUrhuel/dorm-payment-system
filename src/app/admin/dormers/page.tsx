@@ -26,6 +26,7 @@ import { DormersPageSkeleton } from "./components/DormersPageSkeleton";
 import { Bill } from "./types";
 import { Delete } from "lucide-react";
 import DeleteDormerModal from "./components/DeleteDormerModal";
+import { handleExport } from "./utils/csvExport";
 
 export default function DormersPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -73,7 +74,10 @@ export default function DormersPage() {
 
   return (
     <div className="p-4 md:p-6 space-y-6">
-      <DormerHeader onAddDormer={() => openModal("add")} />
+      <DormerHeader
+        onAddDormer={() => openModal("add")}
+        onExport={() => handleExport(dormers)}
+      />
 
       <DormerFilters
         searchTerm={searchTerm}
