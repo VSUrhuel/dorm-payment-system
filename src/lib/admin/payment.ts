@@ -73,3 +73,18 @@ export const getUserPayments = async (dormerId: string) => {
   }
   return payments;
 };
+
+export const getUserPaymentWithBilll = async (
+  dormerId: string,
+  billId: string
+) => {
+  const paymentsSnapshot = await getDocs(collection(db, "payments"));
+  const payments: Payment[] = [];
+  paymentsSnapshot.forEach((doc) => {
+    const data = doc.data();
+    if (data.dormerId === dormerId && data.billId === billId) {
+      payments.push({ id: doc.id, ...data } as Payment);
+    }
+  });
+  return payments;
+};

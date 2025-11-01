@@ -209,18 +209,20 @@ export default function UserDashboard() {
                           Period {bill.billingPeriod}
                         </p>
                         <p className="text-sm text-slate-500">
-                          Amount: {bill.totalAmountDue}
+                          Amount: ₱{formatAmount(bill.totalAmountDue)}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-medium text-slate-900">
-                          ₱{bill.amountPaid}
+                          ₱{formatAmount(bill.amountPaid)}
                         </p>
                         <span
                           className={`text-sm px-2 py-1 rounded inline-block mt-1 ${
                             bill.status === "Paid"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-yellow-100 text-yellow-700"
+                              ? "bg-green-100 text-green-800"
+                              : bill.status === "Partially Paid"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
                           }`}
                         >
                           {bill.status}

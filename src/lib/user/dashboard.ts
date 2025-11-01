@@ -45,5 +45,13 @@ export const recentBills = async (userId: string, limit: number = 5) => {
       bills.push({ id: doc.id, ...data } as Bill);
     }
   });
+
+  bills.sort((a, b) => {
+    const aPeriod = a?.billingPeriod ?? "";
+    const bPeriod = b?.billingPeriod ?? "";
+    if (aPeriod < bPeriod) return 1;
+    if (aPeriod > bPeriod) return -1;
+    return 0;
+  });
   return bills;
 };

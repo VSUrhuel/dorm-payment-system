@@ -9,10 +9,13 @@ import {
   Transaction,
   getDoc,
   getDocs,
+  query,
+  where,
 } from "firebase/firestore";
 import { firestore as db } from "@/lib/firebase";
 import { Bill } from "../../app/admin/dormers/types";
 import { User } from "firebase/auth";
+import { getUserPaymentWithBilll } from "./payment";
 
 export const createBill = async (billData: Omit<Bill, "id">, user: User) => {
   const docRef = await addDoc(collection(db, "bills"), {
@@ -52,4 +55,42 @@ export const totalBills = async () => {
     total += Number(data.totalAmountDue) || 0;
   });
   return total;
+};
+
+export const getBills = async (userId: string): Promise<any[]> => {
+  try {
+    const billsQuery = query(
+      collection(db, "bills"),
+      where("dormerId", "==", userId)
+    );
+
+    const billsSnapshot = await getDocs(billsQuery);
+    const billsPromises = billsSnapshot.docs.map(async (doc) => {
+      const data = doc.data();
+      const paymentList = await getUserPaymentWithBilll(userId, doc.id);
+
+      return {
+        id: doc.id,
+        ...data,
+        ...paymentList,
+      } as any;
+    });
+
+    // Wait for all promises to resolve, then sort the resolved bill objects by billingPeriod descending
+    const bills = await Promise.all(billsPromises);
+    bills.sort((a, b) => {
+      const aPeriod = a?.billingPeriod ?? "";
+      const bPeriod = b?.billingPeriod ?? "";
+      if (aPeriod < bPeriod) return 1;
+      if (aPeriod > bPeriod) return -1;
+      return 0;
+    });
+
+    console.log("Fetched and sorted bills:", bills);
+
+    return bills;
+  } catch (error) {
+    console.error("Error fetching bills:", error);
+    throw new Error("Failed to load bills");
+  }
 };
