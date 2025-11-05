@@ -63,7 +63,7 @@ export default function ExpensesContent() {
   }
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
+    <div className="min-h-screen bg-[#f0f0f0] p-4 md:p-6 lg:p-8 space-y-6">
       <ExpensesHeader
         onAdd={() => setAddExpenseModalOpen(true)}
         onExport={() => handleExport(filteredExpenses)}
@@ -89,28 +89,30 @@ export default function ExpensesContent() {
         onViewDetails={handleViewDetails}
       />
 
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <span className="text-sm text-gray-700">
+      <div className="flex items-center justify-between py-4">
+        <span className="text-sm text-gray-600 font-medium">
           Page {currentPage} of {totalPages || 1}
         </span>
-        <Button
-          className={undefined}
-          variant="outline"
-          size="sm"
-          onClick={handlePreviousPage}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </Button>
-        <Button
-          className={undefined}
-          variant="outline"
-          size="sm"
-          onClick={handleNextPage}
-          disabled={currentPage >= totalPages}
-        >
-          Next
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+            className="border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleNextPage}
+            disabled={currentPage >= totalPages}
+            className="border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            Next
+          </Button>
+        </div>
       </div>
 
       <AddExpenseModal

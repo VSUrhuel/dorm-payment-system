@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../../components/ui/card";
+import { TrendingDown, Calendar, Tag } from "lucide-react";
 import { formatAmount } from "../utils";
 import { SummaryStats } from "../types";
 
@@ -15,47 +16,74 @@ export default function SummaryExpense({
   topCategory,
   expensesByCategory,
 }: SummaryStats) {
+  const kpiData = [
+    {
+      title: "Total Expenses",
+      value: `₱${formatAmount(totalExpenses)}`,
+      description: "All recorded expenses",
+      icon: TrendingDown,
+      trend: "down",
+    },
+    {
+      title: "This Month",
+      value: `₱${formatAmount(monthlyExpenses)}`,
+      description: "Current month's expenses",
+      icon: Calendar,
+      trend: "neutral",
+    },
+    {
+      title: "Top Category",
+      value: topCategory,
+      description: `₱${formatAmount(expensesByCategory[topCategory] || 0)} spent`,
+      icon: Tag,
+      trend: "up",
+    },
+  ];
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <Card className="border-gray-200">
-        <CardHeader className={undefined}>
-          <CardTitle className="text-sm font-medium text-gray-600">
-            Total Expenses
-          </CardTitle>
-        </CardHeader>
-        <CardContent className={undefined}>
-          <div className="text-2xl font-bold text-red-600">
-            ₱{formatAmount(totalExpenses)}
-          </div>
-          <p className="text-xs text-gray-500 mt-1">All recorded expenses</p>
-        </CardContent>
-      </Card>
-      <Card className="border-gray-200">
-        <CardHeader className={undefined}>
-          <CardTitle className="text-sm font-medium text-gray-600">
-            This Month
-          </CardTitle>
-        </CardHeader>
-        <CardContent className={undefined}>
-          <div className="text-2xl font-bold text-orange-600">
-            ₱ {formatAmount(monthlyExpenses)}
-          </div>
-          <p className="text-xs text-gray-500 mt-1">Current month's expenses</p>
-        </CardContent>
-      </Card>
-      <Card className="border-gray-200">
-        <CardHeader className={undefined}>
-          <CardTitle className="text-sm font-medium text-gray-600">
-            Top Category
-          </CardTitle>
-        </CardHeader>
-        <CardContent className={undefined}>
-          <div className="text-2xl font-bold text-blue-600">{topCategory}</div>
-          <p className="text-xs text-gray-500 mt-1">
-            ₱ {formatAmount(expensesByCategory[topCategory] || 0)} spent
-          </p>
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      {kpiData.map((kpi, index) => {
+        const Icon = kpi.icon;
+        return (
+          <Card
+            key={index}
+            className="border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 bg-white"
+          >
+            <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
+              <CardTitle className="text-sm font-semibold text-gray-600">
+                {kpi.title}
+              </CardTitle>
+              <div
+                className={`p-2.5 rounded-xl ${
+                  kpi.trend === "up"
+                    ? "bg-[#A5D6A7]"
+                    : kpi.trend === "down"
+                    ? "bg-red-100"
+                    : "bg-[#E0E0E0]"
+                }`}
+              >
+                <Icon
+                  className={`h-5 w-5 ${
+                    kpi.trend === "up"
+                      ? "text-[#2E7D32]"
+                      : kpi.trend === "down"
+                      ? "text-red-600"
+                      : "text-gray-600"
+                  }`}
+                />
+              </div>
+            </CardHeader>
+            <CardContent className={undefined}>
+              <div className="text-2xl md:text-3xl font-bold text-[#333333]">
+                {kpi.value}
+              </div>
+              <p className="text-xs md:text-sm text-gray-500 mt-1.5">
+                {kpi.description}
+              </p>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }
