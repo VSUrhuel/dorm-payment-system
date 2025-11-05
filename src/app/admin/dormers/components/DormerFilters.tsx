@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, X } from "lucide-react";
 
 interface DormerFiltersProps {
   searchTerm: string;
@@ -30,25 +30,25 @@ export default function DormerFilters({
   resetFilter,
 }: DormerFiltersProps) {
   return (
-    <Card className="border-gray-200">
+    <Card className="border-2 border-gray-100 shadow-md bg-white">
       <CardContent className="pt-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               <Input
-                placeholder="Search by title, description, or recorded by..."
+                placeholder="Search by name, email, or room number..."
                 value={searchTerm}
                 onChange={onSearchChange}
-                className="pl-10 border-gray-300"
+                className="pl-10 border-gray-200 focus:border-[#2E7D32] focus:ring-[#2E7D32] h-11"
                 type={undefined}
               />
             </div>
           </div>
-          <div className="w-full md:w-auto mr-2">
+          <div className="w-full md:w-48">
             <Select value={statusFilter} onValueChange={onStatusChange}>
-              <SelectTrigger className="border-gray-300">
-                <Filter className="h-4 w-4 mr-2" />
+              <SelectTrigger className="border-gray-200 focus:border-[#2E7D32] focus:ring-[#2E7D32] h-11">
+                <Filter className="h-4 w-4 mr-2 text-[#2E7D32]" />
                 <SelectValue placeholder="Filter by room" />
               </SelectTrigger>
               <SelectContent className={undefined}>
@@ -93,20 +93,28 @@ export default function DormerFilters({
           </div>
 
           {(searchTerm || statusFilter !== "All") && (
-            <div className="w-full md:w-26">
-              <Button
-                onClick={resetFilter}
-                className="mt-2 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white"
-                variant={undefined}
-                size={undefined}
-              >
-                Reset Filters
-              </Button>
-            </div>
+            <Button
+              onClick={resetFilter}
+              variant="outline"
+              className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 transition-all font-medium"
+              size={undefined}
+            >
+              <X className="h-4 w-4 mr-2" />
+              Reset
+            </Button>
           )}
         </div>
-        <div className="mt-4 text-sm text-gray-600">
-          Showing {count} dormers
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-sm text-gray-600 font-medium">
+            Showing <span className="text-[#2E7D32] font-bold">{count}</span> dormers
+          </div>
+          {(searchTerm || statusFilter !== "All") && (
+            <div className="text-xs text-gray-500">
+              {searchTerm && `Search: "${searchTerm}"`}
+              {searchTerm && statusFilter !== "All" && " • "}
+              {statusFilter !== "All" && `Room: ${statusFilter}`}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
