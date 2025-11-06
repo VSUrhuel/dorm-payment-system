@@ -13,14 +13,11 @@ export default function DormerHeader({ onAddDormer, onExport }: DormerHeaderProp
     <div className="space-y-2 justify-between flex flex-col md:flex-row md:items-end">
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2.5 rounded-xl bg-[#A5D6A7]">
-            <Users className="h-6 w-6 text-[#2E7D32]" />
-          </div>
           <h1 className="text-3xl md:text-4xl font-bold text-[#12372A] tracking-tight">
             Dormer Management
           </h1>
         </div>
-        <p className="text-sm md:text-base text-[#12372A] ml-14">
+        <p className="text-sm md:text-base text-[#12372A]">
           Generate bills and track payments for all residents
         </p>
       </div>
