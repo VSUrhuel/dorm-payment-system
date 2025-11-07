@@ -25,6 +25,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
@@ -72,6 +73,7 @@ export function AppSidebar() {
   const router = useRouter(); // 5. Initialize the router
   const [user, setUser] = useState(null);
   const [dormerData, setDormerData] = useState(null);
+  const { setOpenMobile } = useSidebar(); 
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -140,6 +142,7 @@ export function AppSidebar() {
                       <Link
                         href={item.url}
                         className="flex items-center gap-3 w-full"
+                        onClick={() => setOpenMobile(false)}
                       >
                         <item.icon className="h-5 w-5 transition-transform group-hover:scale-110" />
                         <span className="text-sm font-medium">{item.title}</span>
