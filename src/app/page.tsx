@@ -15,6 +15,8 @@ import {
   CreditCard,
   TrendingUp,
   CheckCircle,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import {
   Card,
@@ -34,6 +36,7 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [authActionLoading, setAuthActionLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<"admin" | "user">("user");
+  const [showPassword, setShowPassword] = useState(false);
 
   // Handler for the sign-in form submission
   const handleSignIn = async (event: React.FormEvent) => {
@@ -171,35 +174,32 @@ export default function AuthPage() {
 
       {/* Hero Section */}
       <main className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-8 sm:py-12 md:py-16 lg:py-20">
-          <div className="grid grid-cols-2 pt-10 lg:flex-row items-center lg:items-center justify-between gap-8 md:gap-10 lg:gap-16 xl:gap-20">
+          <div className="flex flex-col items-center justify-between gap-8 md:gap-10 lg:gap-16 xl:gap-20 lg:grid lg:grid-cols-2">
+
             {/* Left Column - Text Content */}
             <div className="flex-1 w-full h-[115%] lg:max-w-2xl space-y-3 md:space-y-4 lg:space-y-5 order-2 lg:order-1 text-center lg:text-right relative">
-              <div className="space-y-4 md:space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold text-[#12372A] leading-[0.95] tracking-tight">
-                  DormPay
-                </h1>
-                <div className="w-16 sm:w-20 h-1 sm:h-1.5 bg-[#12372A] rounded-full mx-auto lg:ml-auto lg:mr-0"></div>
-              </div>
-
-              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-[#12372A] leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
-                Your official portal for managing dorm payments.
-              </p>
-
-              {/* <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-normal text-gray-600 leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700">
-                Secure, simple, and accessible anytime.
-              </p> */}
-
-              <div className="hidden lg:block absolute bottom-0 left-15 w-64 xl:w-100 2xl:w-120 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-700">
+              <div className="block lg:absolute lg:bottom-0 lg:left-15 mb-6 lg:mb-0 w-48 sm:w-56 md:w-64 mx-auto lg:mx-0 lg:w-112 xl:w-115 2xl:w-120 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-700">
                 <img
                   src="/landing-vector1.png"
                   alt="DormPay illustration"
                   className="w-full h-auto object-contain drop-shadow-lg"
                 />
               </div>
+
+              <div className="space-y-4 md:space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold text-[#12372A] leading-[0.95] tracking-tight">
+                  DormPay
+                </h1>
+                <div className="w-16 sm:w-20 h-1 sm:h-1.5 bg-[#12372A] rounded-full mx-auto lg:ml-auto lg:mr-0"></div>
+              </div>  
+
+              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-[#12372A] leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
+                Your official portal for managing dorm payments.
+              </p>
             </div>  
 
             {/* Right Column - Sign-in Card */}
-            <div className="order-1 lg:order-2 w-full lg:w-auto flex justify-center items-start">
+            <div className="order-2 lg:order-2 w-full lg:w-auto flex justify-center items-start lg:flex-shrink-0">
               <Card className="w-full max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl rounded-2xl shadow-2xl border border-gray-200 bg-white backdrop-blur-sm animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
                   <CardHeader className="space-y-3">
                     <CardTitle className="text-2xl sm:text-3xl font-bold text-[#12372A] text-start">
@@ -282,15 +282,29 @@ export default function AuthPage() {
                             Forgot Password?
                           </button>
                         </div>
-                        <input
-                          type="password"
-                          id="password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12372A] focus:border-[#12372A] transition-all text-base"
-                          placeholder="••••••••"
-                        />
+                        <div className="relative">
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#12372A] focus:border-[#12372A] transition-all text-base"
+                            placeholder="••••••••"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#12372A] transition-colors focus:outline-none"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-5 w-5" />
+                            ) : (
+                              <Eye className="h-5 w-5" />
+                            )}
+                          </button>
+                        </div>
                       </div>
                       <Button
                       type="submit"
@@ -308,22 +322,13 @@ export default function AuthPage() {
                     </form>
 
                     <p className="text-xs text-gray-500 text-center pt-2">
-                      Developed by Laurente, J.R. | Mabolo 2025
+                      Developed by Laurente, J.R. & Dejos, P. | Department of Computer Science and Technology 2025
                     </p>
                   </CardContent>
                 </Card>
             </div>
           </div>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white mt-12 animate-in fade-in duration-700 delay-1000">
-        <div className="container mx-auto px-6 py-6">
-          <p className="text-sm text-gray-500 text-center">
-            Developed by Laurente, J.R. | Mabolo 2025
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

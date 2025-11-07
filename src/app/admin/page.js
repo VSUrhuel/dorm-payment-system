@@ -647,12 +647,22 @@ export default function Dashboard() {
       {/* Recent Activity */}
       <Card className="border border-gray-200 shadow-md bg-gradient-to-br from-white to-gray-50">
         <CardHeader className="pb-4 border-b border-gray-100">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-xl md:text-2xl font-bold text-[#12372A]">
+              <CardTitle className="text-lg sm:text-xl md:text-2xl font-bold text-[#12372A]">
                 Recent Transactions
               </CardTitle>
-              <p className="text-sm text-gray-600 mt-1">Latest payment and expense activities</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Latest payment and expense activities</p>
+            </div>
+            <div className="flex md:hidden items-center gap-3 text-xs text-gray-500">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#A5D6A7]"></div>
+                <span>Payments</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-100"></div>
+                <span>Expenses</span>
+              </div>
             </div>
             <div className="hidden md:flex items-center gap-3 text-xs text-gray-500">
               <div className="flex items-center gap-1.5">
@@ -667,7 +677,7 @@ export default function Dashboard() {
           </div>
         </CardHeader>
         <CardContent className="pt-4">
-          <div className="space-y-2">
+          <div className="space-y-2 sm:space-y-3">
             {recentTransactions.length === 0 ? (
               <div className="text-center py-8">
                 <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 mb-3">
@@ -680,12 +690,12 @@ export default function Dashboard() {
               recentTransactions.map((activity, index) => (
                 <div
                   key={activity.id}
-                  className="group relative flex items-center justify-between p-3 rounded-lg border border-gray-100 bg-white hover:shadow-md hover:border-[#2E7D32] transition-all duration-200"
+                  className="group relative flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg border border-gray-100 bg-white hover:shadow-md hover:border-[#2E7D32] transition-all duration-200 gap-3 sm:gap-0"
                 >
                   {/* left side - icon and description */}
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <div
-                      className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200 ${
+                      className={`flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-lg flex items-center justify-center transition-all duration-200 ${
                         activity.type === "payment"
                           ? "bg-[#A5D6A7] group-hover:bg-[#2E7D32]"
                           : "bg-red-100 group-hover:bg-red-200"
@@ -693,23 +703,23 @@ export default function Dashboard() {
                     >
                       {activity.type === "payment" ? (
                         <TrendingUp
-                          className={`h-5 w-5 transition-colors ${
+                          className={`h-5 w-5 sm:h-6 sm:w-6 transition-colors ${
                             activity.type === "payment"
                               ? "text-[#2E7D32] group-hover:text-white"
                               : "text-red-600"
                           }`}
                         />
                       ) : (
-                        <TrendingDown className="h-5 w-5 text-red-600" />
+                        <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
                       )}
                     </div>
 
                     {/* description and date */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-[#333333] line-clamp-1 group-hover:text-[#12372A] transition-colors">
+                      <p className="text-sm sm:text-base font-semibold text-[#333333] line-clamp-2 sm:line-clamp-1 group-hover:text-[#12372A] transition-colors">
                         {activity.description}
                       </p>
-                      <div className="flex items-center gap-2 mt-0.5">
+                      <div className="flex items-center gap-2 mt-1">
                         <span className="text-xs text-gray-500">
                           {new Date(activity.date).toLocaleDateString("en-US", {
                             month: "short",
@@ -717,10 +727,10 @@ export default function Dashboard() {
                             year: "numeric",
                           })}
                         </span>
-                        <span className="text-gray-300">•</span>
+                        <span className="text-gray-300 hidden sm:inline">•</span>
                         <Badge
                           variant="outline"
-                          className={`text-xs px-1.5 py-0 h-5 border-0 ${
+                          className={`text-xs px-2 py-0.5 h-5 border-0 hidden sm:inline-flex ${
                             activity.type === "payment"
                               ? "bg-[#A5D6A7]/20 text-[#2E7D32]"
                               : "bg-red-50 text-red-600"
@@ -733,9 +743,19 @@ export default function Dashboard() {
                   </div>
 
                   {/* right side - amount */}
-                  <div className="flex-shrink-0 ml-3">
+                  <div className="flex-shrink-0 sm:ml-3 flex items-center justify-between sm:justify-end gap-2">
+                    <Badge
+                      variant="outline"
+                      className={`text-xs px-2 py-0.5 h-5 border-0 inline-flex sm:hidden ${
+                        activity.type === "payment"
+                          ? "bg-[#A5D6A7]/20 text-[#2E7D32]"
+                          : "bg-red-50 text-red-600"
+                      }`}
+                    >
+                      {activity.type === "payment" ? "Payment" : "Expense"}
+                    </Badge>
                     <div
-                      className={`text-right font-bold text-base ${
+                      className={`text-right font-bold text-base sm:text-lg ${
                         activity.type === "payment"
                           ? "text-[#2E7D32]"
                           : "text-red-600"
