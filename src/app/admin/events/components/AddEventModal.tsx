@@ -147,17 +147,17 @@ export default function AddEventModal({
             variant="outline"
             onClick={handleClose}
             disabled={isSubmitting}
-            className={undefined}
-            size={undefined}
+            className="border-gray-300 hover:bg-gray-50"
+            size="default"
           >
             Cancel
           </Button>
           <Button
-            className="bg-green-600 hover:bg-green-700 text-white"
+            className="bg-[#2E7D32] hover:bg-[#A5D6A7] text-white font-semibold transition-all"
             onClick={handleSave}
             disabled={isSubmitting}
-            variant={undefined}
-            size={undefined}
+            variant="default"
+            size="default"
           >
             {isSubmitting ? "Saving..." : "Save Event"}
           </Button>

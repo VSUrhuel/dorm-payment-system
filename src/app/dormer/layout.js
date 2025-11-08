@@ -18,12 +18,21 @@ export default function RootLayout({ children }) {
         <AppSidebar />
         <SidebarInset>
           {/* Mobile Header with Sidebar Trigger */}
-          <header className="md:hidden flex items-center p-4 border-b sticky top-0 bg-white z-10">
-            <SidebarTrigger />
-            <div className="flex items-center gap-2 mx-auto">
-              <img src="/profile.ico" alt="Logo" width={32} height={32} />
-              <h1 className="text-lg font-bold text-gray-900">DormPay</h1>
+          <header className="md:hidden flex items-center justify-between h-[74px] bg-[#12372A] shadow-md px-4 sticky top-0 z-10">
+            <SidebarTrigger className="text-white hover:bg-[#1c4f3d] hover:text-white" />
+            <div className="flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
+              <img
+                src="/profile.ico"
+                alt="Logo"
+                width={32}
+                height={32}
+                className="rounded-lg"
+              />
+              <h1 className="text-xl font-bold text-white tracking-tight">
+                DormPay
+              </h1>
             </div>
+            <div className="w-10"></div> {/* for centering */}
           </header>
           <main className="flex-1 overflow-auto">{children}</main>
         </SidebarInset>

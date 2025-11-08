@@ -64,27 +64,38 @@ function SkeletonCard() {
 
 function PayableItem({ payable, onEdit }) {
   return (
-    <div className="group relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
-      <div className="flex items-start justify-between">
-        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          {payable.name || "Untitled Payable"}
-        </h3>
+    <div className="group relative rounded-xl border-2 border-gray-100 bg-gradient-to-br from-white to-[#A5D6A7]/5 p-5 shadow-sm transition-all hover:scale-[1.02]">
+      {/* accent bar */}
+      <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#2E7D32] to-[#A5D6A7] rounded-l-xl"></div>
+      
+      <div className="flex items-start justify-between pl-3">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="p-2 rounded-lg bg-[#A5D6A7]/30">
+              <Wallet className="h-4 w-4 text-[#2E7D32]" />
+            </div>
+            <h3 className="text-sm font-bold text-[#333333] group-hover:text-[#2E7D32] transition-colors">
+              {payable.name || "Untitled Payable"}
+            </h3>
+          </div>
+          <p className="text-3xl font-extrabold text-[#2E7D32] mb-2 tracking-tight">
+            ₱{payable.amount.toFixed(2)}
+          </p>
+          <p className="text-xs text-gray-600 leading-relaxed">
+            {payable.description}
+          </p>
+        </div>
+
         {/* Edit button appears on hover */}
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-2 right-2 h-7 w-7 opacity-0 transition-opacity group-hover:opacity-100"
+          className="h-9 w-9 opacity-0 transition-all group-hover:opacity-100 hover:bg-[#2E7D32] hover:text-white -mt-1 -mr-1"
           onClick={() => onEdit(payable)}
         >
           <Edit className="h-4 w-4" />
         </Button>
       </div>
-      <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
-        ₱{payable.amount.toFixed(2)}
-      </p>
-      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-        {payable.description}
-      </p>
     </div>
   );
 }
@@ -521,21 +532,21 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
+    <div className="min-h-screen bg-[#f0f0f0] p-4 md:p-6 lg:p-8 space-y-6">
       {/* Header */}
-      <div className="space-y-1 justify-between flex flex-col md:flex-row">
+      <div className="space-y-2 justify-between flex flex-col md:flex-row md:items-end">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl md:text-4xl font-bold text-[#12372A] tracking-tight">
             Dashboard Overview
           </h1>
-          <p className="text-sm md:text-base text-gray-500 dark:text-gray-400">
+          <p className="text-sm md:text-base text-[#12372A] mt-1">
             Real-time financial status of your dormitory
           </p>
         </div>
         <div className="flex gap-2">
           <Button
             variant="outline"
-            className="border-gray-200 hover:bg-gray-50"
+            className="border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white transition-all"
             onClick={handleEmailReport}
           >
             <Mail className="h-4 w-4 mr-2" />
@@ -545,43 +556,43 @@ export default function Dashboard() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {kpiData.map((kpi, index) => {
           const Icon = kpi.icon;
           return (
             <Card
               key={index}
-              className="border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow"
+              className="border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 bg-white"
             >
-              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
+                <CardTitle className="text-sm font-semibold text-gray-600">
                   {kpi.title}
                 </CardTitle>
                 <div
-                  className={`p-2 rounded-lg ${
+                  className={`p-2.5 rounded-xl ${
                     kpi.trend === "up"
-                      ? "bg-green-50 dark:bg-green-900/30"
+                      ? "bg-[#A5D6A7]"
                       : kpi.trend === "down"
-                      ? "bg-red-50 dark:bg-red-900/30"
-                      : "bg-gray-50 dark:bg-gray-800"
+                      ? "bg-red-100"
+                      : "bg-[#E0E0E0]"
                   }`}
                 >
                   <Icon
-                    className={`h-4 w-4 ${
+                    className={`h-5 w-5 ${
                       kpi.trend === "up"
-                        ? "text-green-600 dark:text-green-400"
+                        ? "text-[#2E7D32]"
                         : kpi.trend === "down"
-                        ? "text-red-600 dark:text-red-400"
-                        : "text-gray-600 dark:text-gray-400"
+                        ? "text-red-600"
+                        : "text-gray-600"
                     }`}
                   />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                <div className="text-2xl md:text-3xl font-bold text-[#333333]">
                   {kpi.value}
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-xs md:text-sm text-gray-500 mt-1.5">
                   {kpi.description}
                 </p>
               </CardContent>
@@ -590,27 +601,31 @@ export default function Dashboard() {
         })}
       </div>
 
-      <Card className="border border-gray-200 dark:border-gray-700">
-        <CardHeader className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+      <Card className="border-2 border-gray-100 shadow-lg bg-gradient-to-br from-white via-[#A5D6A7]/5 to-white overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#A5D6A7]/10 rounded-full blur-3xl -z-0"></div>
+        
+        <CardHeader className="flex flex-col justify-between gap-4 md:flex-row md:items-center pb-4 relative z-10">
           <div>
-            <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white md:text-xl">
-              Regular Payables
-            </CardTitle>
-            <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex items-center gap-3 mb-2">
+              <CardTitle className="text-xl font-bold text-[#12372A] md:text-2xl">
+                Regular Payables
+              </CardTitle>
+            </div>
+            <CardDescription className="text-sm text-gray-600">
               Recurring monthly expenses
             </CardDescription>
           </div>
           <Button
             variant="outline"
             onClick={() => handleAddPayable()}
-            className="gap-2 bg-green-50 hover:bg-green-100 dark:bg-green-900/30 dark:hover:bg-green-800/50"
+            className="gap-2 bg-[#2E7D32] text-white hover:bg-[#54ba59] hover:text-white dark:bg-green-900/30 dark:hover:bg-green-800/50"
           >
-            <PlusIcon className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <PlusIcon className="h-4 w-4" />
             Add Payable
           </Button>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 ">
+        <CardContent className="relative z-10">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {payables.map((payable) => (
               <PayableItem
                 key={payable.id}
@@ -630,55 +645,132 @@ export default function Dashboard() {
       />
 
       {/* Recent Activity */}
-      <Card className="border border-gray-100 dark:border-gray-800 shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white">
-            Recent Transactions
-          </CardTitle>
+      <Card className="border border-gray-200 shadow-md bg-gradient-to-br from-white to-gray-50">
+        <CardHeader className="pb-4 border-b border-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-lg sm:text-xl md:text-2xl font-bold text-[#12372A]">
+                Recent Transactions
+              </CardTitle>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Latest payment and expense activities</p>
+            </div>
+            <div className="flex md:hidden items-center gap-3 text-xs text-gray-500">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#A5D6A7]"></div>
+                <span>Payments</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-100"></div>
+                <span>Expenses</span>
+              </div>
+            </div>
+            <div className="hidden md:flex items-center gap-3 text-xs text-gray-500">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#A5D6A7]"></div>
+                <span>Payments</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-100"></div>
+                <span>Expenses</span>
+              </div>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-[120px]">Date</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {/* ✨ Renders the new dynamic list */}
-                {recentTransactions.map((activity) => (
-                  <TableRow
-                    key={activity.id} // Use unique ID from Firestore doc
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                  >
-                    <TableCell className="font-medium">
-                      {new Date(activity.date).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
+        <CardContent className="pt-4">
+          <div className="space-y-2 sm:space-y-3">
+            {recentTransactions.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 mb-3">
+                  <TrendingUp className="h-7 w-7 text-gray-400" />
+                </div>
+                <p className="text-gray-500 font-medium text-sm">No transactions yet</p>
+                <p className="text-xs text-gray-400 mt-1">Transactions will appear here once recorded</p>
+              </div>
+            ) : (
+              recentTransactions.map((activity, index) => (
+                <div
+                  key={activity.id}
+                  className="group relative flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg border border-gray-100 bg-white hover:shadow-md hover:border-[#2E7D32] transition-all duration-200 gap-3 sm:gap-0"
+                >
+                  {/* left side - icon and description */}
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div
+                      className={`flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-lg flex items-center justify-center transition-all duration-200 ${
+                        activity.type === "payment"
+                          ? "bg-[#A5D6A7] group-hover:bg-[#2E7D32]"
+                          : "bg-red-100 group-hover:bg-red-200"
+                      }`}
+                    >
+                      {activity.type === "payment" ? (
+                        <TrendingUp
+                          className={`h-5 w-5 sm:h-6 sm:w-6 transition-colors ${
+                            activity.type === "payment"
+                              ? "text-[#2E7D32] group-hover:text-white"
+                              : "text-red-600"
+                          }`}
+                        />
+                      ) : (
+                        <TrendingDown className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
+                      )}
+                    </div>
+
+                    {/* description and date */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm sm:text-base font-semibold text-[#333333] line-clamp-2 sm:line-clamp-1 group-hover:text-[#12372A] transition-colors">
+                        {activity.description}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-gray-500">
+                          {new Date(activity.date).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </span>
+                        <span className="text-gray-300 hidden sm:inline">•</span>
+                        <Badge
+                          variant="outline"
+                          className={`text-xs px-2 py-0.5 h-5 border-0 hidden sm:inline-flex ${
+                            activity.type === "payment"
+                              ? "bg-[#A5D6A7]/20 text-[#2E7D32]"
+                              : "bg-red-50 text-red-600"
+                          }`}
+                        >
+                          {activity.type === "payment" ? "Payment" : "Expense"}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* right side - amount */}
+                  <div className="flex-shrink-0 sm:ml-3 flex items-center justify-between sm:justify-end gap-2">
+                    <Badge
+                      variant="outline"
+                      className={`text-xs px-2 py-0.5 h-5 border-0 inline-flex sm:hidden ${
+                        activity.type === "payment"
+                          ? "bg-[#A5D6A7]/20 text-[#2E7D32]"
+                          : "bg-red-50 text-red-600"
+                      }`}
+                    >
+                      {activity.type === "payment" ? "Payment" : "Expense"}
+                    </Badge>
+                    <div
+                      className={`text-right font-bold text-base sm:text-lg ${
+                        activity.type === "payment"
+                          ? "text-[#2E7D32]"
+                          : "text-red-600"
+                      }`}
+                    >
+                      {activity.type === "payment" ? "+" : "-"}₱
+                      {activity.amount.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
                       })}
-                    </TableCell>
-                    <TableCell>{activity.description}</TableCell>
-                    <TableCell className="text-right">
-                      <Badge
-                        variant="outline"
-                        className={`border-0 font-medium ${
-                          activity.type === "payment"
-                            ? "bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                            : "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                        }`}
-                      >
-                        {/* Dynamically add '+' or '-' sign */}
-                        {activity.type === "payment" ? "+" : "-"}₱
-                        {activity.amount.toFixed(2)}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </CardContent>
       </Card>

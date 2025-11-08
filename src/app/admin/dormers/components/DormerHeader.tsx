@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "../../../../components/ui/button";
-import { FileDown, Plus } from "lucide-react";
+import { FileDown, Plus, Users } from "lucide-react";
 
 interface DormerHeaderProps {
   onAddDormer: () => void;
@@ -10,18 +10,20 @@ interface DormerHeaderProps {
 
 export default function DormerHeader({ onAddDormer, onExport }: DormerHeaderProps) {
   return (
-    <div className="flex flex-col md:flex-row justify-between gap-4">
-      <div className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-          Dormer Management
-        </h1>
-        <p className="text-sm text-gray-600">
+    <div className="space-y-2 justify-between flex flex-col md:flex-row md:items-end">
+      <div>
+        <div className="flex items-center gap-3 mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-[#12372A] tracking-tight">
+            Dormer Management
+          </h1>
+        </div>
+        <p className="text-sm md:text-base text-[#12372A]">
           Generate bills and track payments for all residents
         </p>
       </div>
       <div className="flex gap-2">
         <Button
-          className="bg-green-600 hover:bg-green-700 text-white"
+          className="bg-[#2E7D32] hover:bg-[#12372A] text-white transition-all shadow-md hover:shadow-lg font-medium"
           onClick={onAddDormer}
           variant={undefined}
           size={undefined}
@@ -32,7 +34,7 @@ export default function DormerHeader({ onAddDormer, onExport }: DormerHeaderProp
         <Button
           variant="outline"
           onClick={onExport}
-          className="border-gray-200 hover:bg-gray-50"
+          className="border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white transition-all font-medium"
           size={undefined}
         >
           <FileDown className="h-4 w-4 mr-2" />
