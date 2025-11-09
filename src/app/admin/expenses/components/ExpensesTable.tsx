@@ -59,8 +59,8 @@ export default function ExpensesTable({
 
   return (
     <>
-      <Card className="border-2 border-gray-100 shadow-md bg-white">
-        <CardHeader className="border-b border-gray-100 pb-4">
+      <Card className="border-2 border-gray-100 shadow-md bg-white gap-0">
+        <CardHeader className="border-b border-gray-100 py-0">
           <CardTitle className="text-xl md:text-2xl font-bold text-[#12372A]">
             Expense Records
           </CardTitle>
@@ -68,7 +68,14 @@ export default function ExpensesTable({
         </CardHeader>
         <CardContent className="p-0">
           {expenses.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4">              
+            <div className="flex flex-col items-center justify-center py-16 px-4">
+              <div className="relative mb-0">
+                <div className="absolute inset-0 bg-red-100/50 rounded-full blur-2xl"></div>
+                <div className="relative p-6 rounded-full bg-red-600">
+                  <TrendingDown className="h-12 w-12 text-white" />
+                </div>
+              </div>
+              
               <h3 className="text-xl font-bold text-[#333333] mb-2">
                 No expenses recorded
               </h3>
@@ -78,7 +85,7 @@ export default function ExpensesTable({
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto px-5">
               <Table className={undefined}>
                 <TableHeader className={undefined}>
                   <TableRow className="hover:bg-transparent border-b border-gray-100">
@@ -110,7 +117,7 @@ export default function ExpensesTable({
                         </Badge>
                       </TableCell>
                       <TableCell className={undefined}>
-                        <div className="font-bold text-red-600 text-lg">
+                        <div className="font-bold text-red-600 text-md">
                           ₱{formatAmount(expense.amount)}
                         </div>
                       </TableCell>
