@@ -40,9 +40,9 @@ export default function DormersTable({
         </CardTitle>
         <p className="text-sm text-gray-600 mt-1">Complete list of all registered dormers</p>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="px-5 py-0">
         {dormers.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4">
+          <div className="flex flex-col items-center justify-center py-10 px-4">
             <div className="relative mb-6">
               <div className="absolute inset-0 bg-[#A5D6A7]/20 rounded-full blur-2xl"></div>
               <div className="relative p-6 rounded-full bg-[#2E7D32]">
