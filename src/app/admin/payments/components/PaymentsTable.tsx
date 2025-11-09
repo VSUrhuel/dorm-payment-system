@@ -45,8 +45,8 @@ export default function billsTable({
   };
 
   return (
-    <Card className="border-2 border-gray-100 shadow-md bg-white">
-      <CardHeader className="border-b border-gray-100 pb-4">
+    <Card className="border-2 border-gray-100 shadow-md bg-white gap-0">
+      <CardHeader className="border-b pt-0 border-gray-100 pb-0">
         <CardTitle className="text-xl md:text-2xl font-bold text-[#12372A]">
           Bill Records
         </CardTitle>
@@ -71,7 +71,7 @@ export default function billsTable({
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto px-5">
             <Table className={undefined}>
               <TableHeader className={undefined}>
                 <TableRow className="hover:bg-transparent border-b border-gray-100">

@@ -73,7 +73,7 @@ export default function PaymentsContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f0f0] p-4 md:p-6 lg:p-8 space-y-6">
+    <div className="min-h-screen bg-[#f0f0f0] p-3 sm:p-4 md:p-6 lg:p-8 space-y-4 sm:space-y-5 md:space-y-6">
       <PaymentHeader onExport={() => handleExport(filteredBills)} />
 
       <SummaryCards
@@ -118,17 +118,17 @@ export default function PaymentsContent() {
         }}
       />
 
-      <div className="flex items-center justify-between py-4">
-        <span className="text-sm text-gray-600 font-medium">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 py-3 sm:py-4">
+        <span className="text-xs sm:text-sm text-gray-600 font-medium">
           Page {currentPage} of {totalPages || 1}
         </span>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={handlePreviousPage}
             disabled={currentPage === 1}
-            className="border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="flex-1 sm:flex-none border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all text-xs sm:text-sm"
           >
             Previous
           </Button>
@@ -137,7 +137,7 @@ export default function PaymentsContent() {
             size="sm"
             onClick={handleNextPage}
             disabled={currentPage >= totalPages}
-            className="border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="flex-1 sm:flex-none border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all text-xs sm:text-sm"
           >
             Next
           </Button>
