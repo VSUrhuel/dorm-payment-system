@@ -77,7 +77,7 @@ export default function EventDormersTable({
 
   return (
     <Card className="border-2 border-gray-100 shadow-md bg-white">
-      <CardHeader className="border-b border-gray-100 pb-4">
+      <CardHeader className="border-b border-gray-100">
         <div>
           <CardTitle className="text-xl md:text-2xl font-bold text-[#12372A]">
             Dormer Payment Status
