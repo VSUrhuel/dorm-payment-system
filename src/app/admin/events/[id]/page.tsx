@@ -152,24 +152,24 @@ export default function EventDetailsContent() {
       </div>
 
       <div className="bg-white rounded-lg border-2 border-gray-100 shadow-lg p-4 sm:p-6 md:p-8 mb-4 sm:mb-6">
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 sm:gap-6">
-          <div className="flex-1">
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-0">
+          <div className="flex-1 min-w-0">
             <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#12372A] flex-1 line-clamp-2">{event.name}</h1>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#12372A] flex-1 min-w-0 line-clamp-2">{event.name}</h1>
               <Badge
                 variant={event.status === "Active" ? "default" : "secondary"}
                 className={
                   event.status === "Active"
-                    ? "bg-[#A5D6A7] text-[#2E7D32] hover:bg-[#A5D6A7] font-semibold px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm flex-shrink-0"
-                    : "bg-gray-100 text-gray-800 hover:bg-gray-100 font-semibold px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm flex-shrink-0"
+                    ? "bg-[#A5D6A7] text-[#2E7D32] hover:bg-[#A5D6A7] font-semibold px-2 sm:px-3 py-1 text-xs sm:text-sm flex-shrink-0 self-center"
+                    : "bg-gray-100 text-gray-800 hover:bg-gray-100 font-semibold px-2 sm:px-3 py-1 text-xs sm:text-sm flex-shrink-0 self-center"
                 }
               >
                 {event.status}
               </Badge>
             </div>
-            <p className="text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed">{event.description}</p>
+            <p className="text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed mb-3">{event.description}</p>
           </div>
-          <div className="lg:ml-6">
+          <div className="lg:ml-5">
             <Button
               className="bg-[#2E7D32] hover:bg-[#A5D6A7] text-white font-semibold shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full lg:w-auto text-xs sm:text-sm"
               onClick={remindPayable}
@@ -191,48 +191,48 @@ export default function EventDetailsContent() {
       <div className="hidden lg:grid lg:grid-cols-4 gap-4 md:gap-6">
         <Card className="border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 bg-white">
           <CardHeader className="flex flex-row items-center justify-between pb-2 sm:pb-3 space-y-0">
-            <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600">
+            <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600 truncate pr-2">
               Amount Due
             </CardTitle>
-            <div className="p-2 sm:p-2.5 rounded-xl bg-[#E0E0E0]">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-[#E0E0E0] flex-shrink-0">
               <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
             </div>
           </CardHeader>
           <CardContent className={undefined}>
-            <p className="text-xl sm:text-2xl md:text-3xl font-bold text-[#333333]">₱{event.amountDue.toFixed(2)}</p>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-1.5">per dormer</p>
+            <p className="text-lg sm:text-xl md:text-2xl font-bold text-[#333333]">₱{event.amountDue.toFixed(2)}</p>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-1.5 truncate">per dormer</p>
           </CardContent>
         </Card>
 
         <Card className="border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 bg-white">
           <CardHeader className="flex flex-row items-center justify-between pb-2 sm:pb-3 space-y-0">
-            <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600">
+            <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600 truncate pr-2">
               Participants
             </CardTitle>
-            <div className="p-2 sm:p-2.5 rounded-xl bg-[#E0E0E0]">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-[#E0E0E0] flex-shrink-0">
               <Users className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
             </div>
           </CardHeader>
           <CardContent className={undefined}>
-            <p className="text-xl sm:text-2xl md:text-3xl font-bold text-[#333333]">{stats.totalDormers}</p>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-1.5">Total dormers assigned</p>
+            <p className="text-lg sm:text-xl md:text-2xl font-bold text-[#333333]">{stats.totalDormers}</p>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-1.5 truncate">Total dormers assigned</p>
           </CardContent>
         </Card>
 
         <Card className="border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 bg-white">
           <CardHeader className="flex flex-row items-center justify-between pb-2 sm:pb-3 space-y-0">
-            <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600">
+            <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600 truncate pr-2">
               Total Collected
             </CardTitle>
-            <div className="p-2 sm:p-2.5 rounded-xl bg-[#A5D6A7]">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-[#A5D6A7] flex-shrink-0">
               <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-[#2E7D32]" />
             </div>
           </CardHeader>
           <CardContent className={undefined}>
-            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-[#2E7D32]">
+            <div className="text-lg sm:text-xl md:text-2xl font-bold text-[#2E7D32]">
               ₱{stats.totalCollected.toFixed(2)}
             </div>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-1.5">
+            <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-1.5 truncate">
               {Math.round(stats.collectionProgress)}% collected
             </p>
           </CardContent>
@@ -240,10 +240,10 @@ export default function EventDetailsContent() {
 
         <Card className="border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 bg-white">
           <CardHeader className="flex flex-row items-center justify-between pb-2 sm:pb-3 space-y-0">
-            <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600">
+            <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600 truncate pr-2">
               Due Date
             </CardTitle>
-            <div className="p-2 sm:p-2.5 rounded-xl bg-red-100">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-red-100 flex-shrink-0">
               <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-red-600" />
             </div>
           </CardHeader>
@@ -251,7 +251,7 @@ export default function EventDetailsContent() {
             <p className="text-base sm:text-lg md:text-xl font-bold text-[#333333]">
               {new Date(event.dueDate).toLocaleDateString()}
             </p>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-1.5">Payment deadline</p>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-1.5 truncate">Payment deadline</p>
           </CardContent>
         </Card>
       </div>
@@ -263,7 +263,7 @@ export default function EventDetailsContent() {
           return (
             <Card key={index} className="border border-gray-200 shadow-md bg-white">
               <CardHeader className="flex flex-row items-center justify-between pb-2 sm:pb-3 space-y-0">
-                <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600">
+                <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600 truncate pr-2">
                   {item.name}
                 </CardTitle>
                 <div
@@ -287,14 +287,14 @@ export default function EventDetailsContent() {
                 </div>
               </CardHeader>
               <CardContent className={undefined}>
-                <div className={`text-xl sm:text-2xl md:text-3xl font-bold ${
+                <div className={`text-lg sm:text-xl md:text-2xl font-bold ${
                   item.name === "Total Collected" ? "text-[#2E7D32]" : "text-[#333333]"
                 }`}>
                   {item.name === "Amount Due" || item.name === "Total Collected" 
                     ? `₱${item.value}` 
                     : item.value}
                 </div>
-                <p className="text-xs md:text-sm text-gray-500 mt-1 sm:mt-1.5">
+                <p className="text-xs md:text-sm text-gray-500 mt-1 sm:mt-1.5 truncate">
                   {item.description}
                 </p>
               </CardContent>

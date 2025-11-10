@@ -582,11 +582,11 @@ export default function Dashboard() {
                 className="border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 bg-white"
               >
                 <CardHeader className="flex flex-row items-center justify-between pb-2 sm:pb-3 space-y-0">
-                  <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600">
+                  <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600 truncate pr-2">
                     {kpi.title}
                   </CardTitle>
                   <div
-                    className={`p-2 sm:p-2.5 rounded-xl ${
+                    className={`p-2 sm:p-2.5 rounded-xl flex-shrink-0 ${
                       kpi.trend === "up"
                         ? "bg-[#A5D6A7]"
                         : kpi.trend === "down"
@@ -601,15 +601,15 @@ export default function Dashboard() {
                           : kpi.trend === "down"
                           ? "text-red-600"
                           : "text-gray-600"
-                      }`}
-                    />
+                    }`}
+                  />
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-xl sm:text-2xl md:text-3xl font-bold text-[#333333]">
+                  <div className="text-lg sm:text-xl md:text-2xl font-bold text-[#333333]">
                     {kpi.value}
                   </div>
-                  <p className="text-xs md:text-sm text-gray-500 mt-1 sm:mt-1.5">
+                  <p className="text-xs md:text-sm text-gray-500 mt-1 sm:mt-1.5 truncate">
                     {kpi.description}
                   </p>
                 </CardContent>
@@ -627,7 +627,7 @@ export default function Dashboard() {
                 className="border border-gray-200 shadow-md bg-white"
               >
                 <CardHeader className="flex flex-row items-center justify-between pb-2 sm:pb-3 space-y-0">
-                  <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600">
+                  <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600 truncate pr-2">
                     {kpi.title}
                   </CardTitle>
                   <div
@@ -651,10 +651,10 @@ export default function Dashboard() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-xl sm:text-2xl md:text-3xl font-bold text-[#333333]">
+                  <div className="text-lg sm:text-xl md:text-2xl font-bold text-[#333333]">
                     {kpi.value}
                   </div>
-                  <p className="text-xs md:text-sm text-gray-500 mt-1 sm:mt-1.5">
+                  <p className="text-xs md:text-sm text-gray-500 mt-1 sm:mt-1.5 truncate">
                     {kpi.description}
                   </p>
                 </CardContent>
@@ -670,7 +670,7 @@ export default function Dashboard() {
         <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3 pb-3 sm:pb-4 relative z-10">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 sm:mb-1.5">
-              <CardTitle className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-[#12372A]">
+              <CardTitle className="text-sm sm:text-base md:text-lg font-bold text-[#12372A] truncate">
                 Regular Payables
               </CardTitle>
               {payables.length > 0 && (
@@ -682,17 +682,17 @@ export default function Dashboard() {
                 </Badge>
               )}
             </div>
-            <CardDescription className="text-xs sm:text-sm text-gray-600">
+            <CardDescription className="text-xs sm:text-sm text-gray-600 truncate">
               Recurring monthly expenses
             </CardDescription>
           </div>
           <Button
             variant="outline"
             onClick={() => handleAddPayable()}
-            className="gap-2 bg-[#2E7D32] text-white hover:bg-[#54ba59] hover:text-white w-full sm:w-auto text-sm touch-manipulation active:scale-95 flex-shrink-0"
+            className="gap-2 bg-[#2E7D32] text-white hover:bg-[#54ba59] hover:text-white w-full sm:w-auto text-xs sm:text-sm touch-manipulation active:scale-95 flex-shrink-0"
           >
-            <PlusIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            <span>Add Payable</span>
+            <PlusIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+            <span className="truncate">Add Payable</span>
           </Button>
         </CardHeader>
         <CardContent className="relative z-10">
@@ -701,20 +701,20 @@ export default function Dashboard() {
               <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#E8F5E9] mb-3 sm:mb-4">
                 <Wallet className="h-7 w-7 sm:h-8 sm:w-8 text-[#2E7D32]" />
               </div>
-              <h3 className="text-sm sm:text-base md:text-lg font-semibold text-[#12372A] mb-1.5 sm:mb-2">
+              <h3 className="text-sm sm:text-base font-semibold text-[#12372A] mb-1.5 sm:mb-2">
                 No Payables Yet
               </h3>
-              <p className="text-xs sm:text-sm text-slate-500 mb-3 sm:mb-4">
+              <p className="text-xs sm:text-sm text-slate-500 mb-3 sm:mb-4 truncate">
                 Start by adding your first recurring expense
               </p>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => handleAddPayable()}
-                className="gap-2 bg-[#2E7D32] text-white hover:bg-[#54ba59] hover:text-white text-sm"
+                className="gap-2 bg-[#2E7D32] text-white hover:bg-[#54ba59] hover:text-white text-xs sm:text-sm"
               >
                 <PlusIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                Add First Payable
+                <span className="truncate">Add First Payable</span>
               </Button>
             </div>
           ) : (
@@ -744,10 +744,10 @@ export default function Dashboard() {
           <div className="flex flex-col gap-2">
             <div className="flex items-start justify-between gap-2 sm:gap-3">
               <div className="flex-1 min-w-0">
-                <CardTitle className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-[#12372A]">
+                <CardTitle className="text-sm sm:text-base md:text-lg font-bold text-[#12372A] truncate">
                   Recent Transactions
                 </CardTitle>
-                <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
+                <p className="text-xs sm:text-sm text-gray-600 mt-0.5 truncate">
                   Latest payment and expense activities
                 </p>
               </div>

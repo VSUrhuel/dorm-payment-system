@@ -51,11 +51,11 @@ export default function SummaryExpense({
           return (
             <Card key={index} className="border border-gray-200 shadow-md bg-white">
               <CardHeader className="flex flex-row items-center justify-between pb-2 sm:pb-3 space-y-0">
-                <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600">
+                <CardTitle className="text-xs sm:text-sm font-semibold text-gray-600 truncate pr-2">
                   {kpi.title}
                 </CardTitle>
                 <div
-                  className={`p-2 sm:p-2.5 rounded-xl ${
+                  className={`p-2 sm:p-2.5 rounded-xl flex-shrink-0 ${
                     kpi.trend === "up"
                       ? "bg-[#A5D6A7]"
                       : kpi.trend === "down"
@@ -75,10 +75,10 @@ export default function SummaryExpense({
                 </div>
               </CardHeader>
               <CardContent className={undefined}>
-                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-[#333333]">
+                <div className="text-lg sm:text-xl md:text-2xl font-bold text-[#333333]">
                   {kpi.value}
                 </div>
-                <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-1.5">
+                <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-1.5 truncate">
                   {kpi.description}
                 </p>
               </CardContent>
@@ -97,11 +97,11 @@ export default function SummaryExpense({
               className="border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 bg-white"
             >
               <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
-                <CardTitle className="text-sm font-semibold text-gray-600">
+                <CardTitle className="text-sm font-semibold text-gray-600 truncate pr-2">
                   {kpi.title}
                 </CardTitle>
                 <div
-                  className={`p-2.5 rounded-xl ${
+                  className={`p-2.5 rounded-xl flex-shrink-0 ${
                     kpi.trend === "up"
                       ? "bg-[#A5D6A7]"
                       : kpi.trend === "down"
@@ -121,10 +121,10 @@ export default function SummaryExpense({
                 </div>
               </CardHeader>
               <CardContent className={undefined}>
-                <div className="text-2xl md:text-3xl font-bold text-[#333333]">
+                <div className="text-xl md:text-2xl font-bold text-[#333333]">
                   {kpi.value}
                 </div>
-                <p className="text-xs md:text-sm text-gray-500 mt-1.5">
+                <p className="text-xs md:text-sm text-gray-500 mt-1.5 truncate">
                   {kpi.description}
                 </p>
               </CardContent>
