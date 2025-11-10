@@ -373,19 +373,19 @@ export default function UserDashboard() {
 
       {/* Payment Overview */}
       <Card className="border border-gray-200 shadow-md bg-white">
-        <CardHeader className="pb-3 sm:pb-4">
-          <CardTitle className="text-base sm:text-lg md:text-xl font-bold text-[#12372A]">Payment Overview</CardTitle>
+        <CardHeader className="pb-3 sm:pb-4 lg:pb-3">
+          <CardTitle className="text-base sm:text-lg md:text-xl lg:text-lg font-bold text-[#12372A]">Payment Overview</CardTitle>
           <CardDescription className="text-xs sm:text-sm text-gray-600">
             Your recent payment history
           </CardDescription>
         </CardHeader>
         <CardContent className={undefined}>
           {bills.length === 0 ? (
-            <div className="text-center py-8 sm:py-12 px-3 sm:px-4">
-              <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#E8F5E9] mb-3 sm:mb-4">
-                <CreditCard className="h-7 w-7 sm:h-8 sm:w-8 text-[#2E7D32]" />
+            <div className="text-center py-8 sm:py-12 lg:py-8 px-3 sm:px-4">
+              <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 lg:w-14 lg:h-14 rounded-full bg-[#E8F5E9] mb-3 sm:mb-4 lg:mb-3">
+                <CreditCard className="h-7 w-7 sm:h-8 sm:w-8 lg:h-6 lg:w-6 text-[#2E7D32]" />
               </div>
-              <h3 className="text-sm sm:text-base md:text-lg font-semibold text-[#12372A] mb-1.5 sm:mb-2">
+              <h3 className="text-sm sm:text-base md:text-lg lg:text-base font-semibold text-[#12372A] mb-1.5 sm:mb-2 lg:mb-1.5">
                 No Payment History
               </h3>
               <p className="text-xs sm:text-sm text-slate-500">
@@ -393,26 +393,26 @@ export default function UserDashboard() {
               </p>
             </div>
           ) : (
-            <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-3 sm:space-y-4 lg:space-y-2.5">
               {bills.map((bill) => (
                 <div
                   key={bill.id}
-                  className="flex items-center justify-between p-3 sm:p-4 border border-slate-200 rounded-lg hover:border-[#2E7D32] transition-colors duration-200"
+                  className="flex items-center justify-between p-3 sm:p-4 lg:p-3 border border-slate-200 rounded-lg hover:border-[#2E7D32] transition-colors duration-200"
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm sm:text-base text-[#12372A] truncate">
+                    <p className="font-medium text-sm sm:text-base lg:text-sm text-[#12372A] truncate">
                       Period {bill.billingPeriod}
                     </p>
-                    <p className="text-xs sm:text-sm text-slate-500 truncate">
+                    <p className="text-xs sm:text-sm lg:text-xs text-slate-500 truncate">
                       Amount: ₱{formatAmount(bill.totalAmountDue)}
                     </p>
                   </div>
                   <div className="text-right flex-shrink-0 ml-3">
-                    <p className="font-medium text-sm sm:text-base text-[#12372A]">
+                    <p className="font-medium text-sm sm:text-base lg:text-sm text-[#12372A]">
                       ₱{formatAmount(bill.amountPaid)}
                     </p>
                     <span
-                      className={`text-xs sm:text-sm px-2 py-0.5 sm:py-1 rounded inline-block mt-1 font-medium ${
+                      className={`text-xs sm:text-sm lg:text-xs px-2 py-0.5 sm:py-1 lg:py-0.5 rounded inline-block mt-1 font-medium ${
                         bill.status === "Paid"
                           ? "bg-[#E8F5E9] text-[#2E7D32]"
                           : bill.status === "Partially Paid"
