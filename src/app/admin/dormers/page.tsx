@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useDormers } from "./hooks/useDormers";
 import { useDormerActions } from "./hooks/useDormerActions";
 import { useModal } from "./hooks/useModal";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
@@ -30,6 +31,8 @@ import { handleExport } from "./utils/csvExport";
 
 export default function DormersPage() {
   const [user, setUser] = useState<User | null>(null);
+  const { ConfirmDialog, confirm } = useConfirmDialog();
+  
   const {
     dormers,
     bills,
@@ -72,11 +75,26 @@ export default function DormersPage() {
     return <DormersPageSkeleton />;
   }
 
+  const handleExportWithConfirm = async () => {
+    const confirmed = await confirm({
+      title: "Export Dormers Data",
+      description: `Are you sure you want to export all registered dormers' data to CSV? This will download a file to your computer.`,
+      confirmText: "Export",
+      cancelText: "Cancel",
+      variant: "default",
+    });
+
+    if (confirmed) {
+      handleExport(dormers);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#f0f0f0] p-3 sm:p-4 md:p-6 lg:p-8 space-y-4 sm:space-y-5 md:space-y-6">
+      <ConfirmDialog />
       <DormerHeader
         onAddDormer={() => openModal("add")}
-        onExport={() => handleExport(dormers)}
+        onExport={handleExportWithConfirm}
       />
 
       <DormerFilters

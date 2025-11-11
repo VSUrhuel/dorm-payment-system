@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 import { Button } from "@/components/ui/button";
 import ExpensesTable from "./components/ExpensesTable";
 import AddExpenseModal from "./components/AddExpenseModal";
@@ -20,6 +21,7 @@ import { handleSendExpenseReport } from "./utils/emailUtils";
 export default function ExpensesContent() {
   const [user, setUser] = useState<User | null>(null);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const { ConfirmDialog, confirm } = useConfirmDialog();
 
   const {
     loading,
@@ -62,14 +64,41 @@ export default function ExpensesContent() {
     return <ExpensesPageSkeleton />;
   }
 
+  const handleExportWithConfirm = async () => {
+    const confirmed = await confirm({
+      title: "Export Expenses Data",
+      description: `Are you sure you want to export the dormitory's expenses data to CSV? This will download a file to your computer.`,
+      confirmText: "Export",
+      cancelText: "Cancel",
+      variant: "default",
+    });
+
+    if (confirmed) {
+      handleExport(filteredExpenses);
+    }
+  };
+
+  const handleEmailWithConfirm = async () => {
+    const confirmed = await confirm({
+      title: "Send Expense Report",
+      description: `This will send an email containing the dormitory's expenses report to all registered dormers. Proceed?`,
+      confirmText: "Send Email",
+      cancelText: "Cancel",
+      variant: "default",
+    });
+
+    if (confirmed) {
+      handleSendExpenseReport(filteredExpenses, dormers, setIsSendingEmail);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#f0f0f0] p-3 sm:p-4 md:p-6 lg:p-8 space-y-4 sm:space-y-5 md:space-y-6">
+      <ConfirmDialog />
       <ExpensesHeader
         onAdd={() => setAddExpenseModalOpen(true)}
-        onExport={() => handleExport(filteredExpenses)}
-        onEmailReport={() =>
-          handleSendExpenseReport(filteredExpenses, dormers, setIsSendingEmail)
-        }
+        onExport={handleExportWithConfirm}
+        onEmailReport={handleEmailWithConfirm}
         isSendingEmail={isSendingEmail}
       />
 

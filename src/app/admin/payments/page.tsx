@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 import { Button } from "@/components/ui/button";
 import PaymentsTable from "./components/PaymentsTable";
 import PaymentDetailsModal from "./components/ListOfPaymentsModal";
@@ -19,6 +20,8 @@ import { handleExport } from "./utils/csvExport";
 
 export default function PaymentsContent() {
   const [user, setUser] = useState<User | null>(null);
+  const { ConfirmDialog, confirm } = useConfirmDialog();
+  
   const {
     loading,
     paginatedBills,
@@ -72,9 +75,24 @@ export default function PaymentsContent() {
     return <PaymentsPageSkeleton />;
   }
 
+  const handleExportWithConfirm = async () => {
+    const confirmed = await confirm({
+      title: "Export Payments Data",
+      description: `Are you sure you want to export all registered  dormers' payment data to CSV? This will download a file to your computer.`,
+      confirmText: "Export",
+      cancelText: "Cancel",
+      variant: "default",
+    });
+
+    if (confirmed) {
+      handleExport(filteredBills);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#f0f0f0] p-3 sm:p-4 md:p-6 lg:p-8 space-y-4 sm:space-y-5 md:space-y-6">
-      <PaymentHeader onExport={() => handleExport(filteredBills)} />
+      <ConfirmDialog />
+      <PaymentHeader onExport={handleExportWithConfirm} />
 
       <SummaryCards
         totalAmountDue={summaryStats.totalAmountDue}

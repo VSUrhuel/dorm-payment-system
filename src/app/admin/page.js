@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 import {
   Card,
   CardContent,
@@ -107,6 +108,7 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [showEditPayableModal, setShowEditPayableModal] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const { ConfirmDialog, confirm } = useConfirmDialog();
 
   // State for raw data from Firestore
   const [expensesData, setExpensesData] = useState([]);
@@ -373,18 +375,30 @@ export default function Dashboard() {
 
   // Your updated function to send the report via email
   const handleEmailReport = async () => {
+    const recipientEmails = dormersData
+      .map((dormer) => dormer.email)
+      .filter(Boolean);
+
+    // If there are no valid recipients, stop here
+    if (recipientEmails.length === 0) {
+      toast.warn("No valid recipient emails found.");
+      return;
+    }
+
+    const confirmed = await confirm({
+      title: "Send Summary Report",
+      description: `This will send an email containing the dormitory's financial summary report to all registered dormers. Proceed?`,
+      confirmText: "Send Email",
+      cancelText: "Cancel",
+      variant: "default",
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
     try {
       toast.info("Preparing to send summary report...");
-
-      const recipientEmails = dormersData
-        .map((dormer) => dormer.email)
-        .filter(Boolean);
-
-      // If there are no valid recipients, stop here
-      if (recipientEmails.length === 0) {
-        toast.warn("No valid recipient emails found.");
-        return;
-      }
 
       // Convert your KPI data directly to an HTML table string
       const reportTable = convertToHTMLTable(kpiData);
@@ -550,6 +564,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#f0f0f0] p-3 sm:p-4 md:p-6 lg:p-8 space-y-4 sm:space-y-5 md:space-y-6">
+      <ConfirmDialog />
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-2 sm:gap-3">
         <div className="flex-1">

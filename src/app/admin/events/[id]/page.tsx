@@ -154,7 +154,7 @@ export default function EventDetailsContent() {
       <div className="bg-white rounded-lg border-2 border-gray-100 shadow-lg p-4 sm:p-6 md:p-8 mb-4 sm:mb-6">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-0">
           <div className="flex-1 min-w-0">
-            <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
+            <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3" title={event.name}>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#12372A] flex-1 min-w-0 line-clamp-2">{event.name}</h1>
               <Badge
                 variant={event.status === "Active" ? "default" : "secondary"}
