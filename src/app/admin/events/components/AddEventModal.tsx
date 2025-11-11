@@ -90,25 +90,27 @@ export default function AddEventModal({
           <div className="grid grid-cols-1 gap-4">
             <div>
               <Label htmlFor="name" className={undefined}>
-                Event Name
+                Event Name <span className="text-xs text-gray-500">({name.length}/100)</span>
               </Label>
               <Input
                 id="name"
                 className="mt-1"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                maxLength={100}
                 type={undefined}
               />
             </div>
             <div>
               <Label htmlFor="description" className={undefined}>
-                Description
+                Description <span className="text-xs text-gray-500">({description.length}/500)</span>
               </Label>
               <Textarea
                 id="description"
                 className="mt-1"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                maxLength={500}
               />
             </div>
           </div>

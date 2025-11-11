@@ -233,13 +233,14 @@ export default function AddEventPaymentModal({
 
           <div className="space-y-2">
             <Label htmlFor="paymentNotes" className={undefined}>
-              Notes (Optional)
+              Notes (Optional) <span className="text-xs text-gray-500">({paymentNotes.length}/500)</span>
             </Label>
             <Textarea
               id="paymentNotes"
               placeholder="Add any additional notes..."
               value={paymentNotes}
               onChange={(e) => setPaymentNotes(e.target.value)}
+              maxLength={500}
               className="min-h-[60px]"
             />
           </div>

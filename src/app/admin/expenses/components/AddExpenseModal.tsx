@@ -148,7 +148,7 @@ export default function AddExpenseModal({
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="title" className={undefined}>
-              Title *
+              Title * <span className="text-xs text-gray-500">({formData.title.length}/100)</span>
             </Label>
             <Input
               id="title"
@@ -156,6 +156,7 @@ export default function AddExpenseModal({
               value={formData.title}
               onChange={(e) => handleInputChange("title", e.target.value)}
               className="border-gray-300"
+              maxLength={100}
               required
               type={undefined}
             />
@@ -163,7 +164,7 @@ export default function AddExpenseModal({
 
           <div className="space-y-2">
             <Label htmlFor="description" className={undefined}>
-              Description
+              Description <span className="text-xs text-gray-500">({formData.description.length}/500)</span>
             </Label>
             <Textarea
               id="description"
@@ -171,6 +172,7 @@ export default function AddExpenseModal({
               value={formData.description}
               onChange={(e) => handleInputChange("description", e.target.value)}
               className="border-gray-300 min-h-[80px]"
+              maxLength={500}
             />
           </div>
 
