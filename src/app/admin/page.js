@@ -267,12 +267,10 @@ export default function Dashboard() {
         type: "expense",
       };
     });
-
     // Combine, sort by date (most recent first), and take the top 5
     const allTransactions = [...formattedPayments, ...formattedExpenses]
-      .sort((a, b) => b.date - a.date)
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
       .slice(0, 5);
-
     setRecentTransactions(allTransactions);
     setLoading(false);
   }, [paymentsData, expensesData, dormersData]); // This effect depends on these data arrays
@@ -616,8 +614,8 @@ export default function Dashboard() {
                           : kpi.trend === "down"
                           ? "text-red-600"
                           : "text-gray-600"
-                    }`}
-                  />
+                      }`}
+                    />
                   </div>
                 </CardHeader>
                 <CardContent>
