@@ -90,7 +90,7 @@ export default function AddDormerModal({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="firstName" className={undefined}>
-                First Name
+                First Name <span className="text-xs text-gray-500">({firstName.length}/50)</span>
               </Label>
               <Input
                 id="firstName"
@@ -99,12 +99,13 @@ export default function AddDormerModal({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setFirstName(e.target.value)
                 }
+                maxLength={50}
                 type={undefined}
               />
             </div>
             <div>
               <Label htmlFor="lastName" className={undefined}>
-                Last Name
+                Last Name <span className="text-xs text-gray-500">({lastName.length}/50)</span>
               </Label>
               <Input
                 id="lastName"
@@ -113,6 +114,7 @@ export default function AddDormerModal({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setLastName(e.target.value)
                 }
+                maxLength={50}
                 type={undefined}
               />
             </div>
@@ -121,7 +123,7 @@ export default function AddDormerModal({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="email" className={undefined}>
-                Email
+                Email <span className="text-xs text-gray-500">({email.length}/100)</span>
               </Label>
               <Input
                 id="email"
@@ -131,11 +133,12 @@ export default function AddDormerModal({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setEmail(e.target.value)
                 }
+                maxLength={100}
               />
             </div>
             <div>
               <Label htmlFor="phone" className={undefined}>
-                Phone
+                Phone <span className="text-xs text-gray-500">({phone.length}/20)</span>
               </Label>
               <Input
                 id="phone"
@@ -145,6 +148,7 @@ export default function AddDormerModal({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setPhone(e.target.value)
                 }
+                maxLength={20}
               />
             </div>
           </div>

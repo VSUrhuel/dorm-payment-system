@@ -51,8 +51,104 @@ export default function PaymentsPage() {
       if (user) {
         try {
           setLoading(true);
-          const payments = await getBills(user.uid);
-          setUserPayments(payments);
+          
+          const USE_MOCK_DATA = false;
+          
+          if (USE_MOCK_DATA) {
+            // mock payment data for non emtpy state testing
+            const mockPayments = [
+              {
+                id: "1",
+                dormerId: user.uid,
+                billingPeriod: "January 2025",
+                totalAmountDue: 3000,
+                amountPaid: 3000,
+                remainingBalance: 0,
+                status: "Paid" as const,
+                description: "Monthly dorm fees",
+                dormer: null,
+                billDate: new Date(),
+                createdAt: new Date(),
+                updatedAt: { toDate: () => new Date("2025-01-20") }
+              },
+              {
+                id: "2",
+                dormerId: user.uid,
+                billingPeriod: "February 2025",
+                totalAmountDue: 3500,
+                amountPaid: 3500,
+                remainingBalance: 0,
+                status: "Paid" as const,
+                description: "Monthly dorm fees + utilities",
+                dormer: null,
+                billDate: new Date(),
+                createdAt: new Date(),
+                updatedAt: { toDate: () => new Date("2025-02-18") }
+              },
+              {
+                id: "3",
+                dormerId: user.uid,
+                billingPeriod: "March 2025",
+                totalAmountDue: 3000,
+                amountPaid: 2000,
+                remainingBalance: 1000,
+                status: "Partially Paid" as const,
+                description: "Monthly dorm fees",
+                dormer: null,
+                billDate: new Date(),
+                createdAt: new Date(),
+                updatedAt: { toDate: () => new Date("2025-03-15") }
+              },
+              {
+                id: "4",
+                dormerId: user.uid,
+                billingPeriod: "April 2025",
+                totalAmountDue: 3500,
+                amountPaid: 0,
+                remainingBalance: 3500,
+                status: "Unpaid" as const,
+                description: "Monthly dorm fees + maintenance",
+                dormer: null,
+                billDate: new Date(),
+                createdAt: new Date(),
+                updatedAt: { toDate: () => new Date() }
+              },
+              {
+                id: "5",
+                dormerId: user.uid,
+                billingPeriod: "May 2025",
+                totalAmountDue: 3000,
+                amountPaid: 0,
+                remainingBalance: 3000,
+                status: "Unpaid" as const,
+                description: "Monthly dorm fees",
+                dormer: null,
+                billDate: new Date(),
+                createdAt: new Date(),
+                updatedAt: { toDate: () => new Date() }
+              },
+              {
+                id: "6",
+                dormerId: user.uid,
+                billingPeriod: "June 2025",
+                totalAmountDue: 3200,
+                amountPaid: 1500,
+                remainingBalance: 1700,
+                status: "Partially Paid" as const,
+                description: "Monthly dorm fees",
+                dormer: null,
+                billDate: new Date(),
+                createdAt: new Date(),
+                updatedAt: { toDate: () => new Date("2025-06-10") }
+              }
+            ];
+            
+            setUserPayments(mockPayments);
+          } else {
+            // real data fetching
+            const payments = await getBills(user.uid);
+            setUserPayments(payments);
+          }
         } catch (error) {
           console.error("Error fetching user payments:", error);
         } finally {
@@ -68,207 +164,229 @@ export default function PaymentsPage() {
   // Add loading state
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-64">
-        <p>Loading payments...</p>
+      <div className="min-h-screen bg-[#f0f0f0] p-3 sm:p-4 md:p-6 lg:p-8">
+        <div className="space-y-4 sm:space-y-5 md:space-y-6">
+          <div className="space-y-2">
+            <div className="h-8 sm:h-10 w-40 sm:w-48 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-4 sm:h-5 w-48 sm:w-64 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+          <div className="h-80 sm:h-96 bg-white rounded-xl border border-gray-200 animate-pulse"></div>
+        </div>
       </div>
     );
   }
 
   // Return the JSX
   return (
-    <div className="h-screen bg-slate-50">
-      <div className=" overflow-auto">
-        <div className="p-8">
-          <div>
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-slate-900">Payments</h1>
-              <p className="text-slate-600 mt-2">
-                View your payabale and payment history
+    <div className="min-h-screen bg-[#f0f0f0] p-3 sm:p-4 md:p-6 lg:p-8 space-y-4 sm:space-y-5 md:space-y-6">
+      <div className="flex flex-col gap-2 sm:gap-3">
+        <div className="flex-1">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#12372A] tracking-tight">
+            My Payments
+          </h1>
+          <p className="text-xs sm:text-sm md:text-base text-[#12372A] mt-1 sm:mt-1.5">
+            View your payable and payment history
+          </p>
+        </div>
+      </div>
+
+      <Card className="border border-gray-200 shadow-md bg-white gap-0">
+        <CardHeader className="border-b border-gray-100 md:pb-0">
+          <CardTitle className="text-base sm:text-lg md:text-xl font-bold text-[#12372A]">
+            Payment Records
+          </CardTitle>
+          <CardDescription className="text-xs sm:text-sm text-gray-600 mt-1">
+            All your dormitory payments and balances
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          {userPayments.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 sm:py-16 px-3 sm:px-4">
+              <div className="relative mb-4 sm:mb-6 inline-block">
+                <div className="absolute inset-0 bg-gray-100/50 rounded-full blur-2xl"></div>
+                <div className="relative p-4 sm:p-6 rounded-full bg-[#E0E0E0]">
+                  <FileText className="h-10 w-10 sm:h-12 sm:w-12 text-gray-600" />
+                </div>
+              </div>
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-[#333333] mb-2">
+                No Payment Records Found
+              </h3>
+              <p className="text-xs sm:text-sm md:text-base text-gray-600 text-center max-w-md px-4">
+                You don't have any payment records yet. They will appear here once bills are generated.
               </p>
             </div>
-            <Card className={undefined}>
-              <CardHeader className={undefined}>
-                <CardTitle className={undefined}>Payment Records</CardTitle>
-                <CardDescription className={undefined}>
-                  All your dormitory payments and balances
-                </CardDescription>
-              </CardHeader>
-              <CardContent className={undefined}>
-                {userPayments.length === 0 ? (
-                  <div className="text-center py-8">
-                    <FileText className="mx-auto h-12 w-12 text-slate-400" />
-                    <p className="mt-2 text-slate-500">
-                      No payment records found.
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    <div className="rounded-md border">
-                      <Table className={undefined}>
-                        <TableHeader className={undefined}>
-                          <TableRow className={undefined}>
-                            <TableHead className={undefined}>
-                              Billing Period
-                            </TableHead>
-                            <TableHead className={undefined}>
-                              Amount Due
-                            </TableHead>
-                            <TableHead className={undefined}>
-                              Amount Paid
-                            </TableHead>
-                            <TableHead className={undefined}>
-                              Remaining Balance
-                            </TableHead>
-                            <TableHead className={undefined}>
-                              Recorded At
-                            </TableHead>
+          ) : (
+            <div className="p-3 sm:p-4 md:p-6">
+              <div className="overflow-x-auto rounded-lg border border-gray-200">
+                <Table className="">
+                  <TableHeader className="">
+                    <TableRow className="bg-[#f0f0f0] hover:bg-[#f0f0f0]">
+                      <TableHead className="font-bold text-[#12372A] text-xs sm:text-sm">
+                        Billing Period
+                      </TableHead>
+                      <TableHead className="font-bold text-[#12372A] text-xs sm:text-sm">
+                        Amount Due
+                      </TableHead>
+                      <TableHead className="font-bold text-[#12372A] text-xs sm:text-sm">
+                        Amount Paid
+                      </TableHead>
+                      <TableHead className="font-bold text-[#12372A] text-xs sm:text-sm">
+                        Balance
+                      </TableHead>
+                      <TableHead className="font-bold text-[#12372A] text-xs sm:text-sm hidden md:table-cell">
+                        Recorded At
+                      </TableHead>
+                      <TableHead className="font-bold text-[#12372A] text-xs sm:text-sm">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="">
+                    {userPayments.map((payment) => {
+                      const remainingBalance = Math.max(
+                        0,
+                        Number(payment.totalAmountDue) -
+                          Number(payment.amountPaid)
+                      );
+                      const isFullyPaid = remainingBalance === 0;
 
-                            <TableHead className={undefined}>Status</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody className={undefined}>
-                          {userPayments.map((payment) => {
-                            const remainingBalance = Math.max(
-                              0,
-                              Number(payment.totalAmountDue) -
-                                Number(payment.amountPaid)
-                            );
-                            const isFullyPaid = remainingBalance === 0;
-
-                            return (
-                              <TableRow key={payment.id} className={undefined}>
-                                <TableCell className="font-medium">
-                                  {payment.billingPeriod}
-                                </TableCell>
-                                <TableCell className={undefined}>
-                                  ₱{formatAmount(payment.totalAmountDue)}
-                                </TableCell>
-                                <TableCell className="text-green-600">
-                                  ₱{formatAmount(payment.amountPaid)}
-                                </TableCell>
-                                <TableCell
-                                  className={
-                                    isFullyPaid
-                                      ? "text-green-600"
-                                      : "text-red-600"
-                                  }
-                                >
-                                  ₱{formatAmount(remainingBalance)}
-                                </TableCell>
-                                <TableCell className="text-slate-600">
-                                  {payment.status == "Unpaid"
-                                    ? "N/A"
-                                    : payment.updatedAt
-                                        .toDate()
-                                        .toLocaleDateString("en-US", {
-                                          year: "numeric",
-                                          month: "long",
-                                          day: "numeric",
-                                        })}
-                                </TableCell>
-                                <TableCell className={undefined}>
-                                  <span
-                                    className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                      payment.status === "Paid"
-                                        ? "bg-green-100 text-green-800"
-                                        : payment.status === "Partially Paid"
-                                        ? "bg-yellow-100 text-yellow-800"
-                                        : "bg-red-100 text-red-800"
-                                    }`}
-                                  >
-                                    {payment.status}
-                                  </span>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        </TableBody>
-                      </Table>
-                    </div>
-
-                    {/* Summary Footer */}
-                    <div className="mt-6 pt-6 border-t border-slate-200">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="text-center md:text-left">
-                          <p className="text-sm text-slate-600 mb-1">
-                            Total Amount Due
-                          </p>
-                          <p className="text-lg font-bold text-slate-900">
-                            ₱
-                            {formatAmount(
-                              calculatePaymentSummary(userPayments).totalDue
-                            )}
-                          </p>
-                        </div>
-                        <div className="text-center md:text-left">
-                          <p className="text-sm text-slate-600 mb-1">
-                            Total Amount Paid
-                          </p>
-                          <p className="text-lg font-bold text-green-600">
-                            ₱
-                            {formatAmount(
-                              calculatePaymentSummary(userPayments).totalPaid
-                            )}
-                          </p>
-                        </div>
-                        <div className="text-center md:text-left">
-                          <p className="text-sm text-slate-600 mb-1">
-                            Outstanding Balance
-                          </p>
-                          <p
-                            className={`text-lg font-bold ${
-                              calculatePaymentSummary(userPayments)
-                                .totalBalance === 0
-                                ? "text-green-600"
+                      return (
+                        <TableRow key={payment.id} className="hover:bg-[#f0f0f0] transition-colors">
+                          <TableCell className="font-semibold text-[#333333] text-xs sm:text-sm w-[150px]">
+                            <span className="truncate block" title={payment.billingPeriod}>
+                              {payment.billingPeriod}
+                            </span>
+                          </TableCell>
+                          <TableCell className="font-semibold text-[#333333] text-xs sm:text-sm w-[120px]">
+                            ₱{formatAmount(payment.totalAmountDue)}
+                          </TableCell>
+                          <TableCell className="text-[#2E7D32] font-semibold text-xs sm:text-sm w-[120px]">
+                            ₱{formatAmount(payment.amountPaid)}
+                          </TableCell>
+                          <TableCell
+                            className={`font-semibold text-xs sm:text-sm w-[120px] ${
+                              isFullyPaid
+                                ? "text-[#2E7D32]"
                                 : "text-red-600"
                             }`}
                           >
-                            ₱
-                            {formatAmount(
-                              calculatePaymentSummary(userPayments).totalBalance
-                            )}
-                          </p>
-                        </div>
-                      </div>
+                            ₱{formatAmount(remainingBalance)}
+                          </TableCell>
+                          <TableCell className="text-gray-600 text-xs sm:text-sm hidden md:table-cell w-[180px]">
+                            <span className="truncate block" title={payment.status == "Unpaid" ? "N/A" : payment.updatedAt.toDate().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}>
+                              {payment.status == "Unpaid"
+                                ? "N/A"
+                                : payment.updatedAt
+                                    .toDate()
+                                    .toLocaleDateString("en-US", {
+                                      year: "numeric",
+                                      month: "long",
+                                      day: "numeric",
+                                    })}
+                            </span>
+                          </TableCell>
+                          <TableCell className="w-[140px]">
+                            <span
+                              className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-semibold inline-block whitespace-nowrap ${
+                                payment.status === "Paid"
+                                  ? "bg-[#A5D6A7] text-[#2E7D32]"
+                                  : payment.status === "Partially Paid"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-red-100 text-red-800"
+                              }`}
+                            >
+                              {payment.status}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
 
-                      {/* Progress Bar */}
-                      <div className="mt-4">
-                        <div className="flex justify-between text-sm text-slate-600 mb-1">
-                          <span>Payment Progress</span>
-                          <span>
-                            {Math.round(
-                              (calculatePaymentSummary(userPayments).totalPaid /
-                                calculatePaymentSummary(userPayments)
-                                  .totalDue) *
-                                100
-                            )}
-                            %
-                          </span>
-                        </div>
-                        <div className="w-full bg-slate-200 rounded-full h-2">
-                          <div
-                            className="bg-green-600 h-2 rounded-full transition-all duration-300"
-                            style={{
-                              width: `${Math.min(
-                                100,
-                                (calculatePaymentSummary(userPayments)
-                                  .totalPaid /
-                                  calculatePaymentSummary(userPayments)
-                                    .totalDue) *
-                                  100
-                              )}%`,
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
+              {/* Summary Footer */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+                  <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-200">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1 font-medium">
+                      Total Amount Due
+                    </p>
+                    <p className="text-xl sm:text-2xl font-bold text-[#333333]">
+                      ₱
+                      {formatAmount(
+                        calculatePaymentSummary(userPayments).totalDue
+                      )}
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-br from-[#A5D6A7]/10 to-white p-4 rounded-xl border border-[#A5D6A7]/30">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1 font-medium">
+                      Total Amount Paid
+                    </p>
+                    <p className="text-xl sm:text-2xl font-bold text-[#2E7D32]">
+                      ₱
+                      {formatAmount(
+                        calculatePaymentSummary(userPayments).totalPaid
+                      )}
+                    </p>
+                  </div>
+                  <div className={`bg-gradient-to-br p-4 rounded-xl border ${
+                    calculatePaymentSummary(userPayments).totalBalance === 0
+                      ? "from-[#A5D6A7]/10 to-white border-[#A5D6A7]/30"
+                      : "from-red-50 to-white border-red-200"
+                  }`}>
+                    <p className="text-xs sm:text-sm text-gray-600 mb-1 font-medium">
+                      Outstanding Balance
+                    </p>
+                    <p
+                      className={`text-xl sm:text-2xl font-bold ${
+                        calculatePaymentSummary(userPayments)
+                          .totalBalance === 0
+                          ? "text-[#2E7D32]"
+                          : "text-red-600"
+                      }`}
+                    >
+                      ₱
+                      {formatAmount(
+                        calculatePaymentSummary(userPayments).totalBalance
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="mt-6">
+                  <div className="flex justify-between text-sm text-gray-600 mb-2 font-medium">
+                    <span>Payment Progress</span>
+                    <span className="text-[#2E7D32] font-semibold">
+                      {Math.round(
+                        (calculatePaymentSummary(userPayments).totalPaid /
+                          calculatePaymentSummary(userPayments)
+                            .totalDue) *
+                          100
+                      )}
+                      %
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+                    <div
+                      className="bg-gradient-to-r from-[#2E7D32] to-[#A5D6A7] h-3 rounded-full transition-all duration-500 ease-out shadow-sm"
+                      style={{
+                        width: `${Math.min(
+                          100,
+                          (calculatePaymentSummary(userPayments)
+                            .totalPaid /
+                            calculatePaymentSummary(userPayments)
+                              .totalDue) *
+                            100
+                        )}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

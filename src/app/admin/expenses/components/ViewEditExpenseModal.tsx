@@ -213,13 +213,14 @@ export default function ViewEditExpenseModal({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="title" className={undefined}>
-                Title
+                Title {isEditing && <span className="text-xs text-gray-500">({formData.title.length}/100)</span>}
               </Label>
               <Input
                 id="title"
                 value={formData.title}
                 onChange={(e) => handleInputChange("title", e.target.value)}
                 disabled={!isEditing}
+                maxLength={100}
                 className="disabled:opacity-100 disabled:cursor-default"
                 type={undefined}
               />
@@ -286,7 +287,7 @@ export default function ViewEditExpenseModal({
             </div>
             <div className="md:col-span-2 space-y-2">
               <Label htmlFor="description" className={undefined}>
-                Description
+                Description {isEditing && <span className="text-xs text-gray-500">({formData.description.length}/500)</span>}
               </Label>
               <Textarea
                 id="description"
@@ -295,6 +296,7 @@ export default function ViewEditExpenseModal({
                   handleInputChange("description", e.target.value)
                 }
                 disabled={!isEditing}
+                maxLength={500}
                 className="disabled:opacity-100 disabled:cursor-default min-h-[80px]"
               />
             </div>

@@ -59,8 +59,8 @@ export default function ExpensesTable({
 
   return (
     <>
-      <Card className="border-2 border-gray-100 shadow-md bg-white">
-        <CardHeader className="border-b border-gray-100 pb-4">
+      <Card className="border-2 border-gray-100 shadow-md bg-white gap-0">
+        <CardHeader className="border-b border-gray-100 py-0">
           <CardTitle className="text-xl md:text-2xl font-bold text-[#12372A]">
             Expense Records
           </CardTitle>
@@ -68,7 +68,14 @@ export default function ExpensesTable({
         </CardHeader>
         <CardContent className="p-0">
           {expenses.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4">              
+            <div className="flex flex-col items-center justify-center py-16 px-4">
+              <div className="relative mb-0">
+                <div className="absolute inset-0 bg-red-100/50 rounded-full blur-2xl"></div>
+                <div className="relative p-6 rounded-full bg-red-600">
+                  <TrendingDown className="h-12 w-12 text-white" />
+                </div>
+              </div>
+              
               <h3 className="text-xl font-bold text-[#333333] mb-2">
                 No expenses recorded
               </h3>
@@ -78,7 +85,7 @@ export default function ExpensesTable({
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto px-5">
               <Table className={undefined}>
                 <TableHeader className={undefined}>
                   <TableRow className="hover:bg-transparent border-b border-gray-100">
@@ -95,11 +102,11 @@ export default function ExpensesTable({
                 <TableBody className={undefined}>
                   {expenses.map((expense) => (
                     <TableRow className="hover:bg-gray-50 transition-colors border-b border-gray-50" key={expense.id}>
-                      <TableCell className={undefined}>
-                        <div className="font-semibold text-[#333333]">
+                      <TableCell className="w-[200px]">
+                        <div className="font-semibold text-[#333333] max-w-[200px] truncate" title={expense.title}>
                           {expense.title}
                         </div>
-                        <div className="text-sm text-gray-600 line-clamp-2 max-w-md">
+                        <div className="text-sm text-gray-600 line-clamp-2 max-w-[200px] truncate" title={expense.description}>
                           {expense.description}
                         </div>
                         <Badge
@@ -109,30 +116,30 @@ export default function ExpensesTable({
                           {expense.category}
                         </Badge>
                       </TableCell>
-                      <TableCell className={undefined}>
-                        <div className="font-bold text-red-600 text-lg">
+                      <TableCell className="w-[120px]">
+                        <div className="font-bold text-red-600 text-md">
                           ₱{formatAmount(expense.amount)}
                         </div>
                       </TableCell>
-                      <TableCell className={undefined}>
+                      <TableCell className="w-[150px]">
                         <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-gray-400" />
-                          <span className="font-medium text-[#333333]">
+                          <Calendar className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                          <span className="font-medium text-[#333333] truncate">
                             {formatDate(expense.expenseDate)}
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className={undefined}>
+                      <TableCell className="w-[120px]">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleViewReceipt(expense)}
-                          className="border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white transition-all font-medium"
+                          className="border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white transition-all font-medium whitespace-nowrap"
                         >
                           <ImageIcon className="h-4 w-4 mr-1" /> View
                         </Button>
                       </TableCell>
-                      <TableCell className="hidden lg:table-cell">
+                      <TableCell className="hidden lg:table-cell w-[200px]">
                         <div className="flex items-center gap-2">
                           <Avatar className="h-8 w-8 border-2 border-[#A5D6A7]">
                             <AvatarFallback className="bg-[#A5D6A7] text-[#2E7D32] text-xs font-semibold">
@@ -140,23 +147,23 @@ export default function ExpensesTable({
                               {expense.recordedBy?.lastName?.[0]}
                             </AvatarFallback>
                           </Avatar>
-                          <div>
-                            <div className="text-sm font-medium text-[#333333]">
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium text-[#333333] max-w-[200px] truncate" title={`${expense.recordedBy.firstName} ${expense.recordedBy.lastName}`}>
                               {expense.recordedBy.firstName}{" "}
                               {expense.recordedBy.lastName}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-gray-500 max-w-[200px] truncate" title={expense.recordedBy.email}>
                               {expense.recordedBy.email}
                             </div>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right w-[140px]">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => onViewDetails(expense)}
-                          className="border-blue-500 text-blue-600 hover:bg-blue-500 hover:text-white transition-all font-medium"
+                          className="border-blue-500 text-blue-600 hover:bg-blue-500 hover:text-white transition-all font-medium whitespace-nowrap"
                         >
                           <Eye className="h-4 w-4 mr-1" /> View Details
                         </Button>

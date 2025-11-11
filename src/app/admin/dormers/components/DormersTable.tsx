@@ -40,9 +40,9 @@ export default function DormersTable({
         </CardTitle>
         <p className="text-sm text-gray-600 mt-1">Complete list of all registered dormers</p>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="px-5 py-0">
         {dormers.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4">
+          <div className="flex flex-col items-center justify-center py-10 px-4">
             <div className="relative mb-6">
               <div className="absolute inset-0 bg-[#A5D6A7]/20 rounded-full blur-2xl"></div>
               <div className="relative p-6 rounded-full bg-[#2E7D32]">
@@ -90,26 +90,26 @@ export default function DormersTable({
               <TableBody className={undefined}>
                 {dormers.map((dormer) => (
                   <TableRow className="hover:bg-gray-50 transition-colors border-b border-gray-50" key={dormer.id}>
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium w-[30%]">
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 border-2 border-[#A5D6A7]">
+                        <Avatar className="h-10 w-10 border-2 border-[#A5D6A7] flex-shrink-0">
                           <AvatarFallback className="bg-[#A5D6A7] text-[#2E7D32] font-semibold">
                             {dormer.firstName[0]}
                             {dormer.lastName[0]}
                           </AvatarFallback>
                         </Avatar>
-                        <div>
-                          <div className="font-semibold text-[#333333]">
+                        <div className="min-w-0 flex-1">
+                          <div className="font-semibold text-[#333333] min-w-[200px] max-w-[250px] truncate" title={`${dormer.firstName} ${dormer.lastName}`}>
                             {dormer.firstName} {dormer.lastName}
                           </div>
-                          <div className="text-xs text-gray-500 md:hidden">
+                          <div className="text-xs text-gray-500 md:hidden min-w-[200px] max-w-[250px] truncate" title={dormer.email}>
                             {dormer.email}
                           </div>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="font-semibold text-[#2E7D32]">{dormer.roomNumber}</TableCell>
-                    <TableCell className={undefined}>
+                    <TableCell className="font-semibold text-[#2E7D32] w-[105px]">{dormer.roomNumber}</TableCell>
+                    <TableCell className="w-[105px]">
                       <Badge
                         variant={dormer.role === "Admin" ? "default" : "secondary"}
                         className={
@@ -121,10 +121,12 @@ export default function DormersTable({
                         {dormer.role}
                       </Badge>
                     </TableCell>
-                    <TableCell className="hidden md:table-cell text-gray-600">
-                      {dormer.email}
+                    <TableCell className="hidden md:table-cell text-gray-600 max-w-[200px] truncate">
+                      <div className="truncate" title={dormer.email}>
+                        {dormer.email}
+                      </div>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right w-[180px]">
                       <div className="flex gap-2 justify-end">
                         <Button
                           variant="outline"

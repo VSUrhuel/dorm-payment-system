@@ -77,7 +77,7 @@ export default function EventDormersTable({
 
   return (
     <Card className="border-2 border-gray-100 shadow-md bg-white">
-      <CardHeader className="border-b border-gray-100 pb-4">
+      <CardHeader className="border-b border-gray-100">
         <div>
           <CardTitle className="text-xl md:text-2xl font-bold text-[#12372A]">
             Dormer Payment Status
@@ -122,16 +122,16 @@ export default function EventDormersTable({
 
               return (
                 <TableRow className="hover:bg-[#f0f0f0] transition-colors" key={dormer.id}>
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium w-[200px]">
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-8 w-8 border-2 border-[#A5D6A7]">
+                      <Avatar className="h-8 w-8 border-2 border-[#A5D6A7] flex-shrink-0">
                         <AvatarFallback className="bg-[#A5D6A7] text-[#2E7D32] font-semibold">
                           {dormer.firstName[0]}
                           {dormer.lastName[0]}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
-                        <div className="font-semibold text-[#333333]">
+                      <div className="min-w-0 flex-1">
+                        <div className="font-semibold text-[#333333] max-w-[200px] truncate" title={`${dormer.firstName} ${dormer.lastName}`}>
                           {dormer.firstName} {dormer.lastName}
                         </div>
                         <div className="text-xs text-gray-500">
@@ -140,7 +140,7 @@ export default function EventDormersTable({
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className={undefined}>
+                  <TableCell className="w-[130px]">
                     <div className="font-semibold text-[#333333]">
                       {formatCurrency(dormer.amountPaid)}
                     </div>
@@ -152,26 +152,26 @@ export default function EventDormersTable({
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className={undefined}>
+                  <TableCell className="w-[140px]">
                     <Badge
                       variant={statusConfig.variant}
                       className={statusConfig.className}
                     >
-                      <StatusIcon className="h-3 w-3 mr-1" />
-                      {dormer.paymentStatus}
+                      <StatusIcon className="h-3 w-3 mr-1 flex-shrink-0" />
+                      <span className="truncate">{dormer.paymentStatus}</span>
                     </Badge>
                     {dormer.paymentMethod && (
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="text-xs text-gray-500 mt-1 truncate" title={`${dormer.paymentMethod[0].toUpperCase()}${dormer.paymentMethod.slice(1).toLowerCase()}`}>
                         {dormer.paymentMethod[0].toUpperCase()}
                         {dormer.paymentMethod.slice(1).toLowerCase()}
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
+                  <TableCell className="hidden md:table-cell w-[150px]">
                     {dormer.paymentDate ? (
                       <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3 text-gray-400" />
-                        <span className="text-sm text-[#333333]">
+                        <Calendar className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                        <span className="text-sm text-[#333333] truncate">
                           {formatDate(dormer.paymentDate)}
                         </span>
                       </div>
@@ -179,13 +179,13 @@ export default function EventDormersTable({
                       <span className="text-gray-400 text-sm">Not paid</span>
                     )}
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell">
+                  <TableCell className="hidden lg:table-cell w-[200px]">
                     {dormer.recordedBy ? (
                       <div>
-                        <div className="text-sm font-medium text-[#333333]">
+                        <div className="text-sm font-medium text-[#333333] max-w-[200px] truncate" title={dormer.recordedBy.name}>
                           {dormer.recordedBy.name}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-gray-500 max-w-[200px] truncate" title={dormer.recordedBy.email}>
                           {dormer.recordedBy.email}
                         </div>
                       </div>
@@ -193,12 +193,12 @@ export default function EventDormersTable({
                       <span className="text-gray-400 text-sm">N/A</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right w-[160px]">
                     {dormer.paymentStatus != "Paid" ? (
                       <Button
                         size="sm"
                         onClick={() => onLogPayment(dormer)}
-                        className="bg-[#2E7D32] hover:bg-[#A5D6A7] text-white font-semibold transition-all shadow-sm hover:shadow-md"
+                        className="bg-[#2E7D32] hover:bg-[#A5D6A7] text-white font-semibold transition-all shadow-sm hover:shadow-md whitespace-nowrap"
                         variant={undefined}
                       >
                         <CreditCard className="h-4 w-4 mr-1" />
@@ -207,7 +207,7 @@ export default function EventDormersTable({
                     ) : (
                       <Badge
                         variant="outline"
-                        className="text-[#2E7D32] border-[#A5D6A7] bg-[#A5D6A7]/10 font-semibold"
+                        className="text-[#2E7D32] border-[#A5D6A7] bg-[#A5D6A7]/10 font-semibold whitespace-nowrap"
                       >
                         <CheckCircle className="h-3 w-3 mr-1" />
                         Completed

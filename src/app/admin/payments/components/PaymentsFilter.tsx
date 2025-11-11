@@ -42,7 +42,7 @@ export default function PaymentsFilter({
 }: PaymentsFilterProps) {
   return (
     <Card className="border-gray-200">
-      <CardContent className="pt-6">
+      <CardContent className="pt-2">
         <div className="flex flex-col md:flex-row gap-4 ">
           {/* Search Input */}
           <div className="flex-1">
@@ -55,7 +55,7 @@ export default function PaymentsFilter({
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="pl-10 border-gray-300"
+                className="pl-10 text-sm sm:text-base border-gray-300"
                 type={undefined}
               />
             </div>
@@ -70,7 +70,7 @@ export default function PaymentsFilter({
                 setCurrentPage(1);
               }}
             >
-              <SelectTrigger className="border-gray-300">
+              <SelectTrigger className="border-gray-300 w-full">
                 <Filter className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
@@ -100,7 +100,7 @@ export default function PaymentsFilter({
                 setCurrentPage(1);
               }}
             >
-              <SelectTrigger className="border-gray-300">
+              <SelectTrigger className="border-gray-300 w-full">
                 <CalendarDays className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Filter by period" />
               </SelectTrigger>
@@ -127,7 +127,7 @@ export default function PaymentsFilter({
                   setStatusFilter("All");
                   setBillingPeriodFilter("All");
                 }}
-                className="mt-2 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full mt-2 md:mt-0 bg-[#2E7D32] hover:bg-[#27632a] text-white"
                 variant={undefined}
                 size={undefined}
               >

@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, Filter, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface DormerFiltersProps {
   searchTerm: string;
@@ -29,92 +30,100 @@ export default function DormerFilters({
   count,
   resetFilter,
 }: DormerFiltersProps) {
-  return (
-    <Card className="border-2 border-gray-100 shadow-md bg-white">
-      <CardContent className="pt-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-              <Input
-                placeholder="Search by name, email, or room number..."
-                value={searchTerm}
-                onChange={onSearchChange}
-                className="pl-10 border-gray-200 focus:border-[#2E7D32] focus:ring-[#2E7D32] h-11"
-                type={undefined}
-              />
-            </div>
-          </div>
-          <div className="w-full md:w-48">
-            <Select value={statusFilter} onValueChange={onStatusChange}>
-              <SelectTrigger className="border-gray-200 focus:border-[#2E7D32] focus:ring-[#2E7D32] h-11">
-                <Filter className="h-4 w-4 mr-2 text-[#2E7D32]" />
-                <SelectValue placeholder="Filter by room" />
-              </SelectTrigger>
-              <SelectContent className={undefined}>
-                <SelectItem value="All" className={undefined}>
-                  All Rooms
-                </SelectItem>
-                <SelectItem value="1" className={undefined}>
-                  Room 1
-                </SelectItem>
-                <SelectItem value="2" className={undefined}>
-                  Room 2
-                </SelectItem>
-                <SelectItem value="3" className={undefined}>
-                  Room 3
-                </SelectItem>
-                <SelectItem value="4A" className={undefined}>
-                  Room 4A
-                </SelectItem>
-                <SelectItem value="4B" className={undefined}>
-                  Room 4B
-                </SelectItem>
-                <SelectItem value="5" className={undefined}>
-                  Room 5
-                </SelectItem>
-                <SelectItem value="6" className={undefined}>
-                  Room 6
-                </SelectItem>
-                <SelectItem value="7" className={undefined}>
-                  Room 7
-                </SelectItem>
-                <SelectItem value="8" className={undefined}>
-                  Room 8
-                </SelectItem>
-                <SelectItem value="9" className={undefined}>
-                  Room 9
-                </SelectItem>
-                <SelectItem value="SA Room" className={undefined}>
-                  SA Room
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+  const hasActiveFilters = searchTerm || statusFilter !== "All";
 
-          {(searchTerm || statusFilter !== "All") && (
-            <Button
-              onClick={resetFilter}
-              variant="outline"
-              className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 transition-all font-medium"
-              size={undefined}
-            >
-              <X className="h-4 w-4 mr-2" />
-              Reset
-            </Button>
-          )}
-        </div>
-        <div className="mt-4 flex items-center justify-between">
-          <div className="text-sm text-gray-600 font-medium">
-            Showing <span className="text-[#2E7D32] font-bold">{count}</span> dormers
-          </div>
-          {(searchTerm || statusFilter !== "All") && (
-            <div className="text-xs text-gray-500">
-              {searchTerm && `Search: "${searchTerm}"`}
-              {searchTerm && statusFilter !== "All" && " • "}
-              {statusFilter !== "All" && `Room: ${statusFilter}`}
+  return (
+    <Card className="border-gray-200">
+      <CardContent className="pt-4 sm:pt-6">
+        <div className="flex flex-col gap-3 sm:gap-4">
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <Input
+                  placeholder="Search dormers..."
+                  value={searchTerm}
+                  onChange={onSearchChange}
+                  className="pl-9 sm:pl-10 border-gray-300 h-9 sm:h-10 text-sm"
+                  type={undefined}
+                />
+              </div>
             </div>
-          )}
+
+            <div className="flex-shrink-0">
+              <Select value={statusFilter} onValueChange={onStatusChange}>
+                <SelectTrigger className="border-gray-300 h-9 sm:h-10 w-10 sm:w-auto px-1 py-1 sm:px-3 gap-0 sm:gap-2">
+                  <div className="flex items-center justify-center sm:justify-start w-full">
+                    <Filter className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline sm:ml-2">
+                      <SelectValue placeholder="Filter by room" />
+                    </span>
+                    {statusFilter !== "All"}
+                  </div>
+                </SelectTrigger>
+                <SelectContent className={undefined}>
+                  <SelectItem value="All" className={undefined}>
+                    All Rooms
+                  </SelectItem>
+                  <SelectItem value="1" className={undefined}>
+                    Room 1
+                  </SelectItem>
+                  <SelectItem value="2" className={undefined}>
+                    Room 2
+                  </SelectItem>
+                  <SelectItem value="3" className={undefined}>
+                    Room 3
+                  </SelectItem>
+                  <SelectItem value="4A" className={undefined}>
+                    Room 4A
+                  </SelectItem>
+                  <SelectItem value="4B" className={undefined}>
+                    Room 4B
+                  </SelectItem>
+                  <SelectItem value="5" className={undefined}>
+                    Room 5
+                  </SelectItem>
+                  <SelectItem value="6" className={undefined}>
+                    Room 6
+                  </SelectItem>
+                  <SelectItem value="7" className={undefined}>
+                    Room 7
+                  </SelectItem>
+                  <SelectItem value="8" className={undefined}>
+                    Room 8
+                  </SelectItem>
+                  <SelectItem value="9" className={undefined}>
+                    Room 9
+                  </SelectItem>
+                  <SelectItem value="SA Room" className={undefined}>
+                    SA Room
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {hasActiveFilters && (
+              <Button
+                onClick={resetFilter}
+                variant="outline"
+                size="icon"
+                className="h-9 w-9 sm:h-10 sm:w-auto sm:px-4 border-gray-300 hover:bg-gray-50 flex-shrink-0"
+              >
+                <X className="h-3.5 w-3.5 sm:h-4 sm:w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Reset</span>
+              </Button>
+            )}
+          </div>
+          <div className="flex items-center justify-between gap-2">
+            <div className="text-xs sm:text-sm text-gray-600">
+              Showing {count} dormer{count !== 1 ? "s" : ""}
+            </div>
+            {statusFilter !== "All" && (
+              <Badge variant="secondary" className="text-xs bg-[#A5D6A7]/20 text-[#2E7D32] hover:bg-[#A5D6A7]/30">
+                {statusFilter === "SA Room" ? "SA Room" : `Room ${statusFilter}`}
+              </Badge>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

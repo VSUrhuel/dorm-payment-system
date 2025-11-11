@@ -64,25 +64,31 @@ export default function PaymentDetailsModal({
               {bill.payments && bill.payments.length > 0 ? (
                 bill.payments.map((payment) => (
                   <TableRow key={payment.id} className={undefined}>
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium w-[120px]">
                       ₱{payment.amount.toFixed(2)}
                     </TableCell>
-                    <TableCell className={undefined}>
-                      {new Date(payment.paymentDate).toLocaleDateString(
-                        "en-US",
-                        {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        }
-                      )}
+                    <TableCell className="w-[150px]">
+                      <span className="truncate block">
+                        {new Date(payment.paymentDate).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          }
+                        )}
+                      </span>
                     </TableCell>
-                    <TableCell className={undefined}>
-                      {payment.paymentMethod}
+                    <TableCell className="w-[140px]">
+                      <span className="truncate block" title={payment.paymentMethod}>
+                        {payment.paymentMethod}
+                      </span>
                     </TableCell>
-                    <TableCell className={undefined}>
-                      {payment.recordedByUser?.firstName ?? "N/A"}{" "}
-                      {payment.recordedByUser?.lastName ?? ""}
+                    <TableCell className="w-[200px]">
+                      <span className="truncate block" title={`${payment.recordedByUser?.firstName ?? "N/A"} ${payment.recordedByUser?.lastName ?? ""}`}>
+                        {payment.recordedByUser?.firstName ?? "N/A"}{" "}
+                        {payment.recordedByUser?.lastName ?? ""}
+                      </span>
                     </TableCell>
                   </TableRow>
                 ))

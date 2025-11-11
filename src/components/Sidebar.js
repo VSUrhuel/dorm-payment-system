@@ -2,6 +2,7 @@
 
 import {
   CalendarPlus,
+  CalendarCheck,
   CircleDollarSign,
   LayoutDashboard,
   Receipt,
@@ -64,7 +65,7 @@ const menuItems = [
   {
     title: "Events",
     url: "/admin/events",
-    icon: Receipt,
+    icon: CalendarCheck,
   },
 ];
 
@@ -115,8 +116,8 @@ export function AppSidebar() {
   };
   return (
     <Sidebar>
-      <div className="flex flex-col h-full min-h-screen bg-[#12372A]">
-        <SidebarHeader className="p-6">
+      <div className="flex flex-col h-full bg-[#12372A]">
+        <SidebarHeader className="p-6 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-10 h-10 bg-[#12372A] rounded-lg">
               <img src="/profile.ico" alt="Logo" width={32} height={32} />
@@ -128,7 +129,7 @@ export function AppSidebar() {
           </div>
         </SidebarHeader>
 
-        <SidebarContent className="flex-1 px-3 py-6">
+        <SidebarContent className="flex-1 overflow-y-auto px-3 py-6">
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu className="space-y-1">
@@ -163,7 +164,7 @@ export function AppSidebar() {
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter className="p-4">
+        <SidebarFooter className="p-4 flex-shrink-0">
           {dormerData && (
             <SidebarHeader className="flex items-start gap-2 pb-2">
               <Avatar className="h-8 w-8">
