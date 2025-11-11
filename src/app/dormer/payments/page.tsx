@@ -250,17 +250,19 @@ export default function PaymentsPage() {
 
                       return (
                         <TableRow key={payment.id} className="hover:bg-[#f0f0f0] transition-colors">
-                          <TableCell className="font-semibold text-[#333333] text-xs sm:text-sm">
-                            {payment.billingPeriod}
+                          <TableCell className="font-semibold text-[#333333] text-xs sm:text-sm w-[150px]">
+                            <span className="truncate block" title={payment.billingPeriod}>
+                              {payment.billingPeriod}
+                            </span>
                           </TableCell>
-                          <TableCell className="font-semibold text-[#333333] text-xs sm:text-sm">
+                          <TableCell className="font-semibold text-[#333333] text-xs sm:text-sm w-[120px]">
                             ₱{formatAmount(payment.totalAmountDue)}
                           </TableCell>
-                          <TableCell className="text-[#2E7D32] font-semibold text-xs sm:text-sm">
+                          <TableCell className="text-[#2E7D32] font-semibold text-xs sm:text-sm w-[120px]">
                             ₱{formatAmount(payment.amountPaid)}
                           </TableCell>
                           <TableCell
-                            className={`font-semibold text-xs sm:text-sm ${
+                            className={`font-semibold text-xs sm:text-sm w-[120px] ${
                               isFullyPaid
                                 ? "text-[#2E7D32]"
                                 : "text-red-600"
@@ -268,20 +270,22 @@ export default function PaymentsPage() {
                           >
                             ₱{formatAmount(remainingBalance)}
                           </TableCell>
-                          <TableCell className="text-gray-600 text-xs sm:text-sm hidden md:table-cell">
-                            {payment.status == "Unpaid"
-                              ? "N/A"
-                              : payment.updatedAt
-                                  .toDate()
-                                  .toLocaleDateString("en-US", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                  })}
+                          <TableCell className="text-gray-600 text-xs sm:text-sm hidden md:table-cell w-[180px]">
+                            <span className="truncate block" title={payment.status == "Unpaid" ? "N/A" : payment.updatedAt.toDate().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}>
+                              {payment.status == "Unpaid"
+                                ? "N/A"
+                                : payment.updatedAt
+                                    .toDate()
+                                    .toLocaleDateString("en-US", {
+                                      year: "numeric",
+                                      month: "long",
+                                      day: "numeric",
+                                    })}
+                            </span>
                           </TableCell>
-                          <TableCell className="">
+                          <TableCell className="w-[140px]">
                             <span
-                              className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-semibold ${
+                              className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-semibold inline-block whitespace-nowrap ${
                                 payment.status === "Paid"
                                   ? "bg-[#A5D6A7] text-[#2E7D32]"
                                   : payment.status === "Partially Paid"

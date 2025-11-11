@@ -89,25 +89,25 @@ export default function billsTable({
 
                   return (
                     <TableRow className="hover:bg-gray-50 transition-colors border-b border-gray-50" key={bill.id}>
-                      <TableCell className="font-medium">
+                      <TableCell className="font-medium w-[200px]">
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10 border-2 border-[#A5D6A7]">
+                          <Avatar className="h-10 w-10 border-2 border-[#A5D6A7] flex-shrink-0">
                             <AvatarFallback className="bg-[#A5D6A7] text-[#2E7D32] font-semibold">
                               {bill.dormer.firstName[0]}
                               {bill.dormer.lastName[0]}
                             </AvatarFallback>
                           </Avatar>
-                          <div>
-                            <div className="font-semibold text-[#333333]">
+                          <div className="min-w-0 flex-1">
+                            <div className="font-semibold text-[#333333] max-w-[200px] truncate" title={`${bill.dormer.firstName} ${bill.dormer.lastName}`}>
                               {bill.dormer.firstName} {bill.dormer.lastName}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-gray-500 truncate" title={`Room ${bill.dormer.roomNumber} • ${bill.billingPeriod}`}>
                               Room {bill.dormer.roomNumber} • {bill.billingPeriod}
                             </div>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className={undefined}>
+                      <TableCell className="w-[150px]">
                         <div className="font-semibold text-[#333333]">
                           {formatCurrency(bill.totalAmountDue)}
                         </div>
@@ -115,18 +115,18 @@ export default function billsTable({
                           {bill.billingPeriod}
                         </div>
                       </TableCell>
-                      <TableCell className={undefined}>
+                      <TableCell className="w-[150px]">
                         <div className="font-semibold text-[#2E7D32]">
                           {formatCurrency(bill.amountPaid)}
                         </div>
                         {bill.billDate && (
                           <div className="text-xs text-gray-500 flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            {formatDate(bill.billDate)}
+                            <Calendar className="h-3 w-3 flex-shrink-0" />
+                            <span className="truncate">{formatDate(bill.billDate)}</span>
                           </div>
                         )}
                       </TableCell>
-                      <TableCell className={undefined}>
+                      <TableCell className="w-[130px]">
                         <div
                           className={`font-semibold ${
                             bill.remainingBalance > 0
@@ -137,14 +137,14 @@ export default function billsTable({
                           {formatCurrency(bill.remainingBalance)}
                         </div>
                       </TableCell>
-                      <TableCell className={undefined}>
+                      <TableCell className="w-[140px]">
                         <Badge className={className} variant={undefined}>
-                          {Icon && <Icon className="h-4 w-4 mr-1" />}
-                          {bill.status}
+                          {Icon && <Icon className="h-4 w-4 mr-1 flex-shrink-0" />}
+                          <span className="truncate">{bill.status}</span>
                         </Badge>
                       </TableCell>
 
-                      <TableCell className="text-right">
+                      <TableCell className="text-right w-[180px]">
                         <div className="flex gap-2 justify-end">
                           <Button
                             variant="outline"

@@ -97,29 +97,31 @@ export default function BillsModal({
                     const { className, Icon } = getStatusBadgeInfo(bill.status);
                     return (
                       <TableRow key={bill.id} className={undefined}>
-                        <TableCell className={undefined}>
-                          {bill.billingPeriod}
+                        <TableCell className="w-[150px]">
+                          <span className="truncate block" title={bill.billingPeriod}>
+                            {bill.billingPeriod}
+                          </span>
                         </TableCell>
-                        <TableCell className={undefined}>
+                        <TableCell className="w-[120px]">
                           ₱{bill.totalAmountDue.toFixed(2)}
                         </TableCell>
-                        <TableCell className={undefined}>
+                        <TableCell className="w-[120px]">
                           ₱{(bill.amountPaid || 0).toFixed(2)}
                         </TableCell>
-                        <TableCell className={undefined}>
+                        <TableCell className="w-[140px]">
                           <Badge className={className} variant={undefined}>
-                            {Icon && <Icon className="h-4 w-4 mr-1" />}
-                            {bill.status}
+                            {Icon && <Icon className="h-4 w-4 mr-1 flex-shrink-0" />}
+                            <span className="truncate">{bill.status}</span>
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-right ">
+                        <TableCell className="text-right w-[120px]">
                           {(bill.status === "Unpaid" ||
                             bill.status === "Partially Paid" ||
                             bill.status === "Overdue") && (
                             <Button
                               size="sm"
                               onClick={() => onRecordPayment(bill)}
-                              className="h-8 bg-green-600 hover:bg-green-700 text-white"
+                              className="h-8 bg-green-600 hover:bg-green-700 text-white whitespace-nowrap"
                               variant={undefined}
                             >
                               <CreditCard className="h-4 w-4 mr-1" /> Pay
