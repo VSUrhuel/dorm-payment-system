@@ -160,8 +160,8 @@ export default function EventDetailsContent() {
                 variant={event.status === "Active" ? "default" : "secondary"}
                 className={
                   event.status === "Active"
-                    ? "bg-[#A5D6A7] text-[#2E7D32] hover:bg-[#A5D6A7] font-semibold px-2 sm:px-3 py-1 text-xs sm:text-sm flex-shrink-0 self-center"
-                    : "bg-gray-100 text-gray-800 hover:bg-gray-100 font-semibold px-2 sm:px-3 py-1 text-xs sm:text-sm flex-shrink-0 self-center"
+                    ? "bg-[#A5D6A7] text-[#2E7D32] hover:bg-[#A5D6A7] font-semibold px-2 sm:px-3 sm:h-9 flex items-center text-xs sm:text-sm flex-shrink-0"
+                    : "bg-gray-100 text-gray-800 hover:bg-gray-100 font-semibold px-2 sm:px-3 sm:h-9 flex items-center text-xs sm:text-sm flex-shrink-0"
                 }
               >
                 {event.status}

@@ -171,7 +171,7 @@ function Sidebar({
             <SheetTitle>Sidebar</SheetTitle>
             <SheetDescription>Displays the mobile sidebar.</SheetDescription>
           </SheetHeader>
-          <div className="flex h-full min-h-screen w-full flex-col">{children}</div>
+          <div className="flex w-full flex-col" style={{ height: '100dvh', maxHeight: '100dvh' }}>{children}</div>
         </SheetContent>
       </Sheet>
     );
