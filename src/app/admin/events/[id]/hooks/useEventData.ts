@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { Dormer } from "../../../dormers/types";
 import { Event, EventPayment, EventDormerData } from "../../types";
 import { toast } from "sonner";
+import { getEventPayment } from "@/lib/admin/event";
 
 export function useEventData() {
   const params = useParams();
@@ -81,7 +82,7 @@ export function useEventData() {
         paymentMethod: payment?.paymentMethod ?? null,
         recordedBy: payment?.recordedBy ?? null,
       };
-    });
+    }).filter((d) => !d.isDeleted || d.paymentStatus === "Paid");
   }, [dormers, payments]);
 
   const filteredDormers = useMemo(() => {

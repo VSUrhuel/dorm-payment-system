@@ -7,6 +7,7 @@ import { Dormer } from "../../dormers/types";
 import { Event, EventPayment } from "../types";
 import { toast } from "sonner";
 
+
 export function useEventsData() {
   const [events, setEvents] = useState<Event[]>([]);
   const [dormers, setDormers] = useState<Dormer[]>([]);
@@ -57,33 +58,41 @@ export function useEventsData() {
   }, []);
 
   const eventsWithStats = useMemo(() => {
-    const dormerTotal = dormers.length;
-
     return events.map((event) => {
       const paymentsForEvent = eventPayments.filter(
         (p) => p.eventId === event.id
       );
-      const paidDormers = new Set(
+
+      const paidDormerIds = new Set(
         paymentsForEvent
           .filter((p) => p.status === "Paid")
           .map((p) => p.dormerId)
       );
-      const partialDormers = new Set(
+      
+      const partialDormerIds = new Set(
         paymentsForEvent
           .filter((p) => p.status === "Partial")
           .map((p) => p.dormerId)
       );
 
-      const paidCount = paidDormers.size;
-      const partialCount = partialDormers.size;
-      const unpaidCount = dormerTotal - paidCount - partialCount;
+      const dormerTotal = dormers.filter(
+        (d) => !d.isDeleted || paidDormerIds.has(d.id)
+      ).length;
+
+      const paidCount = paidDormerIds.size;
+      const partialCount = partialDormerIds.size;
+
+      const displayPaidCount = paidCount > dormerTotal ? dormerTotal : paidCount;
+      const displayPartialCount = partialCount > dormerTotal ? dormerTotal : partialCount;
+      const unpaidCount = Math.max(0, dormerTotal - displayPaidCount - displayPartialCount);
+      
       const progressPercentage =
-        dormerTotal > 0 ? (paidCount / dormerTotal) * 100 : 0;
+        dormerTotal > 0 ? (displayPaidCount / dormerTotal) * 100 : 0;
 
       return {
         ...event,
-        paidCount,
-        partialCount,
+        paidCount: displayPaidCount,
+        partialCount: displayPartialCount,
         unpaidCount,
         dormerTotal,
         progressPercentage,

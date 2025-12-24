@@ -25,6 +25,7 @@ export interface Bill {
   amountPaid: number;
   description: string;
   updatedAt: any;
+  isDeleted?: boolean;
 }
 
 export interface Payable {

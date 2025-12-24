@@ -44,6 +44,10 @@ export const getBill = async (billId: string) => {
   if (!billSnap.exists()) {
     throw new Error("Bill document does not exist!");
   }
+  // check if bill is deleted
+  if (billSnap.data()?.isDeleted) {
+    throw new Error("Bill document is deleted!");
+  }
   return billSnap.data() as Bill;
 };
 
@@ -52,6 +56,8 @@ export const totalBills = async () => {
   let total = 0;
   billsSnapshot.forEach((doc) => {
     const data = doc.data();
+    // check if bill is deleted
+    if (data.isDeleted) return;
     total += Number(data.totalAmountDue) || 0;
   });
   return total;
@@ -61,7 +67,7 @@ export const getBills = async (userId: string): Promise<any[]> => {
   try {
     const billsQuery = query(
       collection(db, "bills"),
-      where("dormerId", "==", userId)
+      where("dormerId", "==", userId),
     );
 
     const billsSnapshot = await getDocs(billsQuery);

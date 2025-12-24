@@ -130,6 +130,35 @@ export const softDeleteDormer = async (dormerId: string) => {
     isDeleted: true,
     deletedAt: serverTimestamp(),
   });
+
+  const billsRef = collection(db, "bills");
+  const eventPaymentsRef = collection(db, "eventPayments");
+
+  const billsQuery = query(billsRef, where("dormerId", "==", dormerId), where("status", "==", "Unpaid"));
+  const eventPaymentsQuery = query(
+    eventPaymentsRef,
+    where("dormerId", "==", dormerId),
+    where("status", "==", "Unpaid")
+  );
+
+  const billsSnapshot = await getDocs(billsQuery);
+  const eventPaymentsSnapshot = await getDocs(eventPaymentsQuery);
+
+  const batch = writeBatch(db);
+
+  billsSnapshot.forEach((bill) => {
+    batch.set(bill.ref, { isDeleted: true, deletedAt: serverTimestamp() });
+  });
+
+
+  eventPaymentsSnapshot.forEach((eventPayment) => {
+    batch.set(
+      eventPayment.ref,
+      { isDeleted: true, deletedAt: serverTimestamp() }
+    );
+  });
+
+  await batch.commit();
 };
 
 const sendEmail = async (emailData: {
