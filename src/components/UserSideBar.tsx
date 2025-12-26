@@ -14,8 +14,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation"; // 2. Import useRouter
 import { auth } from "@/lib/firebase"; // 3. Import Firebase auth instance
-import { onAuthStateChanged, signOut } from "firebase/auth"; // 4. Import signOut function
-
+import { signOut as firebaseSignOut, onAuthStateChanged } from "firebase/auth";
 import {
   Sidebar,
   SidebarContent,
@@ -26,6 +25,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
@@ -37,39 +37,19 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { AvatarFallback, Avatar } from "@/components/ui/avatar";
+import { AvatarFallback, Avatar } from "./ui/avatar";
 import { firestore as db } from "@/lib/firebase";
 
 const menuItems = [
   {
     title: "Dashboard",
-    url: "/admin",
+    url: "/dormer",
     icon: LayoutDashboard,
   },
   {
     title: "Payments",
-    url: "/admin/dormers",
-    icon: Users,
-  },
-  {
-    title: "Bills",
-    url: "/admin/payments",
+    url: "/dormer/payments",
     icon: CircleDollarSign,
-  },
-  {
-    title: "Expenses",
-    url: "/admin/expenses",
-    icon: Receipt,
-  },
-  {
-    title: "Events",
-    url: "/admin/events",
-    icon: Receipt,
-  },
-  {
-    title: "Profile",
-    url: "/admin/events",
-    icon: Receipt,
   },
 ];
 
@@ -78,6 +58,7 @@ export function AppSidebar() {
   const router = useRouter(); // 5. Initialize the router
   const [user, setUser] = useState(null);
   const [dormerData, setDormerData] = useState(null);
+  const { setOpenMobile } = useSidebar(); 
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -87,7 +68,6 @@ export function AppSidebar() {
   }, []);
 
   useEffect(() => {
-    console.log("user", user);
     if (user) {
       // Only run the query if the user is logged in
       // Query to find the dormer document where 'authUid' matches the logged-in user's uid
@@ -96,59 +76,64 @@ export function AppSidebar() {
         const docSnap = await getDoc(docRef);
         const dormerData = docSnap.data();
         setDormerData(dormerData);
-        console.log(dormerData);
       };
 
       fetchDormerData();
-      console.log(dormerData);
     }
   }, [user]);
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
-      router.push("/"); // Redirect to the login page after sign-out
+      // Sign out from Firebase
+      await firebaseSignOut(auth);
+
+      // Call your API to clear the session cookie
+      await fetch("/api/auth/signout", {
+        method: "POST",
+      });
+
+      // Redirect to login page
+      router.push("/");
     } catch (error) {
-      console.error("Error signing out: ", error);
-      // You could add an error notification here
+      console.error("Sign out error:", error);
     }
   };
   return (
-    <Sidebar className="border-r border-gray-200 bg-white">
-      <div className="flex flex-col h-full">
-        <SidebarHeader className="p-6 border-b border-gray-100">
+    <Sidebar className={undefined}>
+      <div className="flex flex-col h-full bg-[#12372A]">
+        <SidebarHeader className="p-6 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 bg-green-50 rounded-lg">
+            <div className="flex items-center justify-center w-10 h-10 bg-[#12372A] rounded-lg">
               <img src="/profile.ico" alt="Logo" width={32} height={32} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900">DormPay</h2>
-              <p className="text-xs text-gray-500">Payment System</p>
+              <h2 className="text-lg font-bold text-white">DormPay</h2>
+              <p className="text-xs text-white">Payment System</p>
             </div>
           </div>
         </SidebarHeader>
 
-        <SidebarContent className="flex-1 px-3 py-6">
-          <SidebarGroup>
-            <SidebarGroupContent>
+        <SidebarContent className="flex-1 overflow-y-auto px-3 py-6">
+          <SidebarGroup className={undefined}>
+            <SidebarGroupContent className={undefined}>
               <SidebarMenu className="space-y-1">
-                {menuItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
+                {menuItems.map((item: any) => (
+                  <SidebarMenuItem key={item.title} className={undefined}>
                     <SidebarMenuButton
                       asChild
                       isActive={pathname === item.url}
-                      className="group relative h-11 px-3 text-gray-600 hover:text-green-600 hover:bg-green-50 data-[active=true]:bg-green-50 data-[active=true]:text-green-600 data-[active=true]:font-medium transition-all duration-200 rounded-lg"
-                    >
+                      className="group relative h-11 px-3 text-white hover:text-[#12372A] hover:bg-white data-[active=true]:bg-white data-[active=true]:text-[#12372A] data-[active=true]:font-medium transition-all duration-200 rounded-lg" tooltip={undefined}                    >
                       <Link
                         href={item.url}
                         className="flex items-center gap-3 w-full"
+                        onClick={() => setOpenMobile(false)}
                       >
                         <item.icon className="h-5 w-5 transition-transform group-hover:scale-110" />
-                        <span className="text-sm">{item.title}</span>
+                        <span className="text-sm font-medium">{item.title}</span>
                         {item.badge && (
                           <Badge
                             variant="secondary"
-                            className="ml-auto bg-green-100 text-green-800 text-xs px-2 py-0.5 group-hover:bg-green-200 transition-colors"
+                            className="ml-auto bg-[#12372A] text-green-800 text-xs px-2 py-0.5 transition-colors"
                           >
                             {item.badge}
                           </Badge>
@@ -162,9 +147,9 @@ export function AppSidebar() {
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter className="p-4 border-t border-gray-100">
+        <SidebarFooter className="p-4 flex-shrink-0">
           {dormerData && (
-            <SidebarHeader class="flex items-start gap-2 pb-2">
+            <SidebarHeader className="flex items-start gap-2 pb-2">
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-green-100 text-green-800 text-sm font-medium">
                   {dormerData.firstName[0]}
@@ -172,10 +157,10 @@ export function AppSidebar() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-white truncate">
                   {dormerData.firstName} {dormerData.lastName}
                 </p>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-gray-100 truncate">
                   {dormerData.email}
                 </p>
               </div>
@@ -183,8 +168,7 @@ export function AppSidebar() {
           )}
           <SidebarMenuButton
             onClick={handleSignOut}
-            className=" relative flex items-center gap-3 h-11 px-3 w-full text-gray-500 hover:text-white hover:bg-red-500 transition-all duration-200 rounded-lg"
-          >
+            className=" relative flex items-center gap-3 h-11 px-3 w-full text-gray-100 hover:text-white hover:bg-red-500 transition-all duration-200 rounded-lg" tooltip={undefined}          >
             <div className="relative">
               <LogOut className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </div>

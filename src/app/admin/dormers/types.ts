@@ -25,6 +25,7 @@ export interface Bill {
   amountPaid: number;
   description: string;
   updatedAt: any;
+  isDeleted?: boolean;
 }
 
 export interface Payable {
@@ -43,12 +44,7 @@ export type ModalType =
   | null;
 
 export interface DormerData {
-  paymentStatus(paymentStatus: any): unknown;
   id: Key;
-  amountPaid(amountPaid: any): import("react").ReactNode;
-  paymentMethod: any;
-  paymentDate: any;
-  recordedBy: any;
   firstName: string;
   lastName: string;
   email: string;

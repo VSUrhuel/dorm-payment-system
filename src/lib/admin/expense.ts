@@ -1,0 +1,40 @@
+import {
+  collection,
+  addDoc,
+  doc,
+  updateDoc,
+  serverTimestamp,
+  getDocs,
+} from "firebase/firestore";
+import { firestore as db } from "@/lib/firebase";
+
+export const addExpense = async (expenseData: any, recordedBy: string, dormitoryId: string) => {
+  const docRef = await addDoc(collection(db, "expenses"), {
+    ...expenseData,
+    dormitoryId,
+    recordedBy,
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+};
+
+export const updateExpense = async (expenseData: any, updatedBy: string) => {
+  const expenseRef = doc(db, "expenses", expenseData.id);
+  await updateDoc(expenseRef, {
+    ...expenseData,
+    updatedBy,
+    updatedAt: serverTimestamp(),
+  });
+};
+
+export const totalExpenses = async (dormitoryId: string) => {
+  const expensesSnapshot = await getDocs(collection(db, "expenses"));
+  let total = 0;
+  expensesSnapshot.forEach((doc) => {
+    const data = doc.data();
+    if (data.dormitoryId === dormitoryId) {
+      total += Number(data.amount) || 0;
+    }
+  });
+  return total;
+};

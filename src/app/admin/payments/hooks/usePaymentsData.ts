@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { collection, onSnapshot, query } from "firebase/firestore";
-import { firestore as db } from "@/lib/firebase";
+import { collection, doc, getDoc, onSnapshot, query, where } from "firebase/firestore";
+import { auth, firestore as db } from "@/lib/firebase";
 import { toast } from "sonner";
 import { Dormer, Bill } from "../../dormers/types";
 import { Payment, BillData } from "../types";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 export function usePaymentsData() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,6 +18,7 @@ export function usePaymentsData() {
   const [bills, setBills] = useState<Bill[]>([]);
   const [dormers, setDormers] = useState<Dormer[]>([]);
   const [loading, setLoading] = useState(true);
+  const {dormitoryId, loading: loadingDormitoryId } = useCurrentDormitoryId();
 
   useEffect(() => {
     const collections = {
@@ -31,8 +33,12 @@ export function usePaymentsData() {
       }
     };
 
+    if(!loadingDormitoryId && !dormitoryId) {
+      setLoading(false);
+      return;
+    }
     const unsubscribers = Object.keys(collections).map((key) => {
-      const q = query(collection(db, key));
+      const q = query(collection(db, key), where("dormitoryId", "==", dormitoryId));
       return onSnapshot(
         q,
         (snapshot) => {
@@ -54,7 +60,7 @@ export function usePaymentsData() {
     });
 
     return () => unsubscribers.forEach((unsub) => unsub());
-  }, []);
+  }, [dormitoryId, loadingDormitoryId]);
 
   const combinedBillData: BillData[] = useMemo(() => {
     if (loading || !bills.length || !dormers.length) {

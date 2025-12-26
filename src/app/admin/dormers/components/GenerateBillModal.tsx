@@ -116,6 +116,11 @@ export default function GenerateBillModal({
       toast.info("Please select at least one payable to generate a bill.");
       return;
     }
+    if (dormer.id === undefined || dormer.id === null) {
+      toast.error("Dormer ID is undefined.");
+      return;
+    }
+    console.log(dormer);
 
     const billData = {
       dormerId: dormer.id,
@@ -250,7 +255,7 @@ export default function GenerateBillModal({
 
           <div>
             <Label htmlFor="description" className={undefined}>
-              Description / Notes
+              Description / Notes <span className="text-xs text-gray-500">({description.length}/500)</span>
             </Label>
             <Textarea
               id="description"
@@ -258,6 +263,7 @@ export default function GenerateBillModal({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="e.g., Monthly charges for October, including maintenance and WiFi."
               className="mt-1"
+              maxLength={500}
             />
           </div>
         </div>

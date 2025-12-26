@@ -31,16 +31,9 @@ const convertToCSV = (data: ExpenseData[]): string => {
     ].join(",")
   );
   const total = data.reduce((sum, expense) => sum + expense.amount, 0);
-  const summaryRow = [
-    "Total Expenses",
-    "",
-    "",
-    total.toFixed(2),
-    "",
-    "",
-    "",
-    "",
-  ].join(",");
+  const summaryRow = ["Total Expenses", "", "", total, "", "", "", ""].join(
+    ","
+  );
   rows.push(summaryRow);
   return [header.join(","), ...rows].join("\n");
 };

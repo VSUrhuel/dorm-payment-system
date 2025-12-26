@@ -7,6 +7,8 @@ import { useParams } from "next/navigation";
 import { Dormer } from "../../../dormers/types";
 import { Event, EventPayment, EventDormerData } from "../../types";
 import { toast } from "sonner";
+import { getEventPayment } from "@/lib/admin/event";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 export function useEventData() {
   const params = useParams();
@@ -22,7 +24,13 @@ export function useEventData() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  const {dormitoryId, loading: eventDormitoryLoading } = useCurrentDormitoryId();
+
   useEffect(() => {
+    if(!eventDormitoryLoading && !dormitoryId) {
+      setLoading(false);
+      return;
+    }
     if (!eventId) {
       setLoading(false);
       return;
@@ -31,7 +39,8 @@ export function useEventData() {
 
     const dormersQuery = query(
       collection(db, "dormers"),
-      where("role", "==", "User")
+      where("role", "==", "User"),
+      where("dormitoryId", "==", dormitoryId)
     );
     const unsubscribeDormers = onSnapshot(dormersQuery, (snapshot) => {
       setDormers(
@@ -52,7 +61,8 @@ export function useEventData() {
 
     const paymentsQuery = query(
       collection(db, "eventPayments"),
-      where("eventId", "==", eventId)
+      where("eventId", "==", eventId),
+      where("dormitoryId", "==", dormitoryId)
     );
     const unsubscribePayments = onSnapshot(paymentsQuery, (snapshot) => {
       setPayments(
@@ -67,7 +77,7 @@ export function useEventData() {
       unsubscribeEvent();
       unsubscribePayments();
     };
-  }, [eventId]);
+  }, [eventId, dormitoryId, eventDormitoryLoading]);
 
   const eventDormersData: EventDormerData[] = useMemo(() => {
     const paymentsMap = new Map(payments.map((p) => [p.dormerId, p]));
@@ -81,7 +91,7 @@ export function useEventData() {
         paymentMethod: payment?.paymentMethod ?? null,
         recordedBy: payment?.recordedBy ?? null,
       };
-    });
+    }).filter((d) => !d.isDeleted || d.paymentStatus === "Paid");
   }, [dormers, payments]);
 
   const filteredDormers = useMemo(() => {

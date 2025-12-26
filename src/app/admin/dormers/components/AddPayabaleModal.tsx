@@ -99,7 +99,7 @@ export default function AddPayableModal({
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Name
+              Name <span className="text-xs text-gray-500">({name.length}/100)</span>
             </Label>
             <Input
               id="name"
@@ -107,6 +107,7 @@ export default function AddPayableModal({
               onChange={(e) => setName(e.target.value)}
               className="col-span-3"
               placeholder="e.g., Monthly Rent"
+              maxLength={100}
               type={undefined}
             />
           </div>
@@ -125,7 +126,7 @@ export default function AddPayableModal({
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="description" className="text-right">
-              Description
+              Description <span className="text-xs text-gray-500">({description.length}/300)</span>
             </Label>
             <Textarea
               id="description"
@@ -133,6 +134,7 @@ export default function AddPayableModal({
               onChange={(e) => setDescription(e.target.value)}
               className="col-span-3"
               placeholder="(Optional) Any details about this payable."
+              maxLength={300}
             />
           </div>
         </div>

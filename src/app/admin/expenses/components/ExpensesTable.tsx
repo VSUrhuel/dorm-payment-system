@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Eye, Calendar, ImageIcon } from "lucide-react";
+import { Eye, Calendar, ImageIcon, TrendingDown } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -40,11 +40,11 @@ export default function ExpensesTable({
 
   const getCategoryBadge = (category: ExpenseData["category"]) => {
     const config = {
-      Utilities: "bg-blue-100 text-blue-800",
-      Maintenance: "bg-orange-100 text-orange-800",
-      Security: "bg-purple-100 text-purple-800",
-      Supplies: "bg-green-100 text-green-800",
-      Other: "bg-gray-100 text-gray-800",
+      Utilities: "bg-blue-100 text-blue-800 border-blue-200",
+      Maintenance: "bg-orange-100 text-orange-800 border-orange-200",
+      Security: "bg-purple-100 text-purple-800 border-purple-200",
+      Supplies: "bg-[#A5D6A7]/30 text-[#2E7D32] border-[#A5D6A7]",
+      Other: "bg-gray-100 text-gray-800 border-gray-200",
     };
     return config[category] || config["Other"];
   };
@@ -59,99 +59,121 @@ export default function ExpensesTable({
 
   return (
     <>
-      <Card className="border-gray-200 shadow-sm">
-        <CardHeader className={undefined}>
-          <CardTitle className="text-lg font-semibold">
+      <Card className="border-2 border-gray-100 shadow-md bg-white gap-0">
+        <CardHeader className="border-b border-gray-100 py-0">
+          <CardTitle className="text-xl md:text-2xl font-bold text-[#12372A]">
             Expense Records
           </CardTitle>
+          <p className="text-sm text-gray-600 mt-1">Complete list of all recorded expenses</p>
         </CardHeader>
-        <CardContent className={undefined}>
-          <Table className={undefined}>
-            <TableHeader className={undefined}>
-              <TableRow className={undefined}>
-                <TableHead className={undefined}>Title & Description</TableHead>
-                <TableHead className={undefined}>Amount</TableHead>
-                <TableHead className={undefined}>Expense Date</TableHead>
-                <TableHead className={undefined}>Receipt</TableHead>
-                <TableHead className="hidden lg:table-cell">
-                  Recorded By
-                </TableHead>
-                <TableHead className="text-right">Details</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className={undefined}>
-              {expenses.map((expense) => (
-                <TableRow className="hover:bg-gray-50" key={expense.id}>
-                  <TableCell className={undefined}>
-                    <div className="font-semibold text-gray-900">
-                      {expense.title}
-                    </div>
-                    <div className="text-sm text-gray-600 line-clamp-2 max-w-md">
-                      {expense.description}
-                    </div>
-                    <Badge
-                      variant="outline"
-                      className={getCategoryBadge(expense.category)}
-                    >
-                      {expense.category}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className={undefined}>
-                    <div className="font-bold text-red-600 text-lg">
-                      ₱{formatAmount(expense.amount)}
-                    </div>
-                  </TableCell>
-                  <TableCell className={undefined}>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-gray-400" />
-                      <span className="font-medium">
-                        {formatDate(expense.expenseDate)}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className={undefined}>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleViewReceipt(expense)}
-                      className={undefined}
-                    >
-                      <ImageIcon className="h-4 w-4 mr-1" /> View
-                    </Button>
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell">
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback className="bg-green-100 text-green-800 text-xs">
-                          {expense.recordedBy?.firstName?.[0]}
-                          {expense.recordedBy?.lastName?.[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="text-sm font-medium">
-                          {expense.recordedBy.firstName}{" "}
-                          {expense.recordedBy.lastName}
+        <CardContent className="p-0">
+          {expenses.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 px-4">
+              <div className="relative mb-0">
+                <div className="absolute inset-0 bg-red-100/50 rounded-full blur-2xl"></div>
+                <div className="relative p-6 rounded-full bg-red-600">
+                  <TrendingDown className="h-12 w-12 text-white" />
+                </div>
+              </div>
+              
+              <h3 className="text-xl font-bold text-[#333333] mb-2">
+                No expenses recorded
+              </h3>
+              
+              <p className="text-sm text-gray-600 text-center max-w-md mb-6">
+                Get started by recording your first expense. Click the 'Add Expense' button to begin tracking expenses.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto px-5">
+              <Table className={undefined}>
+                <TableHeader className={undefined}>
+                  <TableRow className="hover:bg-transparent border-b border-gray-100">
+                    <TableHead className="font-semibold text-gray-700">Title & Description</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Amount</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Expense Date</TableHead>
+                    <TableHead className="font-semibold text-gray-700">Receipt</TableHead>
+                    <TableHead className="hidden lg:table-cell font-semibold text-gray-700">
+                      Recorded By
+                    </TableHead>
+                    <TableHead className="text-right font-semibold text-gray-700">Details</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className={undefined}>
+                  {expenses.map((expense) => (
+                    <TableRow className="hover:bg-gray-50 transition-colors border-b border-gray-50" key={expense.id}>
+                      <TableCell className="w-[200px]">
+                        <div className="font-semibold text-[#333333] max-w-[200px] truncate" title={expense.title}>
+                          {expense.title}
                         </div>
-                        <div className="text-xs text-gray-500">
-                          {expense.recordedBy.email}
+                        <div className="text-sm text-gray-600 line-clamp-2 max-w-[200px] truncate" title={expense.description}>
+                          {expense.description}
                         </div>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onViewDetails(expense)}
-                      className={undefined}
-                    >
-                      <Eye className="h-4 w-4 mr-1" /> View Details
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                        <Badge
+                          variant="outline"
+                          className={`mt-1.5 border ${getCategoryBadge(expense.category)}`}
+                        >
+                          {expense.category}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="w-[120px]">
+                        <div className="font-bold text-red-600 text-md">
+                          ₱{formatAmount(expense.amount)}
+                        </div>
+                      </TableCell>
+                      <TableCell className="w-[150px]">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                          <span className="font-medium text-[#333333] truncate">
+                            {formatDate(expense.expenseDate)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="w-[120px]">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleViewReceipt(expense)}
+                          className="border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white transition-all font-medium whitespace-nowrap"
+                        >
+                          <ImageIcon className="h-4 w-4 mr-1" /> View
+                        </Button>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell w-[200px]">
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-8 w-8 border-2 border-[#A5D6A7]">
+                            <AvatarFallback className="bg-[#A5D6A7] text-[#2E7D32] text-xs font-semibold">
+                              {expense.recordedBy?.firstName?.[0]}
+                              {expense.recordedBy?.lastName?.[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium text-[#333333] max-w-[200px] truncate" title={`${expense.recordedBy.firstName} ${expense.recordedBy.lastName}`}>
+                              {expense.recordedBy.firstName}{" "}
+                              {expense.recordedBy.lastName}
+                            </div>
+                            <div className="text-xs text-gray-500 max-w-[200px] truncate" title={expense.recordedBy.email}>
+                              {expense.recordedBy.email}
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right w-[140px]">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onViewDetails(expense)}
+                          className="border-blue-500 text-blue-600 hover:bg-blue-500 hover:text-white transition-all font-medium whitespace-nowrap"
+                        >
+                          <Eye className="h-4 w-4 mr-1" /> View Details
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
 

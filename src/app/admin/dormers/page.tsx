@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDormers } from "./hooks/useDormers";
 import { useDormerActions } from "./hooks/useDormerActions";
 import { useModal } from "./hooks/useModal";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
@@ -26,9 +27,12 @@ import { DormersPageSkeleton } from "./components/DormersPageSkeleton";
 import { Bill } from "./types";
 import { Delete } from "lucide-react";
 import DeleteDormerModal from "./components/DeleteDormerModal";
+import { handleExport } from "./utils/csvExport";
 
 export default function DormersPage() {
   const [user, setUser] = useState<User | null>(null);
+  const { ConfirmDialog, confirm } = useConfirmDialog();
+  
   const {
     dormers,
     bills,
@@ -60,20 +64,38 @@ export default function DormersPage() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [billToCreate, setBillToCreate] = useState<Bill | null>(null);
 
-  useState(() => {
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
     return () => unsubscribe();
-  });
+  }, []);
 
   if (loading) {
     return <DormersPageSkeleton />;
   }
 
+  const handleExportWithConfirm = async () => {
+    const confirmed = await confirm({
+      title: "Export Dormers Data",
+      description: `Are you sure you want to export all registered dormers' data to CSV? This will download a file to your computer.`,
+      confirmText: "Export",
+      cancelText: "Cancel",
+      variant: "default",
+    });
+
+    if (confirmed) {
+      handleExport(dormers);
+    }
+  };
+
   return (
-    <div className="p-4 md:p-6 space-y-6">
-      <DormerHeader onAddDormer={() => openModal("add")} />
+    <div className="min-h-screen bg-[#f0f0f0] p-3 sm:p-4 md:p-6 lg:p-8 space-y-4 sm:space-y-5 md:space-y-6">
+      <ConfirmDialog />
+      <DormerHeader
+        onAddDormer={() => openModal("add")}
+        onExport={handleExportWithConfirm}
+      />
 
       <DormerFilters
         searchTerm={searchTerm}
@@ -92,30 +114,37 @@ export default function DormersPage() {
         onGenerateBill={(dormer) => openModal("generateBill", dormer)}
         onViewBills={(dormer) => openModal("bills", dormer)}
         onDelete={(dormer) => openModal("deleteDormer", dormer)}
+        hasFilters={searchTerm !== "" || statusFilter !== "All"}
+        onResetFilters={() => {
+          setSearchTerm("");
+          setStatusFilter("All");
+        }}
       />
 
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <span className="text-sm text-gray-700">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 py-3 sm:py-4">
+        <span className="text-xs sm:text-sm text-gray-600 font-medium">
           Page {currentPage} of {totalPages}
         </span>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handlePreviousPage}
-          disabled={currentPage === 1}
-          className={undefined}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleNextPage}
-          disabled={currentPage >= totalPages}
-          className={undefined}
-        >
-          Next
-        </Button>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+            className="flex-1 sm:flex-none border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all text-xs sm:text-sm"
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleNextPage}
+            disabled={currentPage >= totalPages}
+            className="flex-1 sm:flex-none border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all text-xs sm:text-sm"
+          >
+            Next
+          </Button>
+        </div>
       </div>
 
       <AddDormerModal

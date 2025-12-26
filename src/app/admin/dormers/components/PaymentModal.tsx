@@ -217,13 +217,14 @@ export default function PaymentModal({
 
             <div>
               <Label htmlFor="paymentNotes" className={undefined}>
-                Notes (Optional)
+                Notes (Optional) <span className="text-xs text-gray-500">({notes.length}/500)</span>
               </Label>
               <Textarea
                 id="paymentNotes"
                 placeholder="e.g., Partial payment for September"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
+                maxLength={500}
                 className="mt-1"
               />
             </div>

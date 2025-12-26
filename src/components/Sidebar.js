@@ -2,6 +2,7 @@
 
 import {
   CalendarPlus,
+  CalendarCheck,
   CircleDollarSign,
   LayoutDashboard,
   Receipt,
@@ -25,6 +26,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
@@ -63,7 +65,7 @@ const menuItems = [
   {
     title: "Events",
     url: "/admin/events",
-    icon: Receipt,
+    icon: CalendarCheck,
   },
 ];
 
@@ -72,6 +74,7 @@ export function AppSidebar() {
   const router = useRouter(); // 5. Initialize the router
   const [user, setUser] = useState(null);
   const [dormerData, setDormerData] = useState(null);
+  const { setOpenMobile } = useSidebar(); 
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -112,21 +115,21 @@ export function AppSidebar() {
     }
   };
   return (
-    <Sidebar className="border-r border-gray-200 bg-white">
-      <div className="flex flex-col h-full">
-        <SidebarHeader className="p-6 border-b border-gray-100">
+    <Sidebar>
+      <div className="flex flex-col h-full bg-[#12372A]">
+        <SidebarHeader className="p-6 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 bg-green-50 rounded-lg">
+            <div className="flex items-center justify-center w-10 h-10 bg-[#12372A] rounded-lg">
               <img src="/profile.ico" alt="Logo" width={32} height={32} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900">DormPay</h2>
-              <p className="text-xs text-gray-500">Payment System</p>
+              <h2 className="text-lg font-bold text-white">DormPay</h2>
+              <p className="text-xs text-white">Payment System</p>
             </div>
           </div>
         </SidebarHeader>
 
-        <SidebarContent className="flex-1 px-3 py-6">
+        <SidebarContent className="flex-1 overflow-y-auto px-3 py-6">
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu className="space-y-1">
@@ -135,18 +138,19 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       asChild
                       isActive={pathname === item.url}
-                      className="group relative h-11 px-3 text-gray-600 hover:text-green-600 hover:bg-green-50 data-[active=true]:bg-green-50 data-[active=true]:text-green-600 data-[active=true]:font-medium transition-all duration-200 rounded-lg"
+                      className={"group relative h-11 px-3 text-white hover:text-[#12372A] hover:bg-white data-[active=true]:bg-white data-[active=true]:text-[#12372A] data-[active=true]:font-medium transition-all duration-200 rounded-lg"}
                     >
                       <Link
                         href={item.url}
                         className="flex items-center gap-3 w-full"
+                        onClick={() => setOpenMobile(false)}
                       >
                         <item.icon className="h-5 w-5 transition-transform group-hover:scale-110" />
-                        <span className="text-sm">{item.title}</span>
+                        <span className="text-sm font-medium">{item.title}</span>
                         {item.badge && (
                           <Badge
                             variant="secondary"
-                            className="ml-auto bg-green-100 text-green-800 text-xs px-2 py-0.5 group-hover:bg-green-200 transition-colors"
+                            className="ml-auto bg-[#12372A] text-green-800 text-xs px-2 py-0.5 transition-colors"
                           >
                             {item.badge}
                           </Badge>
@@ -160,7 +164,7 @@ export function AppSidebar() {
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter className="p-4 border-t border-gray-100">
+        <SidebarFooter className="p-4 flex-shrink-0">
           {dormerData && (
             <SidebarHeader className="flex items-start gap-2 pb-2">
               <Avatar className="h-8 w-8">
@@ -170,10 +174,10 @@ export function AppSidebar() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-white truncate">
                   {dormerData.firstName} {dormerData.lastName}
                 </p>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-gray-100 truncate">
                   {dormerData.email}
                 </p>
               </div>
@@ -181,7 +185,7 @@ export function AppSidebar() {
           )}
           <SidebarMenuButton
             onClick={handleSignOut}
-            className=" relative flex items-center gap-3 h-11 px-3 w-full text-gray-500 hover:text-white hover:bg-red-500 transition-all duration-200 rounded-lg"
+            className=" relative flex items-center gap-3 h-11 px-3 w-full text-gray-100 hover:text-white hover:bg-red-500 transition-all duration-200 rounded-lg"
           >
             <div className="relative">
               <LogOut className="h-5 w-5 transition-transform group-hover:translate-x-1" />

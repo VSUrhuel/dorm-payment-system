@@ -1,16 +1,11 @@
 "use client";
-
-import {
-  collection,
-  doc,
-  runTransaction,
-  addDoc,
-  serverTimestamp,
-} from "firebase/firestore";
 import { firestore as db } from "@/lib/firebase";
 import { toast } from "sonner";
 import { User } from "firebase/auth";
 import { Dormer } from "../../dormers/types";
+import { recordPayment } from "@/lib/admin/payment";
+import { paymentConfirmationEmailTemplate } from "../utils/email";
+import { getBill } from "@/lib/admin/bill";
 
 export function usePaymentActions(dormers: Dormer[]) {
   const sendEmail = async (emailData: {
@@ -46,64 +41,21 @@ export function usePaymentActions(dormers: Dormer[]) {
       return;
     }
 
-    const billRef = doc(db, "bills", paymentData.billId);
-
     try {
-      await runTransaction(db, async (transaction) => {
-        const billDoc = await transaction.get(billRef);
-        if (!billDoc.exists()) {
-          throw new Error("Bill document does not exist!");
-        }
-
-        const currentBillData = billDoc.data();
-        const currentAmountPaid = currentBillData.amountPaid || 0;
-        const totalAmountDue = currentBillData.totalAmountDue;
-
-        const newPaymentAmount = paymentData.amount;
-        const newAmountPaid = Math.min(
-          totalAmountDue,
-          currentAmountPaid + newPaymentAmount
-        );
-
-        let newStatus: "Paid" | "Partially Paid" = "Partially Paid";
-        if (newAmountPaid >= totalAmountDue) {
-          newStatus = "Paid";
-        }
-
-        await addDoc(collection(db, "payments"), {
-          ...paymentData,
-          recordedBy: user.uid,
-          createdAt: serverTimestamp(),
-        });
-
-        transaction.update(billRef, {
-          amountPaid: newAmountPaid,
-          status: newStatus,
-          updatedBy: user.uid,
-          updatedAt: serverTimestamp(),
-        });
-      });
-
+      await recordPayment(paymentData, user);
       toast.success("Payment recorded successfully!");
 
       const dormerInfo = dormers.find((d) => d.id === paymentData.dormerId);
       if (dormerInfo?.email) {
+        const billData = await getBill(paymentData.billId);
         await sendEmail({
           to: dormerInfo.email,
           subject: `Payment Confirmation - ${paymentData.billId}`,
-          html: `
-            <h1>Payment Received!</h1>
-            <p>Hi ${dormerInfo.firstName},</p>
-            <p>We've received your payment of <strong>₱${paymentData.amount.toFixed(
-              2
-            )}</strong>.</p>
-            <p>Thank you!</p> <p style="margin-top: 25px;">Best regards,<br><strong>Mabolo Management</strong></p>
-              <div style="border-top: 1px solid #eeeeee; margin-top: 30px; padding-top: 20px; color: #888888; text-align: center; font-size: 12px; line-height: 1.5;">
-                <p style="margin: 0;">© ${new Date().getFullYear()} Mabolo Men's Home. All rights reserved.</p>
-                <p style="margin: 5px 0 0 0;">Visca, Baybay City, Leyte</p>
-                <p style="margin: 5px 0 0 0;">This is an automated message, please do not reply.</p>
-            </div>
-          `,
+          html: paymentConfirmationEmailTemplate(
+            dormerInfo.firstName,
+            paymentData,
+            billData
+          ),
         });
       }
     } catch (error) {

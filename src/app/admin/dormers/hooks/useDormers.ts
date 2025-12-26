@@ -1,7 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
-import { collection, query, onSnapshot } from "firebase/firestore";
+import { collection, query, onSnapshot, where } from "firebase/firestore";
 import { firestore as db } from "@/lib/firebase";
 import { Dormer, Bill, Payable } from "../types";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 export function useDormers() {
   const [dormers, setDormers] = useState<Dormer[]>([]);
@@ -13,9 +14,15 @@ export function useDormers() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
+  const {dormitoryId, loading: dormitoryIdLoading} = useCurrentDormitoryId();
+
   useEffect(() => {
+    if(!dormitoryIdLoading && !dormitoryId) {
+      setLoading(false);
+      return;
+    }
     const unsubscribeDormers = onSnapshot(
-      query(collection(db, "dormers")),
+      query(collection(db, "dormers"), where("dormitoryId", "==", dormitoryId)),
       (snapshot) => {
         const dormerData = snapshot.docs
           .map((doc) => ({ id: doc.id, ...doc.data() } as Dormer))
@@ -52,7 +59,7 @@ export function useDormers() {
       unsubscribeBills();
       unsubscribePayables();
     };
-  }, []);
+  }, [dormitoryId, dormitoryIdLoading]);
 
   const dormersWithBills = useMemo(() => {
     if (!dormers.length) return [];
