@@ -51,12 +51,14 @@ export const recordPayment = async (paymentData: any, user: User) => {
   });
 };
 
-export const totalPayments = async () => {
+export const totalPayments = async (dormitoryId: string) => {
   const paymentsSnapshot = await getDocs(collection(db, "payments"));
   let total = 0;
   paymentsSnapshot.forEach((doc) => {
     const data = doc.data();
-    total += Number(data.amount) || 0;
+    if (data.dormitoryId === dormitoryId) {
+      total += Number(data.amount) || 0;
+    }
   });
   return total;
 };

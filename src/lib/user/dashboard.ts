@@ -19,11 +19,13 @@ import { Bill, DormerData } from "../../app/admin/dormers/types";
 import { totalExpenses } from "../admin/expense";
 import { totalBills } from "../admin/bill";
 import { totalPayments } from "../admin/payment";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 export const dashboardData = async () => {
-  const expenses = await totalExpenses();
-  const bills = await totalBills();
-  const payments = await totalPayments();
+  const {dormitoryId, loading} = useCurrentDormitoryId();
+  const expenses = await totalExpenses(dormitoryId);
+  const bills = await totalBills(dormitoryId);
+  const payments = await totalPayments(dormitoryId);
 
   return {
     totalExpenses: expenses,

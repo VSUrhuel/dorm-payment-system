@@ -17,9 +17,10 @@ import { Bill } from "../../app/admin/dormers/types";
 import { User } from "firebase/auth";
 import { getUserPaymentWithBilll } from "./payment";
 
-export const createBill = async (billData: Omit<Bill, "id">, user: User) => {
+export const createBill = async (billData: Omit<Bill, "id">, user: User, dormitoryId: string) => {
   const docRef = await addDoc(collection(db, "bills"), {
     ...billData,
+    dormitoryId,
     createdBy: user.uid,
     createdAt: serverTimestamp(),
   });
@@ -51,23 +52,25 @@ export const getBill = async (billId: string) => {
   return billSnap.data() as Bill;
 };
 
-export const totalBills = async () => {
+export const totalBills = async (dormitoryId: string) => {
   const billsSnapshot = await getDocs(collection(db, "bills"));
   let total = 0;
   billsSnapshot.forEach((doc) => {
     const data = doc.data();
     // check if bill is deleted
     if (data.isDeleted) return;
+    if (data.dormitoryId !== dormitoryId) return;
     total += Number(data.totalAmountDue) || 0;
   });
   return total;
 };
 
-export const getBills = async (userId: string): Promise<any[]> => {
+export const getBills = async (userId: string, dormitoryId: string): Promise<any[]> => {
   try {
     const billsQuery = query(
       collection(db, "bills"),
       where("dormerId", "==", userId),
+      where("dormitoryId", "==", dormitoryId),
     );
 
     const billsSnapshot = await getDocs(billsQuery);

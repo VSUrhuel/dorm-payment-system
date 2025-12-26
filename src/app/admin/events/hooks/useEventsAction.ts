@@ -7,9 +7,11 @@ import { Event } from "../types";
 import { Dormer } from "../../dormers/types";
 import { addEvent, updateEvent } from "@/lib/admin/event";
 import { newEventEmailTemplate } from "../utils/email";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 export function useEventActions() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const {dormitoryId, loading} = useCurrentDormitoryId();
 
   const sendEmail = async (emailData: any) => {
     try {
@@ -30,6 +32,10 @@ export function useEventActions() {
     user: User | null,
     dormers: Dormer[]
   ) => {
+    if (!dormitoryId) {
+      toast.error("Dormitory ID not found. Please log in again.");
+      return;
+    }
     if (!user) {
       toast.error("Authentication error. Please log in again.");
       return;
@@ -42,7 +48,7 @@ export function useEventActions() {
         await updateEvent(dataToSave, id);
         toast.success("Event updated successfully!");
       } else {
-        await addEvent(dataToSave, user.uid);
+        await addEvent(dataToSave, user.uid, dormitoryId);
         toast.success("New event created successfully!");
       }
 

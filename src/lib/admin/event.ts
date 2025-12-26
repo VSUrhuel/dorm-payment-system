@@ -10,9 +10,10 @@ import {
 } from "firebase/firestore";
 import { firestore as db } from "@/lib/firebase";
 
-export const addEvent = async (eventData: any, createdBy: string) => {
+export const addEvent = async (eventData: any, createdBy: string, dormitoryId: string) => {
   const docRef = await addDoc(collection(db, "events"), {
     ...eventData,
+    dormitoryId,
     createdBy,
     createdAt: serverTimestamp(),
   });

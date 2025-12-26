@@ -40,7 +40,8 @@ import {
   query,
   onSnapshot,
   runTransaction,
-  serverTimestamp, // Use serverTimestamp for more accurate timestamps
+  serverTimestamp,
+  where, // Use serverTimestamp for more accurate timestamps
 } from "firebase/firestore";
 import AddPayableModal from "./dormers/components/AddPayabaleModal";
 
@@ -49,6 +50,7 @@ import { Skeleton } from "./../../components/ui/skeleton";
 import { toast } from "sonner";
 import { formatAmount } from "./expenses/utils";
 import { convertToHTMLTable, generateEmailHtml } from "@/lib/admin/dashboardUtils";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 function SkeletonCard() {
   return (
@@ -128,6 +130,8 @@ export default function Dashboard() {
 
   const [payableToEdit, setPayableToEdit] = useState(null);
 
+  const { dormitoryId, loading: dormitoryIdLoading} = useCurrentDormitoryId();
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
@@ -151,9 +155,13 @@ export default function Dashboard() {
       payments: setPaymentsData, // Added payments collection listener
     };
 
+    if (!dormitoryId) {
+      return;
+    }
+
     const unsubscribers = Object.entries(collections).map(
       ([collectionName, setter]) => {
-        const q = query(collection(db, collectionName));
+        const q = query(collection(db, collectionName), where("dormitoryId", "==", dormitoryId));
         return onSnapshot(
           q,
           (snapshot) => {
@@ -182,7 +190,7 @@ export default function Dashboard() {
 
     // Cleanup function to unsubscribe from all listeners on component unmount
     return () => unsubscribers.forEach((unsub) => unsub());
-  }, []);
+  }, [dormitoryId]);
 
   // Effect for calculating totals whenever the source data changes
   useEffect(() => {
