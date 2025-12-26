@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Key, useState } from "react";
 import { firestore as db, auth } from "@/lib/firebase";
 import { toast } from "sonner";
 import { Dormer, Bill, DormerData } from "../types";
@@ -11,6 +11,7 @@ import {
   migrateDormerAccounts,
   recordPaymentTransaction,
   softDeleteDormer,
+  updateDormerDetails,
 } from "@/lib/admin/dormer";
 import { User } from "firebase/auth";
 import { createBill, getBill, updateBill } from "@/lib/admin/bill";
@@ -47,6 +48,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
   };
 
   const saveDormer = async (dormerData: DormerData, user: User | null) => {
+
     if (!user) {
       toast.error("Authentication error. Please log in again.");
       return;
@@ -126,6 +128,20 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
       } else {
         toast.error(`Failed to add dormer: ${error.message}`);
       }
+    }
+  };
+
+  const updateDormer = async (dormerData: DormerData, user: User | null) => {
+    if (!user) {
+      toast.error("Authentication error or missing dormer data.");
+      return;
+    }
+
+    try {
+      await updateDormerDetails(dormerData.id as any,dormerData, user);
+      toast.success("Dormer updated successfully!");
+    } catch (error) {
+      toast.error("Error updating dormer!");
     }
   };
 
@@ -215,5 +231,6 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
     saveBill,
     deleteDormer,
     isSubmitting,
+    updateDormer,
   };
 }

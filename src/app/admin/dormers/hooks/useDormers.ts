@@ -35,7 +35,7 @@ export function useDormers() {
     );
 
     const unsubscribeBills = onSnapshot(
-      query(collection(db, "bills")),
+      query(collection(db, "bills"), where("dormitoryId", "==", dormitoryId)),
       (snapshot) => {
         const billData = snapshot.docs.map(
           (doc) => ({ id: doc.id, ...doc.data() } as Bill)
@@ -45,7 +45,7 @@ export function useDormers() {
     );
 
     const unsubscribePayables = onSnapshot(
-      query(collection(db, "regularCharge")),
+      query(collection(db, "regularCharge"), where("dormitoryId", "==", dormitoryId)),
       (snapshot) => {
         const payableData = snapshot.docs.map(
           (doc) => ({ id: doc.id, ...doc.data() } as Payable)

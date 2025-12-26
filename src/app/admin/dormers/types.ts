@@ -41,14 +41,16 @@ export type ModalType =
   | "payment"
   | "generateBill"
   | "deleteDormer"
+  | "edit"
   | null;
 
 export interface DormerData {
-  id: Key;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
   role: string;
   roomNumber: string;
+  dormerId?: string;
 }
