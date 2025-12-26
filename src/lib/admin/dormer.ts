@@ -396,3 +396,40 @@ export const migrateDormerAccounts = async () => {
   const timestamp = new Date().toISOString().replace(/:/g, "-");
   downloadLogFile(logContent, `dormer-migration-log-${timestamp}.txt`);
 };
+
+export const updateDormerId = async () => {
+  try {
+    // 1. Get a reference to the collection
+    const dormersCollection = collection(db, "dormers");
+    
+    // 2. Fetch all documents in the collection
+    const querySnapshot = await getDocs(dormersCollection);
+    
+    // 3. Initialize a WriteBatch
+    const batch = writeBatch(db);
+    let count = 0;
+
+    // 4. Loop through each document and add the update to the batch
+    querySnapshot.forEach((document) => {
+      const docRef = doc(db, "dormers", document.id);
+      
+      batch.update(docRef, {
+        dormitoryId: "9yHHtMPd2dalQ5f25Y7m",
+        isDeleted: false,
+      });
+      
+      count++;
+    });
+
+    // 5. Commit the batch (sends all updates in one network request)
+    if (count > 0) {
+      await batch.commit();
+      console.log(`Successfully updated ${count} dormers.`);
+    } else {
+      console.log("No dormers found to update.");
+    }
+    
+  } catch (error) {
+    console.error("Error updating dormers:", error);
+  }
+};
