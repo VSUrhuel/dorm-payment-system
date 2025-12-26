@@ -433,3 +433,90 @@ export const updateDormerId = async () => {
     console.error("Error updating dormers:", error);
   }
 };
+
+export const updateIds = async () => {
+  const billsCollection = collection(db, "bills");
+  const paymentsCollection = collection(db, "payments");
+  const eventPaymentsCollection = collection(db, "eventPayments");
+  const eventsCollection = collection(db, "events");
+  const regularChargeCollection = collection(db, "regularCharge");
+  const expensesCollection = collection(db, "expenses");
+
+  const batch = writeBatch(db);
+  let count = 0;
+
+  const billsQuery = query(billsCollection);
+  const paymentsQuery = query(paymentsCollection);
+  const eventPaymentsQuery = query(eventPaymentsCollection);
+  const eventsQuery = query(eventsCollection);
+  const regularChargeQuery = query(regularChargeCollection);
+  const expensesQuery = query(expensesCollection);
+
+  const billsSnapshot = await getDocs(billsQuery);
+  const paymentsSnapshot = await getDocs(paymentsQuery);
+  const eventPaymentsSnapshot = await getDocs(eventPaymentsQuery);
+  const eventsSnapshot = await getDocs(eventsQuery);
+  const regularChargeSnapshot = await getDocs(regularChargeQuery);
+  const expensesSnapshot = await getDocs(expensesQuery);
+
+  billsSnapshot.forEach((billDoc) => {
+    const billRef = doc(db, "bills", billDoc.id);
+    batch.update(billRef, {
+      dormitoryId: "9yHHtMPd2dalQ5f25Y7m",
+      isDeleted: false,
+    });
+    count++;
+  });
+
+  paymentsSnapshot.forEach((paymentDoc) => {
+    const paymentRef = doc(db, "payments", paymentDoc.id);
+    batch.update(paymentRef, {
+      dormitoryId: "9yHHtMPd2dalQ5f25Y7m",
+      isDeleted: false,
+    });
+    count++;
+  });
+
+  eventPaymentsSnapshot.forEach((eventPaymentDoc) => {
+    const eventPaymentRef = doc(db, "eventPayments", eventPaymentDoc.id);
+    batch.update(eventPaymentRef, {
+      dormitoryId: "9yHHtMPd2dalQ5f25Y7m",
+      isDeleted: false,
+    });
+    count++;
+  });
+
+  eventsSnapshot.forEach((eventDoc) => {
+    const eventRef = doc(db, "events", eventDoc.id);
+    batch.update(eventRef, {
+      dormitoryId: "9yHHtMPd2dalQ5f25Y7m",
+      isDeleted: false,
+    });
+    count++;
+  });
+
+  regularChargeSnapshot.forEach((regularChargeDoc) => {
+    const regularChargeRef = doc(db, "regularCharge", regularChargeDoc.id);
+    batch.update(regularChargeRef, {
+      dormitoryId: "9yHHtMPd2dalQ5f25Y7m",
+      isDeleted: false,
+    });
+    count++;
+  });
+
+  expensesSnapshot.forEach((expenseDoc) => {
+    const expenseRef = doc(db, "expenses", expenseDoc.id);
+    batch.update(expenseRef, {
+      dormitoryId: "9yHHtMPd2dalQ5f25Y7m",
+      isDeleted: false,
+    });
+    count++;
+  });
+
+  if (count > 0) {
+    await batch.commit();
+    console.log(`Successfully updated ${count} documents.`);
+  } else {
+    console.log("No documents found to update.");
+  } 
+}

@@ -28,7 +28,7 @@ import { Bill } from "./types";
 import { Delete } from "lucide-react";
 import DeleteDormerModal from "./components/DeleteDormerModal";
 import { handleExport } from "./utils/csvExport";
-import { updateDormerId } from "@/lib/admin/dormer";
+import { updateDormerId, updateIds } from "@/lib/admin/dormer";
 
 export default function DormersPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -77,7 +77,7 @@ export default function DormersPage() {
   }
 
   const handleExportWithConfirm = async () => {
-    await updateDormerId();
+    await updateIds();
     const confirmed = await confirm({
       title: "Export Dormers Data",
       description: `Are you sure you want to export all registered dormers' data to CSV? This will download a file to your computer.`,

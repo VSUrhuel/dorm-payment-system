@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { collection, onSnapshot, query } from "firebase/firestore";
-import { firestore as db } from "@/lib/firebase";
+import { collection, doc, getDoc, onSnapshot, query, where } from "firebase/firestore";
+import { auth, firestore as db } from "@/lib/firebase";
 import { toast } from "sonner";
 import { Dormer, Bill } from "../../dormers/types";
 import { Payment, BillData } from "../types";
+import { onAuthStateChanged } from "firebase/auth";
+import { m } from "framer-motion";
 
 export function usePaymentsData() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,6 +19,28 @@ export function usePaymentsData() {
   const [bills, setBills] = useState<Bill[]>([]);
   const [dormers, setDormers] = useState<Dormer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dormitoryId, setDormitoryId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDocRef = doc(db, "dormers", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          if (userData.dormitoryId) {
+            setDormitoryId(userData.dormitoryId);
+          } else {
+            console.error("User profile not found in dormers collection.");
+            setLoading(false);
+          }
+        }
+      } else {
+        setLoading(false);
+      }
+    });
+    return () => unsubscribeAuth();
+  }, []);
 
   useEffect(() => {
     const collections = {
@@ -32,7 +56,7 @@ export function usePaymentsData() {
     };
 
     const unsubscribers = Object.keys(collections).map((key) => {
-      const q = query(collection(db, key));
+      const q = query(collection(db, key), where("dormitoryId", "==", dormitoryId));
       return onSnapshot(
         q,
         (snapshot) => {
