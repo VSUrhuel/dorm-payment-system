@@ -171,7 +171,7 @@ export default function Dashboard() {
             }));
             // If fetching dormers, filter by role 'User'
             if (collectionName === "dormers") {
-              setter(data.filter((d) => d.role === "User"));
+              setter(data.filter((dormer) => dormer.role === "User" && !dormer.isDeleted));
             } else {
               setter(data);
             }
@@ -232,7 +232,7 @@ export default function Dashboard() {
     setLoading(true);
     // Helper function to find dormer info safely
     const getDormerInfo = (dormerId) => {
-      return dormersData.find((d) => d.id === dormerId) || {};
+      return dormersData.find((d) => d.id === dormerId && d.isDeleted === false) || {};
     };
 
     const getBillInfo = (billId) => {

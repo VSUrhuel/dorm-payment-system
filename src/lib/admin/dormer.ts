@@ -55,6 +55,15 @@ export const createAdminDormer = async (
   return newAdminUid;
 };
 
+export const updateDormerDetails = async (dormerId: string, dormerData: DormerData, user: User) => {
+  const dormerRef = doc(db, "dormers", dormerId);
+  await updateDoc(dormerRef, {
+    ...dormerData,
+    updatedBy: user.uid,
+    updatedAt: serverTimestamp(),
+  });
+}
+
 export const fetchDormitoryIdByUid = async (uid: string): Promise<string | null> => {
   try {
     const userDocRef = doc(db, "dormers", uid);
