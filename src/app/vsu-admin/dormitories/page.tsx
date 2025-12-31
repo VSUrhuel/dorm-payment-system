@@ -4,36 +4,24 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Plus, MoreHorizontal, MapPin } from "lucide-react"
-
-const dorms = [
-  {
-    id: 1,
-    name: "Narra Residence",
-    location: "North Campus",
-    manager: "Liza Soberano",
-    occupancy: "145/150",
-    status: "Active",
-  },
-  {
-    id: 2,
-    name: "Ipil Hall",
-    location: "South Campus",
-    manager: "Enrique Gil",
-    occupancy: "190/200",
-    status: "Active",
-  },
-  {
-    id: 3,
-    name: "Bamboo Suites",
-    location: "West Side",
-    manager: "James Reid",
-    occupancy: "85/120",
-    status: "Maintenance",
-  },
-  { id: 4, name: "Yakal Dorm", location: "Main Gate", manager: "Nadine Lustre", occupancy: "0/150", status: "Closed" },
-]
+import { useDormitoryData } from "./hooks/useDormitoryData"
 
 export default function DormitoryManagement() {
+  const { dormitories,
+        currentPage,
+        setCurrentPage,
+        searchTerm,
+        setSearchTerm,
+        locationFilter,
+        setLocationFilter,
+        totalPages,
+        setTotalPages,
+        loading,
+        paginatedDormitories,
+        filteredDormitories,
+        handleNextPage,
+        handlePreviousPage,} = useDormitoryData()
+
   return (
     <div className="min-h-screen bg-background pl-64">
       <header className="flex h-16 items-center border-b bg-white px-8">
@@ -67,7 +55,7 @@ export default function DormitoryManagement() {
               </TableRow>
             </TableHeader>
             <TableBody className={undefined}>
-              {dorms.map((dorm) => (
+              {filteredDormitories.map((dorm) => (
                 <TableRow key={dorm.id} className="hover:bg-gray-50/50 transition-colors">
                   <TableCell className="font-semibold">{dorm.name}</TableCell>
                   <TableCell className="text-xs">
@@ -79,15 +67,15 @@ export default function DormitoryManagement() {
                   <TableCell className={undefined}>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-7 w-7 border">
-                        <AvatarImage src={`/.jpg?height=28&width=28&query=${dorm.manager}`} className={undefined} />
+                        <AvatarImage src={`/.jpg?height=28&width=28&query=${dorm.adviser}`} className={undefined} />
                         <AvatarFallback className={undefined}>
-                          {dorm.manager
+                          {dorm.adviser
                             .split(" ")
                             .map((n) => n[0])
                             .join("")}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="text-xs font-medium">{dorm.manager}</span>
+                      <span className="text-xs font-medium">{dorm.adviser}</span>
                     </div>
                   </TableCell>
                   <TableCell className="text-xs">

@@ -4,4 +4,5 @@ export interface Dormitory {
     location: string;
     adviser: string;
     isDeleted?: boolean;
+    occupancy?: number;
 }
