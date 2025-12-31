@@ -9,6 +9,7 @@ export interface Dormer {
   role: string;
   roomNumber: string;
   createdAt: any;
+  dormitoryId: string;
   isDeleted?: boolean;
   bills: Bill[];
 }
