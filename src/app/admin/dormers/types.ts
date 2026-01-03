@@ -43,6 +43,7 @@ export type ModalType =
   | "generateBill"
   | "deleteDormer"
   | "edit"
+  | "delete"
   | null;
 
 export interface DormerData {

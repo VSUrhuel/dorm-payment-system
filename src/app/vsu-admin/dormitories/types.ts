@@ -1,5 +1,5 @@
 export interface Dormitory {
-    id: string;
+    id?: string;
     name: string;
     location: string;
     adviser: string;

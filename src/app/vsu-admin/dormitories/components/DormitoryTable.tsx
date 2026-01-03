@@ -2,36 +2,17 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { MoreHorizontal, MapPin } from "lucide-react"
+import { MoreHorizontal, MapPin, Edit2, Trash2 } from "lucide-react"
+import { Dormitory } from "../types"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
-const dorms = [
-  {
-    id: 1,
-    name: "Narra Residence",
-    location: "North Campus",
-    manager: "Liza Soberano",
-    occupancy: "145/150",
-  },
-  {
-    id: 2,
-    name: "Ipil Hall",
-    location: "South Campus",
-    manager: "Enrique Gil",
-    occupancy: "190/200",
-    status: "Active",
-  },
-  {
-    id: 3,
-    name: "Bamboo Suites",
-    location: "West Side",
-    manager: "James Reid",
-    occupancy: "85/120",
-    status: "Maintenance",
-  },
-  { id: 4, name: "Yakal Dorm", location: "Main Gate", manager: "Nadine Lustre", occupancy: "0/150", status: "Closed" },
-]
+interface dormitoryTableProps {
+  dorms: Dormitory[],
+  editDormitory: (dorm: Dormitory) => void,
+  deleteDormitory: (dorm: Dormitory) => void
+}
+export default function DormitoryTable({ dorms, editDormitory, deleteDormitory }: dormitoryTableProps) {
 
-export default function DormitoryTable() {
     return (
         <main className="p-8">
         <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden">
@@ -66,15 +47,15 @@ export default function DormitoryTable() {
                   <TableCell className={undefined}>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-7 w-7 border">
-                        <AvatarImage src={`/.jpg?height=28&width=28&query=${dorm.manager}`} className={undefined} />
+                        <AvatarImage src={`/.jpg?height=28&width=28&query=${dorm.adviser}`} className={undefined} />
                         <AvatarFallback className={undefined}>
-                          {dorm.manager
+                          {dorm.adviser
                             .split(" ")
                             .map((n) => n[0])
                             .join("")}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="text-xs font-medium">{dorm.manager}</span>
+                      <span className="text-xs font-medium">{dorm.adviser}</span>
                     </div>
                   </TableCell>
                   <TableCell className="text-xs">
@@ -83,9 +64,31 @@ export default function DormitoryTable() {
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-primary"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-[160px]">
+                        <DropdownMenuItem
+                          className="text-xs font-medium py-2 cursor-pointer"
+                          onClick={() => editDormitory(dorm)} inset={undefined}                        >
+                          <Edit2 className="mr-2 h-3.5 w-3.5" />
+                          Edit Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-xs font-medium py-2 cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                          onClick={() => deleteDormitory(dorm)} inset={undefined}                        >
+                          <Trash2 className="mr-2 h-3.5 w-3.5" />
+                          Remove Dorm
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}

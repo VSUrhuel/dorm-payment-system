@@ -1,20 +1,22 @@
 import { Dormitory } from "../types"
-import { createDormitory, softDeleteDormitory } from "@/lib/vsu-admin/dormitory"
+import { createDormitory, softDeleteDormitory, updateDormitory } from "@/lib/vsu-admin/dormitory"
 import { toast } from "sonner"
 
 export function useDormitoryAction() {
     const addDormitory = async (dormitory: Dormitory) => {
         try {
             await createDormitory(dormitory)
+            toast.success("Dormitory added successfully!")
         } catch (error) {
             toast.error("Error adding dormitory:", error)
         }
     }
 
-    const updateDormitory = async (dormitory: Dormitory) => {
+    const updateDormDetails = async (dormitory: Dormitory) => {
         try {
             if(dormitory.id){
                 await updateDormitory(dormitory)
+                toast.success("Dormitory updated successfully!")
             }
             else {
                 toast.error("Dormitory ID is required for updating.")
@@ -24,10 +26,10 @@ export function useDormitoryAction() {
         }
     }
 
-    const deleteDormitory = async (id: string) => {
+    const deleteDormitory = async (dormitory: Dormitory) => {
         try {
-            if(id){
-                await softDeleteDormitory(id)
+            if(dormitory.id){
+                await softDeleteDormitory(dormitory.id)
             }
             else {
                 toast.error("Dormitory ID is required for soft deleting.")
@@ -39,7 +41,7 @@ export function useDormitoryAction() {
 
     return {
         addDormitory,
-        updateDormitory,
+        updateDormDetails,
         deleteDormitory,
     }
 }

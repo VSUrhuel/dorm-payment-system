@@ -73,3 +73,17 @@ export const dormerCount = async (dormitoryId: string) => {
         toast.error("Error getting dormers:", error)
     }
 }
+
+export const getDormAdviser = async (userId: string) => {
+    try {
+        const userSnapshot = await getDocs(collection(db, "dormers"))
+        const users = userSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }))
+        const adviserName = users.find((user: Dormer) => user.id === userId) as Dormer
+        return adviserName.firstName + " " + adviserName.lastName
+    } catch (error) {
+        toast.error("Error getting user:", error)
+    }
+}

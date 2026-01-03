@@ -1,7 +1,9 @@
-import { collection, onSnapshot, query } from "firebase/firestore"
+import { collection, onSnapshot, query, where } from "firebase/firestore"
 import { useEffect, useMemo, useState } from "react"
 import { firestore as db } from "@/lib/firebase"
 import { Dormitory } from "../types"
+import { getDormAdviser } from "@/lib/vsu-admin/dormitory"
+import { Dormer } from "@/app/admin/dormers/types"
 
 
 export function useDormitoryData() {
@@ -10,6 +12,7 @@ export function useDormitoryData() {
     const [allDormers, setAllDormers] = useState<any[]>([])
     const [dormsLoaded, setDormsLoaded] = useState(false)
     const [dormersLoaded, setDormersLoaded] = useState(false)
+    const [advisers, setAdvisers] = useState<Dormer[]>([])
 
     const [currentPage, setCurrentPage] = useState(1)
     const [searchTerm, setSearchTerm] = useState("")
@@ -23,12 +26,21 @@ export function useDormitoryData() {
         const unsub = onSnapshot(query(collection(db, "dormitories")), (snap) => {
             const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Dormitory[]
             setRawDormitories(data)
+            console.log(data + "s")
             setDormsLoaded(true)
         }, (err) => {
             console.error("Error fetching dormitories:", err)
             setLoading(false)
         })
-        return () => unsub()
+
+        const advisersUnsub = onSnapshot(query(collection(db, "dormers"), where("role", "==", "Adviser")), (snap) => {
+            const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Dormer[]
+            setAdvisers(data)
+        }, (err) => console.error("Error fetching dormers:", err))
+        return () => {
+            unsub()
+            advisersUnsub()
+        }
     }, [])
 
     useEffect(() => {
@@ -53,8 +65,12 @@ export function useDormitoryData() {
 
     useEffect(() => {
         const totalPages = Math.ceil(dormitories.length / dormsPerPage)
+        dormitories.forEach(async (dorm) => {
+          dorm.adviser =  await getDormAdviser(dorm.adviser); 
+        })
         setTotalPages(totalPages)
     }, [dormitories])
+
 
     const filteredDormitories = useMemo(() => {
         return dormitories.filter((dormitory) =>
@@ -62,14 +78,18 @@ export function useDormitoryData() {
             dormitory.location.toLowerCase().includes(locationFilter.toLowerCase())
         )
     }, [dormitories, searchTerm, locationFilter])
-
     
-
+    console.log(filteredDormitories)
+    console.log(dormitories)
     const paginatedDormitories = useMemo(() => {
         const indexOfLastDormitory = currentPage * dormsPerPage
         const indexOfFirstDormitory = indexOfLastDormitory - dormsPerPage
-        return dormitories.slice(indexOfFirstDormitory, indexOfLastDormitory)
-    }, [dormitories, currentPage])
+        return filteredDormitories.slice(indexOfFirstDormitory, indexOfLastDormitory)
+    }, [filteredDormitories, currentPage])
+
+    
+    console.log(paginatedDormitories)
+    
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -89,6 +109,7 @@ export function useDormitoryData() {
 
     return {
         dormitories,
+        advisers,
         currentPage,
         setCurrentPage,
         searchTerm,
