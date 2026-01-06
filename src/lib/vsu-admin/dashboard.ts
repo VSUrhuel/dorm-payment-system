@@ -34,7 +34,7 @@ export const getKpiData = async () => {
 
 export const getDormitoriesOccupancy = async () => {
     try {
-        const dormitories = await getDormitories();
+        const dormitories = await getDormitories() as any;
         const dormitoryOccupancy = dormitories.map(async (dormitory: Dormitory) => {
             const totalDormers = await dormerCount(dormitory.id)
             return {

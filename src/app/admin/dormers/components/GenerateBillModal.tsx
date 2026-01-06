@@ -103,7 +103,6 @@ export default function GenerateBillModal({
         bill.billingPeriod === billingPeriod &&
         (bill.status === "Paid" || bill.status === "Partially Paid")
     );
-    console.log("Already Paid Bill Check:", existingBill);
     return !!existingBill;
   };
 
@@ -120,7 +119,6 @@ export default function GenerateBillModal({
       toast.error("Dormer ID is undefined.");
       return;
     }
-    console.log(dormer);
 
     const billData = {
       dormerId: dormer.id,

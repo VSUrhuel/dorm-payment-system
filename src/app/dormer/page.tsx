@@ -28,6 +28,7 @@ import { auth } from "@/lib/firebase";
 import { dashboardData, recentBills } from "@/lib/user/dashboard";
 import { Bill } from "../admin/dormers/types";
 import { formatAmount } from "../admin/expenses/utils";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 const userPayments = [
   {
@@ -69,6 +70,7 @@ export default function UserDashboard() {
   const [totalBills, setTotalBills] = useState(0);
   const [bills, setBills] = useState<Bill[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { dormitoryId, loading: dormitoryIdLoading } = useCurrentDormitoryId();
 
   // Handle authentication first
   useEffect(() => {
@@ -177,7 +179,7 @@ export default function UserDashboard() {
           setBills(mockBills);
         } else {
           // real data fetching
-          const data = await dashboardData();
+          const data = await dashboardData(dormitoryId);
           if (!mounted) return;
 
           setTotalDue(data.totalDue);
@@ -205,7 +207,7 @@ export default function UserDashboard() {
     return () => {
       mounted = false;
     };
-  }, [user]); // This effect depends on user
+  }, [user, dormitoryId]); // This effect depends on user and dormitoryId
 
   //console.log("Bills:", bills);
 

@@ -30,7 +30,6 @@ export function useExpenseActions(expenses: Expense[]) {
       await addExpense(expenseData, user.uid, dormitoryId);
       toast.success("Expense added successfully!");
     } catch (error: any) {
-      console.log(error.message);
       toast.error(`Failed to add expense: ${error.message}`);
     } finally {
       setIsSubmitting(false);

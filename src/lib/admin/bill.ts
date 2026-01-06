@@ -95,8 +95,6 @@ export const getBills = async (userId: string, dormitoryId: string): Promise<any
       return 0;
     });
 
-    console.log("Fetched and sorted bills:", bills);
-
     return bills;
   } catch (error) {
     console.error("Error fetching bills:", error);
