@@ -38,6 +38,14 @@ export default function DormitoryManagement() {
       deleteDormitory,
   } = useDormitoryAction()
 
+  if(loading) {
+    return(
+      <div className="min-h-screen bg-background pl-64">
+        loading
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-background pl-64">
       <HeaderDormitory onAddDormitory={() => openModal("add")} />

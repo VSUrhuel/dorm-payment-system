@@ -15,7 +15,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Building2, MapPin, User, Info, AlertTriangle } from "lucide-react"
 import { Dormer, ModalType } from "@/app/admin/dormers/types";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface AddEditDormitoryProps {
     isOpen: boolean;
@@ -36,7 +36,15 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
   const [dormitoryName, setDormitoryName] = useState(dormitory?.name || "")
   const [dormitoryLocation, setDormitoryLocation] = useState(dormitory?.location || "")
   const [dormitoryAdviser, setDormitoryAdviser] = useState(dormitory?.adviser || "")
-  
+
+  useEffect(() => {
+    if (isOpen) {
+      setDormitoryName(dormitory?.name || "");
+      setDormitoryLocation(dormitory?.location || "");
+      setDormitoryAdviser(dormitory?.adviser || "");
+    }
+  }, [dormitory, isOpen]);
+    
   const handleSave = () => {
     if(dormitoryName === "" || dormitoryLocation === "" || dormitoryAdviser === "") {
       toast.error("Please fill in all fields!")
@@ -100,7 +108,7 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
             <Input
                id="name"
                placeholder="e.g. Narra Residence"
-               defaultValue={dormitory.name}
+               value={dormitoryName}
                className="border-gray-200 focus:ring-secondary focus:border-secondary transition-all" type={undefined}
                onChange={(e) => setDormitoryName(e.target.value)}            />
           </div>
@@ -117,25 +125,19 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
               <Input
                  id="location"
                  placeholder="e.g. North Campus"
+                 value={dormitoryLocation}
                  className="border-gray-200 focus:ring-secondary focus:border-secondary" type={undefined}
                  onChange={(e) => setDormitoryLocation(e.target.value)}              />
             </div>
           </div>
 
           <div className="grid gap-2">
-            <Label
-              htmlFor="adviser"
-              className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5"
-            >
-              <User className="h-3.5 w-3.5" />
-              Assigned Adviser
-            </Label>
-            <Select defaultValue={dormitory.adviser} onValueChange={(value) => setDormitoryAdviser(value)}>
+            <Select value={dormitoryAdviser} onValueChange={(value) => setDormitoryAdviser(value)}>
               <SelectTrigger id="adviser" className="border-gray-200 focus:ring-secondary focus:border-secondary">
                 <SelectValue placeholder="Select an adviser" />
               </SelectTrigger>
               <SelectContent className={undefined} >
-                {advisers.map((adviser) => (
+                {advisers?.map((adviser) => (
                   <SelectItem key={adviser.id} value={adviser.id} className={undefined}>
                     {adviser.firstName + " " + adviser.lastName}
                   </SelectItem>

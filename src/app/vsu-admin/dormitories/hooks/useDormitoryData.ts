@@ -26,7 +26,6 @@ export function useDormitoryData() {
         const unsub = onSnapshot(query(collection(db, "dormitories")), (snap) => {
             const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Dormitory[]
             setRawDormitories(data)
-            console.log(data + "s")
             setDormsLoaded(true)
         }, (err) => {
             console.error("Error fetching dormitories:", err)
@@ -36,60 +35,76 @@ export function useDormitoryData() {
         const advisersUnsub = onSnapshot(query(collection(db, "dormers"), where("role", "==", "Adviser")), (snap) => {
             const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Dormer[]
             setAdvisers(data)
-        }, (err) => console.error("Error fetching dormers:", err))
+            
+        }, (err) => {
+            console.error("Error fetching dormers:", err)
+            setLoading(false)
+        })
+
         return () => {
             unsub()
             advisersUnsub()
         }
     }, [])
 
+   
+
     useEffect(() => {
+        setLoading(true)
         const unsub = onSnapshot(query(collection(db, "dormers")), (snap) => {
             const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
             setAllDormers(data)
             setDormersLoaded(true)
-        }, (err) => console.error("Error fetching dormers:", err))
+        }, (err) => {
+            console.error("Error fetching dormers:", err)
+            setLoading(false)
+        })
+        setLoading(false)
         return () => unsub()
     }, [])
 
     useEffect(() => {
         if (dormsLoaded && dormersLoaded) {
-            const merged = rawDormitories.map((dorm) => ({
-                ...dorm,
-                occupancy: allDormers.filter((d) => d.dormitoryId === dorm.id && !d.isDeleted).length
-            }))
-            setDormitories(merged)
-            setLoading(false)
+            const merged = rawDormitories.map((dorm) => {
+                const adviser = allDormers.find((d) => d.id === dorm.adviser);
+                const adviserName = adviser ? `${adviser.firstName} ${adviser.lastName}` : (dorm.adviser || "No Adviser");
+                
+                return {
+                    ...dorm,
+                    adviser: adviserName,
+                    occupancy: allDormers.filter((d) => d.dormitoryId === dorm.id && !d.isDeleted).length
+                };
+            });
+            setDormitories(merged);
+            setLoading(false);
         }
-    }, [rawDormitories, allDormers, dormsLoaded, dormersLoaded])
+    }, [rawDormitories, allDormers, dormsLoaded, dormersLoaded]);
 
     useEffect(() => {
+        setLoading(true)
         const totalPages = Math.ceil(dormitories.length / dormsPerPage)
-        dormitories.forEach(async (dorm) => {
-          dorm.adviser =  await getDormAdviser(dorm.adviser); 
-        })
         setTotalPages(totalPages)
+        setLoading(false)
     }, [dormitories])
 
 
     const filteredDormitories = useMemo(() => {
-        return dormitories.filter((dormitory) =>
+        setLoading(true)
+        const filteredDorm = dormitories.filter((dormitory) =>
             dormitory.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
             dormitory.location.toLowerCase().includes(locationFilter.toLowerCase())
         )
+        setLoading(false)
+        return filteredDorm
     }, [dormitories, searchTerm, locationFilter])
     
-    console.log(filteredDormitories)
-    console.log(dormitories)
     const paginatedDormitories = useMemo(() => {
+        setLoading(true)
         const indexOfLastDormitory = currentPage * dormsPerPage
         const indexOfFirstDormitory = indexOfLastDormitory - dormsPerPage
+        setLoading(false)
         return filteredDormitories.slice(indexOfFirstDormitory, indexOfLastDormitory)
     }, [filteredDormitories, currentPage])
-
-    
-    console.log(paginatedDormitories)
-    
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
