@@ -27,12 +27,13 @@ import { getUserPayments } from "@/lib/admin/payment";
 import { formatAmount } from "@/app/admin/expenses/utils";
 import { calculatePaymentSummary } from "./utils/paymentSummary";
 import { getBills } from "@/lib/admin/bill";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 export default function PaymentsPage() {
   const [user, setUser] = useState<User | null>(null);
   const [userPayments, setUserPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const { dormitoryId, loading: dormitoryLoading } = useCurrentDormitoryId();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser: User) => {
       if (!currentUser) {
@@ -52,7 +53,7 @@ export default function PaymentsPage() {
         try {
           setLoading(true);
           
-          const payments = await getBills(user.uid);
+          const payments = await getBills(user.uid, dormitoryId);
           setUserPayments(payments);
         } catch (error) {
           console.error("Error fetching user payments:", error);

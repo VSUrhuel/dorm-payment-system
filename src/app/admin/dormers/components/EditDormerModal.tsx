@@ -24,41 +24,46 @@ import { Button } from "@/components/ui/button";
 import { DormerData } from "../types";
 
 // --- Type Definitions ---
-interface AddDormerModalProps {
+interface EditDormerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (dormerData: DormerData) => void;
+  onUpdate: (dormerData: DormerData) => void;
+  dormerData: DormerData
 }
 
 // --- Component ---
-export default function AddDormerModal({
+export default function EditDormerModal({
   isOpen,
   onClose,
-  onSave,
-}: AddDormerModalProps) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [role, setRole] = useState("");
-  const [roomNumber, setRoomNumber] = useState("");
+  onUpdate,
+  dormerData,
+}: EditDormerModalProps) {
+    if(dormerData === null) {
+        return null;
+    }
+  const [firstName, setFirstName] = useState(dormerData.firstName);
+  const [lastName, setLastName] = useState(dormerData.lastName);
+  const [email, setEmail] = useState(dormerData.email);
+  const [phone, setPhone] = useState(dormerData.phone);
+  const [role, setRole] = useState(dormerData.role);
+  const [roomNumber, setRoomNumber] = useState(dormerData.roomNumber);
 
   const handleSave = () => {
     if (!firstName || !lastName || !email || !phone || !role || !roomNumber) {
       toast.info("All fields are required.");
       return;
     }
-    const dormerData: DormerData = {
+    const dormerDetails: DormerData = {
       firstName,
       lastName,
       email,
       phone,
       role,
       roomNumber,
-      id: "",
-      dormerId: "",
+      id: dormerData.dormerId,
+      dormerId: dormerData.dormerId,
     };
-    onSave(dormerData);
+    onUpdate(dormerDetails);
     handleClose();
   };
 
@@ -81,9 +86,9 @@ export default function AddDormerModal({
         }}
       >
         <DialogHeader className={undefined}>
-          <DialogTitle className={undefined}>Add New Dormer</DialogTitle>
+          <DialogTitle className={undefined}>Edit Dormer</DialogTitle>
           <DialogDescription className={undefined}>
-            Fill in the details to register a new dormitory resident
+            Fill in the details to edit a dormitory resident
           </DialogDescription>
         </DialogHeader>
 
@@ -160,7 +165,7 @@ export default function AddDormerModal({
             <Label htmlFor="role" className={undefined}>
               Role
             </Label>
-            <Select value={role} onValueChange={setRole}>
+            <Select value={role} onValueChange={setRole} disabled={true}>
               <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
@@ -233,10 +238,10 @@ export default function AddDormerModal({
           <Button
             className="bg-green-600 hover:bg-green-700 text-white"
             onClick={handleSave}
-            variant={undefined}
-            size={undefined}
+            variant="default"
+            size="default"
           >
-            Save Dormer
+            Save Changes
           </Button>
         </DialogFooter>
       </DialogContent>

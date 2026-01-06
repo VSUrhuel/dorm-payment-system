@@ -6,8 +6,7 @@ import { auth, firestore as db } from "@/lib/firebase";
 import { toast } from "sonner";
 import { Dormer, Bill } from "../../dormers/types";
 import { Payment, BillData } from "../types";
-import { onAuthStateChanged } from "firebase/auth";
-import { m } from "framer-motion";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 export function usePaymentsData() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,28 +18,7 @@ export function usePaymentsData() {
   const [bills, setBills] = useState<Bill[]>([]);
   const [dormers, setDormers] = useState<Dormer[]>([]);
   const [loading, setLoading] = useState(true);
-  const [dormitoryId, setDormitoryId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userDocRef = doc(db, "dormers", user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists()) {
-          const userData = userDocSnap.data();
-          if (userData.dormitoryId) {
-            setDormitoryId(userData.dormitoryId);
-          } else {
-            console.error("User profile not found in dormers collection.");
-            setLoading(false);
-          }
-        }
-      } else {
-        setLoading(false);
-      }
-    });
-    return () => unsubscribeAuth();
-  }, []);
+  const {dormitoryId, loading: loadingDormitoryId } = useCurrentDormitoryId();
 
   useEffect(() => {
     const collections = {
@@ -55,6 +33,10 @@ export function usePaymentsData() {
       }
     };
 
+    if(!loadingDormitoryId && !dormitoryId) {
+      setLoading(false);
+      return;
+    }
     const unsubscribers = Object.keys(collections).map((key) => {
       const q = query(collection(db, key), where("dormitoryId", "==", dormitoryId));
       return onSnapshot(
@@ -78,7 +60,7 @@ export function usePaymentsData() {
     });
 
     return () => unsubscribers.forEach((unsub) => unsub());
-  }, []);
+  }, [dormitoryId, loadingDormitoryId]);
 
   const combinedBillData: BillData[] = useMemo(() => {
     if (loading || !bills.length || !dormers.length) {

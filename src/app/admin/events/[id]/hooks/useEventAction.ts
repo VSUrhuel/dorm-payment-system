@@ -16,6 +16,7 @@ import { User } from "firebase/auth";
 import { toast } from "sonner";
 import { Event, EventPayment } from "../../types";
 import { Dormer } from "../../../dormers/types";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 export function useEventActions(
   event: Event | null,
@@ -24,6 +25,7 @@ export function useEventActions(
 ) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const {dormitoryId, loading} = useCurrentDormitoryId();
 
   const sendEmail = async (emailData: any) => {
     try {
@@ -49,7 +51,7 @@ export function useEventActions(
       const existingPaymentQuery = query(
         collection(db, "eventPayments"),
         where("dormerId", "==", paymentData.dormerId),
-        where("eventId", "==", event.id)
+        where("eventId", "==", event.id),
       );
 
       const querySnapshot = await getDocs(existingPaymentQuery);
@@ -68,6 +70,7 @@ export function useEventActions(
 
       const paymentRecord = {
         ...paymentData,
+        dormitoryId,
         status,
         eventId: event.id,
         amount: finalAmountPaid,
@@ -87,6 +90,7 @@ export function useEventActions(
       } else {
         await addDoc(collection(db, "eventPayments"), {
           ...paymentRecord,
+          dormitoryId,
           createdAt: serverTimestamp(),
         });
         toast.success("Payment recorded successfully");
@@ -141,7 +145,7 @@ export function useEventActions(
         .filter(
           (dormer) =>
             !payments.some(
-              (p) => p.dormerId === dormer.id && p.status === "Paid"
+              (p : any) => p.dormerId === dormer.id && p.status === "Paid" && p.dormitoryId === dormitoryId
             )
         )
         .map((d) => d.email)

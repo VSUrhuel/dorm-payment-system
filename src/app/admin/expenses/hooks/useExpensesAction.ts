@@ -5,9 +5,11 @@ import { User } from "firebase/auth";
 import { toast } from "sonner";
 import { Expense } from "../types";
 import { addExpense, updateExpense } from "@/lib/admin/expense";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 export function useExpenseActions(expenses: Expense[]) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const {dormitoryId, loading} = useCurrentDormitoryId();
 
   const handleAddExpense = async (
     expenseData: Omit<Expense, "id" | "recordedBy" | "createdAt">,
@@ -25,7 +27,7 @@ export function useExpenseActions(expenses: Expense[]) {
         return;
       }
 
-      await addExpense(expenseData, user.uid);
+      await addExpense(expenseData, user.uid, dormitoryId);
       toast.success("Expense added successfully!");
     } catch (error: any) {
       console.log(error.message);

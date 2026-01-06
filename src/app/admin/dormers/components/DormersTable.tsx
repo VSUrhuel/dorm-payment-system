@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { FileText, Eye, Trash, Users, Search } from "lucide-react";
+import { FileText, Eye, Trash, Users, Search, Edit } from "lucide-react";
 import { Dormer } from "../types";
 
 interface DormersTableProps {
@@ -20,6 +20,7 @@ interface DormersTableProps {
   onGenerateBill: (dormer: Dormer) => void;
   onViewBills: (dormer: Dormer) => void;
   onDelete: (dormer: Dormer) => void;
+  onEdit: (dormer: Dormer) => void;
   hasFilters?: boolean;
   onResetFilters?: () => void;
 }
@@ -29,6 +30,7 @@ export default function DormersTable({
   onGenerateBill,
   onViewBills,
   onDelete,
+  onEdit,
   hasFilters = false,
   onResetFilters,
 }: DormersTableProps) {
@@ -143,6 +145,14 @@ export default function DormersTable({
                           className="border-blue-500 text-blue-600 hover:bg-blue-500 hover:text-white transition-all font-medium"
                         >
                           <Eye className="h-4 w-4 mr-1" /> View
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onEdit(dormer)}
+                          className="border-[#2E7D32] text-[#2E7D32] hover:bg-[#2E7D32] hover:text-white transition-all font-medium"
+                        >
+                          <Edit className="h-4 w-4 mr-1" /> Edit
                         </Button>
                         <Button
                           variant="outline"

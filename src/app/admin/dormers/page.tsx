@@ -28,7 +28,7 @@ import { Bill } from "./types";
 import { Delete } from "lucide-react";
 import DeleteDormerModal from "./components/DeleteDormerModal";
 import { handleExport } from "./utils/csvExport";
-import { updateDormerId, updateIds } from "@/lib/admin/dormer";
+import EditDormerModal from "./components/EditDormerModal";
 
 export default function DormersPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -56,6 +56,7 @@ export default function DormersPage() {
     saveBill,
     deleteDormer,
     isSubmitting,
+    updateDormer
   } = useDormerActions(dormers, bills);
 
   const { modal, selectedDormer, selectedBill, openModal, closeModal } =
@@ -77,7 +78,6 @@ export default function DormersPage() {
   }
 
   const handleExportWithConfirm = async () => {
-    await updateIds();
     const confirmed = await confirm({
       title: "Export Dormers Data",
       description: `Are you sure you want to export all registered dormers' data to CSV? This will download a file to your computer.`,
@@ -116,6 +116,7 @@ export default function DormersPage() {
         onGenerateBill={(dormer) => openModal("generateBill", dormer)}
         onViewBills={(dormer) => openModal("bills", dormer)}
         onDelete={(dormer) => openModal("deleteDormer", dormer)}
+        onEdit={(dormer) => openModal("edit", dormer)}
         hasFilters={searchTerm !== "" || statusFilter !== "All"}
         onResetFilters={() => {
           setSearchTerm("");
@@ -153,6 +154,13 @@ export default function DormersPage() {
         isOpen={modal === "add"}
         onClose={closeModal}
         onSave={(dormerData) => saveDormer(dormerData, user)}
+      />
+
+      <EditDormerModal
+        isOpen={modal === "edit"}
+        onClose={closeModal}
+        onUpdate={(dormerData) => updateDormer(dormerData, user)}
+        dormerData={selectedDormer}
       />
 
       <BillsModal

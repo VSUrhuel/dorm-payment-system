@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Key, useState } from "react";
 import { firestore as db, auth } from "@/lib/firebase";
 import { toast } from "sonner";
 import { Dormer, Bill, DormerData } from "../types";
@@ -11,14 +11,17 @@ import {
   migrateDormerAccounts,
   recordPaymentTransaction,
   softDeleteDormer,
+  updateDormerDetails,
 } from "@/lib/admin/dormer";
 import { User } from "firebase/auth";
 import { createBill, getBill, updateBill } from "@/lib/admin/bill";
 import { paymentConfirmationEmailTemplate } from "../../payments/utils/email";
 import { generateRandomPassword } from "../utils/generateRandomPass";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { dormitoryId, loading: dormitoryIdLoading } = useCurrentDormitoryId();
 
   const sendEmail = async (emailData: {
     to: string;
@@ -45,8 +48,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
   };
 
   const saveDormer = async (dormerData: DormerData, user: User | null) => {
-    console.log("migration startss");
-    // await migrateDormerAccounts();
+
     if (!user) {
       toast.error("Authentication error. Please log in again.");
       return;
@@ -81,7 +83,8 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
           currentAdmin,
           adminEmail,
           adminPassword,
-          temporaryPassword
+          temporaryPassword,
+          dormitoryId
         );
 
         toast.success("Admin dormer added successfully!");
@@ -100,7 +103,8 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
           user,
           adminEmail,
           adminPassword,
-          temporaryPassword
+          temporaryPassword,
+          dormitoryId
         );
 
         toast.success("Dormer added successfully!");
@@ -127,6 +131,20 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
     }
   };
 
+  const updateDormer = async (dormerData: DormerData, user: User | null) => {
+    if (!user) {
+      toast.error("Authentication error or missing dormer data.");
+      return;
+    }
+
+    try {
+      await updateDormerDetails(dormerData.id as any,dormerData, user);
+      toast.success("Dormer updated successfully!");
+    } catch (error) {
+      toast.error("Error updating dormer!");
+    }
+  };
+
   const handleSavePayment = async (paymentData: any, user: User | null) => {
     if (!user || !paymentData.billId) {
       toast.error("Authentication or data error.");
@@ -134,7 +152,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
     }
 
     try {
-      await recordPaymentTransaction(paymentData, user);
+      await recordPaymentTransaction(paymentData, user, dormitoryId);
 
       toast.success("Payment recorded successfully!");
 
@@ -157,13 +175,11 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
   };
 
   const saveBill = async (billData: Bill, user: User | null) => {
-    // await updatePaymentIncludeDormerDetails();
     if (!user || !billData) {
       toast.error("Authentication error or missing bill data.");
       return;
     }
 
-    console.log("existging");
     setIsSubmitting(true);
     try {
       const { id, ...dataToSave } = billData;
@@ -172,7 +188,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
         await updateBill(billData, user);
         toast.success("Bill overwritten successfully!");
       } else {
-        await createBill(billData, user);
+        await createBill(billData, user, dormitoryId);
         toast.success("New bill generated successfully!");
       }
 
@@ -209,35 +225,12 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
     }
   };
 
-  // ONLY CREATED FOR A UTILITY TASK
-  // const updatePaymentIncludeDormerDetails = async () => {
-  //   const paymentsRef = collection(db, "payments");
-  //   const snapshot = await getDocs(paymentsRef);
-  //   const batch = writeBatch(db);
-  //   snapshot.forEach((docSnap) => {
-  //     const paymentData = docSnap.data();
-  //     const dormerInfo = dormers.find((d) => d.id === paymentData.dormerId);
-  //     if (dormerInfo) {
-  //       const paymentRef = doc(db, "payments", docSnap.id);
-  //       batch.update(paymentRef, {
-  //         dormerDetails: {
-  //           firstName: dormerInfo.firstName,
-  //           lastName: dormerInfo.lastName,
-  //           roomNumber: dormerInfo.roomNumber,
-  //           email: dormerInfo.email,
-  //         },
-  //       });
-  //     }
-  //   });
-  //   await batch.commit();
-  //   toast.success("Payment documents updated with dormer details.");
-  // };
-
   return {
     saveDormer,
     handleSavePayment,
     saveBill,
     deleteDormer,
     isSubmitting,
+    updateDormer,
   };
 }

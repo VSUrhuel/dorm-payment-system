@@ -6,6 +6,7 @@ import { firestore as db } from "../../../../lib/firebase";
 import { Dormer } from "../../dormers/types";
 import { Event, EventPayment } from "../types";
 import { toast } from "sonner";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 
 export function useEventsData() {
@@ -13,10 +14,15 @@ export function useEventsData() {
   const [dormers, setDormers] = useState<Dormer[]>([]);
   const [eventPayments, setEventPayments] = useState<EventPayment[]>([]);
   const [loading, setLoading] = useState(true);
+  const {dormitoryId, loading: eventDormitoryLoading } = useCurrentDormitoryId();
 
   useEffect(() => {
+    if(!eventDormitoryLoading && !dormitoryId) {
+      setLoading(false);
+      return;
+    }
     const unsubscribeEvents = onSnapshot(
-      collection(db, "events"),
+      query(collection(db, "events"), where("dormitoryId", "==", dormitoryId)),
       (snapshot) => {
         setEvents(
           snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Event))
@@ -31,7 +37,7 @@ export function useEventsData() {
     );
 
     const unsubscribeDormers = onSnapshot(
-      query(collection(db, "dormers"), where("role", "==", "User")),
+      query(collection(db, "dormers"), where("role", "==", "User"), where("dormitoryId", "==", dormitoryId)),
       (snapshot) => {
         setDormers(
           snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Dormer))
@@ -40,7 +46,7 @@ export function useEventsData() {
     );
 
     const unsubscribePayments = onSnapshot(
-      collection(db, "eventPayments"),
+      query(collection(db, "eventPayments"), where("dormitoryId", "==", dormitoryId)),
       (snapshot) => {
         setEventPayments(
           snapshot.docs.map(
@@ -55,28 +61,28 @@ export function useEventsData() {
       unsubscribeDormers();
       unsubscribePayments();
     };
-  }, []);
+  }, [dormitoryId, eventDormitoryLoading]);
 
   const eventsWithStats = useMemo(() => {
     return events.map((event) => {
       const paymentsForEvent = eventPayments.filter(
-        (p) => p.eventId === event.id
+        (p: any) => p.eventId === event.id && p.dormitoryId === dormitoryId
       );
 
       const paidDormerIds = new Set(
         paymentsForEvent
-          .filter((p) => p.status === "Paid")
-          .map((p) => p.dormerId)
+          .filter((p: any) => p.status === "Paid" && p.dormitoryId === dormitoryId)
+          .map((p: any) => p.dormerId)
       );
       
       const partialDormerIds = new Set(
         paymentsForEvent
-          .filter((p) => p.status === "Partial")
-          .map((p) => p.dormerId)
+          .filter((p: any) => p.status === "Partial" && p.dormitoryId === dormitoryId)
+          .map((p: any) => p.dormerId)
       );
 
       const dormerTotal = dormers.filter(
-        (d) => !d.isDeleted || paidDormerIds.has(d.id)
+        (d: any) => (!d.isDeleted || paidDormerIds.has(d.id)) && d.dormitoryId === dormitoryId
       ).length;
 
       const paidCount = paidDormerIds.size;
@@ -98,7 +104,7 @@ export function useEventsData() {
         progressPercentage,
       };
     });
-  }, [events, dormers, eventPayments]);
+  }, [events, dormers, eventPayments, dormitoryId]);
 
   return { loading, eventsWithStats, dormers };
 }

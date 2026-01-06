@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { collection, query, onSnapshot } from "firebase/firestore";
+import { collection, query, onSnapshot, where } from "firebase/firestore";
 import { firestore as db } from "../../../../lib/firebase";
 import { Dormer } from "../../dormers/types";
 import { Expense, ExpenseData, SummaryStats } from "../types";
 import { toast } from "sonner";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 
 export function useExpensesData() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -15,11 +16,14 @@ export function useExpensesData() {
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
+  const {dormitoryId, loading: loadingDormitoryId } = useCurrentDormitoryId();
   useEffect(() => {
-    const qExpenses = query(collection(db, "expenses"));
+    if(!loadingDormitoryId && !dormitoryId) {
+      setLoading(false);
+      return;
+    }
     const unsubscribeExpenses = onSnapshot(
-      qExpenses,
+      query(collection(db, "expenses"), where("dormitoryId", "==", dormitoryId)),
       (snapshot) => {
         const expensesData = snapshot.docs.map(
           (doc) => ({ id: doc.id, ...doc.data() } as Expense)
@@ -53,7 +57,7 @@ export function useExpensesData() {
       unsubscribeExpenses();
       unsubscribeDormers();
     };
-  }, []);
+  }, [dormitoryId, loadingDormitoryId]);
 
   const combinedExpensesData: ExpenseData[] = useMemo(() => {
     if (loading || !expenses.length || !dormers.length) return [];
