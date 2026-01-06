@@ -9,6 +9,7 @@ export interface Dormer {
   role: string;
   roomNumber: string;
   createdAt: any;
+  dormitoryId: string;
   isDeleted?: boolean;
   bills: Bill[];
 }
@@ -42,6 +43,7 @@ export type ModalType =
   | "generateBill"
   | "deleteDormer"
   | "edit"
+  | "delete"
   | null;
 
 export interface DormerData {
