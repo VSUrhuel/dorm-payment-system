@@ -65,7 +65,7 @@ export default function PaymentsPage() {
       }
     };
     fetchUserPayments();
-  }, [user]);
+  }, [user, dormitoryId]);
 
   // Add loading state
   if (loading) {

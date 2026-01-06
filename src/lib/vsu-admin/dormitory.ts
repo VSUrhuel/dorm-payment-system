@@ -1,5 +1,5 @@
 import { Dormitory } from "@/app/vsu-admin/dormitories/types";
-import { addDoc, collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { firestore as db } from "@/lib/firebase";
 import { toast } from "sonner";
 import { Dormer } from "@/app/admin/dormers/types";
@@ -58,6 +58,18 @@ export const getDormitories = async () => {
         return dormitories
     } catch (error) {
         toast.error("Error getting dormitories:", error)
+    }
+}
+
+export const getDormitoryById = async (dormitoryId: string) => {
+    try {
+        if(dormitoryId == null)
+            return null;
+        const dormitorySnapshot = await getDoc(doc(db, "dormitories", dormitoryId))
+        const dormitory = dormitorySnapshot.data()
+        return dormitory
+    } catch (error) {
+        console.error("Error getting dormitory:", error)
     }
 }
 

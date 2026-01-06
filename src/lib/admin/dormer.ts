@@ -363,9 +363,6 @@ export const migrateDormerAccounts = async () => {
       log(
         `  > Batch: UPDATE ${billsSnapshot.size} bill(s) from ${oldDormerId} to ${newAuthUid}.`
       );
-      console.log(
-        `  > Found and updating ${billsSnapshot.size} bill(s) for ${email}.`
-      );
 
       // Step 4.3: Find and update 'payments'
       const paymentsQuery = query(

@@ -40,6 +40,8 @@ import {
 } from "firebase/firestore";
 import { AvatarFallback, Avatar } from "./ui/avatar";
 import { firestore as db } from "@/lib/firebase";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
+import { getDormitoryById } from "@/lib/vsu-admin/dormitory";
 
 const menuItems = [
   {
@@ -75,13 +77,21 @@ export function AppSidebar() {
   const [user, setUser] = useState(null);
   const [dormerData, setDormerData] = useState(null);
   const { setOpenMobile } = useSidebar(); 
+  const {dormitoryId, loading} = useCurrentDormitoryId();
+  const [dormitoryData, setDormitoryData] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
     });
+
+    const fetchDormitoryData = async () => {
+      const dormitory = await getDormitoryById(dormitoryId);
+      setDormitoryData(dormitory);
+    }
+    fetchDormitoryData();
     return () => unsubscribe();
-  }, []);
+  }, [dormitoryId]);
 
   useEffect(() => {
     if (user) {
@@ -124,7 +134,7 @@ export function AppSidebar() {
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">DormPay</h2>
-              <p className="text-xs text-white">Payment System</p>
+              <p className="text-xs text-white">{dormitoryData?.name}</p>
             </div>
           </div>
         </SidebarHeader>
