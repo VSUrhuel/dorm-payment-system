@@ -131,6 +131,7 @@ export default function ExpensesContent() {
         onClose={() => setViewEditModalOpen(false)}
         onSave={(data) => handleUpdateExpense(data, user)}
         expense={selectedExpense}
+        isDormer={true}
       />
     </div>
   );

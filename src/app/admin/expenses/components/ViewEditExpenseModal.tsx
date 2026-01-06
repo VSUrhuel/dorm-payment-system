@@ -31,6 +31,7 @@ interface ViewEditExpenseModalProps {
   onClose: () => void;
   expense: Expense | null;
   onSave: (updatedExpense: Expense) => void;
+  isDormer?: boolean
 }
 
 export default function ViewEditExpenseModal({
@@ -38,6 +39,7 @@ export default function ViewEditExpenseModal({
   onClose,
   expense,
   onSave,
+  isDormer
 }: ViewEditExpenseModalProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Expense | null>(null);
@@ -342,15 +344,17 @@ export default function ViewEditExpenseModal({
                 >
                   Close
                 </Button>
-                <Button
-                  type="button"
-                  onClick={() => setIsEditing(true)}
-                  className={undefined}
-                  variant={undefined}
-                  size={undefined}
-                >
-                  <Edit className="h-4 w-4 mr-2" /> Edit
-                </Button>
+                {isDormer ? '' : (
+                  <Button
+                    type="button"
+                    onClick={() => setIsEditing(true)}
+                    className={undefined}
+                    variant={undefined}
+                    size={undefined}
+                  >
+                    <Edit className="h-4 w-4 mr-2" /> Edit
+                  </Button>
+                )}
               </>
             )}
           </DialogFooter>
