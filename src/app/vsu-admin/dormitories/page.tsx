@@ -40,14 +40,14 @@ export default function DormitoryManagement() {
 
   if(loading) {
     return(
-      <div className="min-h-screen bg-background pl-64">
+      <div className="min-h-screen bg-background">
         loading
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background pl-64">
+    <div className="min-h-screen bg-background">
       <HeaderDormitory onAddDormitory={() => openModal("add")} />
       
       <main className="p-8">

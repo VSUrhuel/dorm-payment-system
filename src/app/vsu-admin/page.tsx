@@ -3,7 +3,7 @@ import { Building, Users, CreditCard, Activity, TrendingUp } from "lucide-react"
 
 export default function VsuAdminDashboard() {
   return (
-    <div className="min-h-screen bg-background pl-64">
+    <div className="min-h-screen bg-background">
       <header className="flex h-16 items-center border-b bg-white px-8">
         <h1 className="text-lg font-semibold text-primary">University Overview</h1>
         <div className="ml-auto flex items-center gap-4">
