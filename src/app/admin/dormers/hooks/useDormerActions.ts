@@ -22,7 +22,7 @@ import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { dormitoryId, loading: dormitoryIdLoading } = useCurrentDormitoryId();
-
+  const [errors, setErrors] = useState<string[]>([]);
   const sendEmail = async (emailData: {
     to: string;
     subject: string;
@@ -225,6 +225,66 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
     }
   };
 
+  const importDormers = async (dormersList: DormerData[], user: User | null) => {
+    if (!user) {
+      toast.error("Authentication error. Please log in again.");
+      return { successCount: 0, errorCount: 0 };
+    }
+
+    setIsSubmitting(true);
+    setErrors([]);
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const dormerData of dormersList) {
+      try {
+        const existingDormer = dormers.find((d) => d.email === dormerData.email);
+        if (existingDormer) {
+          const errorMsg = `Dormer with email ${dormerData.email} already exists. Skipping.`;
+          console.warn(errorMsg);
+          setErrors((prev) => [...prev, errorMsg]);
+          errorCount++;
+          continue;
+        }
+
+        const temporaryPassword = generateRandomPassword();
+        await createUserDormer(
+          dormerData,
+          user,
+          temporaryPassword,
+          dormitoryId
+        );
+
+        await sendEmail({
+          to: dormerData.email,
+          subject: "Welcome to Mabolo Payment System",
+          html: welcomeUserTemplate(
+            dormerData.firstName,
+            dormerData.email,
+            temporaryPassword
+          ),
+        });
+
+        successCount++;
+      } catch (error: any) {
+        errorCount++;
+        const errorMsg = error.message || String(error);
+        setErrors((prevErrors) => [...prevErrors, `${dormerData.email}: ${errorMsg}`]);
+      }
+    }
+
+    setIsSubmitting(false);
+
+    if (successCount > 0) {
+      toast.success(`Successfully imported ${successCount} dormer(s).`);
+    }
+    if (errorCount > 0) {
+      toast.error(`Failed to import ${errorCount} dormer(s).`);
+    }
+
+    return { successCount, errorCount };
+  };
+
   return {
     saveDormer,
     handleSavePayment,
@@ -232,5 +292,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
     deleteDormer,
     isSubmitting,
     updateDormer,
+    importDormers,
+    errors,
   };
 }
