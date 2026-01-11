@@ -325,7 +325,7 @@ export const migrateDormerAccounts = async () => {
 
       await sendEmail({
         to: dormerData.email,
-        subject: "Welcome to Mabolo Payment System",
+        subject: "Welcome to DormPay System",
         html: welcomeUserTemplate(
           dormerData.firstName,
           dormerData.email,

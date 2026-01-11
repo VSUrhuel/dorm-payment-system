@@ -91,7 +91,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
         toast.success("Admin dormer added successfully!");
         await sendEmail({
           to: dormerData.email,
-          subject: "Welcome to Mabolo Payment System",
+          subject: "Welcome to DormPay System",
           html: welcomeAdminTemplate(
             dormerData.firstName,
             dormerData.email,
@@ -110,7 +110,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
         toast.success("Dormer added successfully!");
         await sendEmail({
           to: dormerData.email,
-          subject: "Welcome to Mabolo Payment System",
+          subject: "Welcome to DormPay System",
           html: welcomeUserTemplate(
             dormerData.firstName,
             dormerData.email,
@@ -257,7 +257,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
 
         await sendEmail({
           to: dormerData.email,
-          subject: "Welcome to Mabolo Payment System",
+          subject: "Welcome to DormPay System",
           html: welcomeUserTemplate(
             dormerData.firstName,
             dormerData.email,
