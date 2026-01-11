@@ -12,8 +12,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Mabolo Payment System",
-  description: "Admin dashboard for managing Mabolo payments",
+  title: "DormPay System",
+  description: "Admin dashboard for managing dormitory payments",
 };
 
 export default function RootLayout({ children }) {

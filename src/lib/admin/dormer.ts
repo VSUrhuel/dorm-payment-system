@@ -51,6 +51,8 @@ export const createAdminDormer = async (
   temporaryPassword: string,
   dormitoryId: string
 ) => {
+  try {
+    
   const newAdminUid = await createAccountWithoutLoggingOut(dormerData.email, temporaryPassword);
   if (!await checkUserPassword(adminEmail, adminPassword)) {
     throw new Error("Invalid admin password");
@@ -64,6 +66,9 @@ export const createAdminDormer = async (
   });
 
   return newAdminUid;
+  } catch (error) {
+    toast.error("Error creating admin dormer:", error)
+  }
 };
 
 export const updateDormerDetails = async (dormerId: string, dormerData: DormerData, user: User) => {
@@ -99,7 +104,6 @@ export const createAccountWithoutLoggingOut = async (email: string, password: st
     await signOut(secondaryAuth)
     return userCredential.user.uid;
   } catch (error) {
-    console.error("Error creating account:", error);
     throw error;
   }
 }
@@ -325,7 +329,7 @@ export const migrateDormerAccounts = async () => {
 
       await sendEmail({
         to: dormerData.email,
-        subject: "Welcome to Mabolo Payment System",
+        subject: "Welcome to DormPay System",
         html: welcomeUserTemplate(
           dormerData.firstName,
           dormerData.email,

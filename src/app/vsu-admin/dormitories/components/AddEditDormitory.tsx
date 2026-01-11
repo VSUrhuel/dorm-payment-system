@@ -36,7 +36,6 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
   const [dormitoryName, setDormitoryName] = useState(dormitory?.name || "")
   const [dormitoryLocation, setDormitoryLocation] = useState(dormitory?.location || "")
   const [dormitoryAdviser, setDormitoryAdviser] = useState(dormitory?.adviser || "")
-
   useEffect(() => {
     if (isOpen) {
       setDormitoryName(dormitory?.name || "");
@@ -50,8 +49,6 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
       toast.error("Please fill in all fields!")
       return
     }
-
-    toast.success("Dormitory saved successfully!")
     
     if(type === "add") {  
       onAdd({
@@ -130,22 +127,34 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
                  onChange={(e) => setDormitoryLocation(e.target.value)}              />
             </div>
           </div>
-
+              {advisers.length > 0 && (
           <div className="grid gap-2">
+            <Label
+              htmlFor="adviser"
+              className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5"
+            >
+              <User className="h-3.5 w-3.5" />
+              Adviser
+            </Label>
             <Select value={dormitoryAdviser} onValueChange={(value) => setDormitoryAdviser(value)}>
               <SelectTrigger id="adviser" className="border-gray-200 focus:ring-secondary focus:border-secondary">
                 <SelectValue placeholder="Select an adviser" />
               </SelectTrigger>
               <SelectContent className={undefined} >
-                {advisers?.map((adviser) => (
-                  <SelectItem key={adviser.id} value={adviser.id} className={undefined}>
-                    {adviser.firstName + " " + adviser.lastName}
-                  </SelectItem>
+                {advisers
+                  .filter(adviser => 
+                    (adviser.id && adviser.id.trim() !== "") && 
+                    (!adviser.dormitoryId || adviser.id === dormitory?.adviser)
+                  )
+                  .map((adviser) => (
+                    <SelectItem key={adviser.id} value={adviser.id} className={undefined}>
+                      {adviser.firstName + " " + adviser.lastName}
+                    </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-
+              )}
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">

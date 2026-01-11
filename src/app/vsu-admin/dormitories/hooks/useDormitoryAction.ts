@@ -1,5 +1,6 @@
+import { updateDormAdvisory } from "@/lib/vsu-admin/adviser"
 import { Dormitory } from "../types"
-import { createDormitory, softDeleteDormitory, updateDormitory } from "@/lib/vsu-admin/dormitory"
+import { createDormitory, getDormitoryById, softDeleteDormitory, updateDormitory } from "@/lib/vsu-admin/dormitory"
 import { toast } from "sonner"
 
 export function useDormitoryAction() {
@@ -15,8 +16,12 @@ export function useDormitoryAction() {
     const updateDormDetails = async (dormitory: Dormitory) => {
         try {
             if(dormitory.id){
+                const dormitoryData = await getDormitoryById(dormitory.id)
+                console.log(dormitoryData.adviser, dormitory.adviser)
+                if(dormitoryData.adviser != dormitory.adviser){
+                    await updateDormAdvisory(dormitory.id, dormitory.adviser, dormitory.name)
+                }
                 await updateDormitory(dormitory)
-                toast.success("Dormitory updated successfully!")
             }
             else {
                 toast.error("Dormitory ID is required for updating.")

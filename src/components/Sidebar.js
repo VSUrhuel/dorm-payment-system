@@ -129,7 +129,7 @@ export function AppSidebar() {
       <div className="flex flex-col h-full bg-[#12372A]">
         <SidebarHeader className="p-6 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 bg-[#12372A] rounded-lg">
+            <div className="flex items-center justify-center w-10 h-10 bg-[#12372A] rounded-xl">
               <img src="/profile.ico" alt="Logo" width={32} height={32} />
             </div>
             <div>

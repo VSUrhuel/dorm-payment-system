@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 const navItems = [
   { name: "Dashboard", href: "/vsu-admin", icon: LayoutDashboard },
   { name: "Dormitories", href: "/vsu-admin/dormitories", icon: Building },
-  { name: "SA/Advisers", href: "/vsu-admin/sa-advisers", icon: Users },
+  { name: "Advisers", href: "/vsu-admin/advisers", icon: Users },
 ]
 
 export function VsuAdminSidebar() {
