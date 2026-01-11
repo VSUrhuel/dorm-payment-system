@@ -15,14 +15,33 @@ import {
 } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  getAuth,
+  reauthenticateWithCredential,
   signInWithEmailAndPassword,
+  signOut,
   User,
 } from "firebase/auth";
-import { firestore as db, auth } from "@/lib/firebase";
+import { firestore as db, auth, firebaseConfig } from "@/lib/firebase";
 import { Bill, DormerData } from "../../app/admin/dormers/types";
 import { generateRandomPassword } from "@/app/admin/dormers/utils/generateRandomPass";
 import { toast } from "sonner";
 import { welcomeUserTemplate } from "@/app/admin/dormers/email-templates/welcomeUser";
+import { initializeApp } from "firebase/app";
+
+export const checkUserPassword = async (email: string, password: string) => {
+  try {
+    const user = getAuth().currentUser;
+    if (!user) throw new Error("User not found");
+    return await reauthenticateWithCredential(user, EmailAuthProvider.credential(email, password)).then(() => {
+      return true;
+    }).catch(() => {
+      return false;
+    });
+  } catch (error) {
+    return false;
+  }
+}
 
 export const createAdminDormer = async (
   dormerData: DormerData,
@@ -32,22 +51,14 @@ export const createAdminDormer = async (
   temporaryPassword: string,
   dormitoryId: string
 ) => {
-  const userCredential = await createUserWithEmailAndPassword(
-    auth,
-    dormerData.email,
-    temporaryPassword,
-  );
-  const newAdminUid = userCredential.user.uid;
-
-  if (adminEmail && adminPassword) {
-    await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
+  const newAdminUid = await createAccountWithoutLoggingOut(dormerData.email, temporaryPassword);
+  if (!await checkUserPassword(adminEmail, adminPassword)) {
+    throw new Error("Invalid admin password");
   }
-
-  dormerData.id = newAdminUid;
-
   await setDoc(doc(db, "dormers", newAdminUid), {
     ...dormerData,
     dormitoryId,
+    dormerId: newAdminUid,
     createdAt: serverTimestamp(),
     createdBy: currentAdmin.uid,
   });
@@ -79,30 +90,36 @@ export const fetchDormitoryIdByUid = async (uid: string): Promise<string | null>
   }
 };
 
+export const createAccountWithoutLoggingOut = async (email: string, password: string) => {
+  const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
+  const secondaryAuth = getAuth(secondaryApp);
+
+  try {
+    const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+    await signOut(secondaryAuth)
+    return userCredential.user.uid;
+  } catch (error) {
+    console.error("Error creating account:", error);
+    throw error;
+  }
+}
+
 export const createUserDormer = async (
   dormerData: DormerData,
   currentAdmin: User,
-  adminEmail: string,
-  adminPassword: string,
   temporaryPassword: string,
   dormitoryId: string
 ) => {
-  const userCredential = await createUserWithEmailAndPassword(
-    auth,
-    dormerData.email,
-    temporaryPassword,
-  );
-  const newUserUid = userCredential.user.uid;
+  const userCredential = await createAccountWithoutLoggingOut(dormerData.email, temporaryPassword);
+  const newUserUid = userCredential;
 
-  if (adminEmail && adminPassword) {
-    await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
-  }
 
   dormerData.id = newUserUid;
 
   await setDoc(doc(db, "dormers", newUserUid), {
     ...dormerData,
     dormitoryId,
+    dormerId: newUserUid,
     createdAt: serverTimestamp(),
     createdBy: currentAdmin.uid,
   });

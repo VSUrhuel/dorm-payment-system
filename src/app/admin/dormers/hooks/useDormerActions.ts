@@ -68,16 +68,17 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
         return;
       }
 
-      const adminPassword = prompt(
-        "To add security, please enter your password:"
-      );
-
-      if (!adminPassword) {
-        toast.info("Admin creation canceled.");
-        return;
-      }
+      
 
       if (dormerData.role === "Admin") {
+        const adminPassword = prompt(
+          "To add security, please enter your password:"
+        );
+
+        if (!adminPassword) {
+          toast.info("Admin creation canceled.");
+          return;
+        }
         await createAdminDormer(
           dormerData,
           currentAdmin,
@@ -98,11 +99,10 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
           ),
         });
       } else {
+
         await createUserDormer(
           dormerData,
           user,
-          adminEmail,
-          adminPassword,
           temporaryPassword,
           dormitoryId
         );
