@@ -44,6 +44,7 @@ export type ModalType =
   | "deleteDormer"
   | "edit"
   | "delete"
+  | "import"
   | null;
 
 export interface DormerData {

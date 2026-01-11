@@ -29,6 +29,8 @@ import { Delete } from "lucide-react";
 import DeleteDormerModal from "./components/DeleteDormerModal";
 import { handleExport } from "./utils/csvExport";
 import EditDormerModal from "./components/EditDormerModal";
+import ImportDormerModal from "./components/ImportDormerModal";
+import ImportResultModal from "./components/ImportErrorModals";
 
 export default function DormersPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -49,14 +51,16 @@ export default function DormersPage() {
     handleNextPage,
     handlePreviousPage,
   } = useDormers();
-
+ 
   const {
     saveDormer,
     handleSavePayment,
     saveBill,
     deleteDormer,
     isSubmitting,
-    updateDormer
+    updateDormer,
+    importDormers,
+    errors,
   } = useDormerActions(dormers, bills);
 
   const { modal, selectedDormer, selectedBill, openModal, closeModal } =
@@ -65,6 +69,8 @@ export default function DormersPage() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [billToCreate, setBillToCreate] = useState<Bill | null>(null);
+  const [showImportErrorModal, setShowImportErrorModal] = useState(false);
+  const [importResults, setImportResults] = useState({ success: 0, failed: 0 });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -76,6 +82,10 @@ export default function DormersPage() {
   if (loading) {
     return <DormersPageSkeleton />;
   }
+
+  const handleCloseImportModal = () => {
+    closeModal();
+  };
 
   const handleExportWithConfirm = async () => {
     const confirmed = await confirm({
@@ -96,6 +106,7 @@ export default function DormersPage() {
       <ConfirmDialog />
       <DormerHeader
         onAddDormer={() => openModal("add")}
+        onImport={() => openModal("import")}
         onExport={handleExportWithConfirm}
       />
 
@@ -156,6 +167,19 @@ export default function DormersPage() {
         onSave={(dormerData) => saveDormer(dormerData, user)}
       />
 
+      <ImportDormerModal
+        isOpen={modal === "import"}
+        onClose={handleCloseImportModal}
+        onImport={async (dormersList) => {
+          const results = await importDormers(dormersList, user);
+          if (results) {
+            setImportResults({ success: results.successCount, failed: results.errorCount });
+            setShowImportErrorModal(true);
+          }
+        }}
+        isSubmitting={isSubmitting}
+      />
+
       <EditDormerModal
         isOpen={modal === "edit"}
         onClose={closeModal}
@@ -181,6 +205,14 @@ export default function DormersPage() {
           await handleSavePayment(paymentData, user);
           closeModal();
         }}
+      />
+
+      <ImportResultModal
+        isOpen={showImportErrorModal}
+        onClose={() => setShowImportErrorModal(false)}
+        errors={errors}
+        successCount={importResults.success}
+        errorCount={importResults.failed}
       />
 
       <DeleteDormerModal
