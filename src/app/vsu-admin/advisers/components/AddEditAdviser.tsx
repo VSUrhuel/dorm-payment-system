@@ -66,46 +66,48 @@ export default function AddEditAdviser({ isOpen, onClose, adviser, type, onAdd, 
 
   return (
      <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[550px]">
+      <DialogContent className="sm:max-w-[500px] border-neutral-200">
         <DialogHeader className={undefined}>
-          <DialogTitle className="text-2xl font-bold text-[#12372A] flex items-center gap-2">
-            <User className="h-6 w-6" />
-            {type === "add" ? "Add New Adviser" : "Edit Adviser Details"}
+          <DialogTitle className="text-xl font-semibold text-neutral-900 flex items-center gap-2.5">
+            <div className="h-9 w-9 rounded-lg bg-neutral-100 flex items-center justify-center">
+              <User className="h-5 w-5 text-neutral-700" />
+            </div>
+            {type === "add" ? "Add New Adviser" : "Edit Adviser"}
           </DialogTitle>
-          <DialogDescription className={undefined}>
+          <DialogDescription className="text-[15px] text-neutral-500">
             {type === "add"
               ? "Register a new dormitory adviser to the system."
               : "Update the contact information for this adviser."}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-6 py-4">
+        <div className="grid gap-5 py-4">
           <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label className="text-xs font-bold uppercase tracking-wider text-[#12372A]">First Name</Label>
+            <div className="grid gap-1.5">
+              <Label className="text-[13px] font-medium text-neutral-700">First Name</Label>
               <Input
                  placeholder="John"
                  value={firstName}
                  onChange={(e) => setFirstName(e.target.value)}
-                 className="border-gray-200"
+                 className="border-neutral-200 focus:ring-neutral-900 focus:border-neutral-900 h-10"
                  type={undefined}
               />
             </div>
-            <div className="grid gap-2">
-              <Label className="text-xs font-bold uppercase tracking-wider text-[#12372A]">Last Name</Label>
+            <div className="grid gap-1.5">
+              <Label className="text-[13px] font-medium text-neutral-700">Last Name</Label>
               <Input
                  placeholder="Doe"
                  value={lastName}
                  onChange={(e) => setLastName(e.target.value)}
-                 className="border-gray-200"
+                 className="border-neutral-200 focus:ring-neutral-900 focus:border-neutral-900 h-10"
                  type={undefined}
               />
             </div>
           </div>
 
-          <div className="grid gap-2">
-            <Label className="text-xs font-bold uppercase tracking-wider text-[#12372A] flex items-center gap-1.5">
-              <Mail className="h-3.5 w-3.5" />
+          <div className="grid gap-1.5">
+            <Label className="text-[13px] font-medium text-neutral-700 flex items-center gap-1.5">
+              <Mail className="h-3.5 w-3.5 text-neutral-400" />
               Email Address
             </Label>
             <Input
@@ -113,33 +115,33 @@ export default function AddEditAdviser({ isOpen, onClose, adviser, type, onAdd, 
                placeholder="john.doe@vsu.edu.ph"
                value={email}
                onChange={(e) => setEmail(e.target.value)}
-               className="border-gray-200"
+               className="border-neutral-200 focus:ring-neutral-900 focus:border-neutral-900 h-10"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label className="text-xs font-bold uppercase tracking-wider text-[#12372A] flex items-center gap-1.5">
-                <Phone className="h-3.5 w-3.5" />
+            <div className="grid gap-1.5">
+              <Label className="text-[13px] font-medium text-neutral-700 flex items-center gap-1.5">
+                <Phone className="h-3.5 w-3.5 text-neutral-400" />
                 Phone Number
               </Label>
               <Input
                  placeholder="0917XXXXXXX"
                  value={phone}
                  onChange={(e) => setPhone(e.target.value)}
-                 className="border-gray-200"
+                 className="border-neutral-200 focus:ring-neutral-900 focus:border-neutral-900 h-10"
                  type={undefined}
               />
             </div>
           </div>
         </div>
 
-        <DialogFooter className="gap-2 sm:gap-0">
-          <Button variant="ghost" onClick={onClose} className="hover:bg-gray-100" size={undefined}>
+        <DialogFooter className="gap-2 sm:gap-0 pt-2">
+          <Button variant="ghost" onClick={onClose} className="hover:bg-neutral-100 text-neutral-600 font-medium" size={undefined}>
             Cancel
           </Button>
-          <Button onClick={handleSave} className="bg-[#12372A] hover:bg-[#12372A]/90 text-white" variant={undefined} size={undefined}>
-            {type === "add" ? "Register Adviser" : "Update Adviser"}
+          <Button onClick={handleSave} className="bg-neutral-900 hover:bg-neutral-800 text-white font-medium" variant={undefined} size={undefined}>
+            {type === "add" ? "Add Adviser" : "Save Changes"}
           </Button>
         </DialogFooter>
       </DialogContent>

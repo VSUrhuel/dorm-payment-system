@@ -63,18 +63,18 @@ export function VsuAdminSidebar() {
 
   return (
     <Sidebar className={undefined}>
-      <div className="flex flex-col h-full bg-primary text-primary-foreground">
+      <div className="flex flex-col h-full bg-[var(--super-admin)] text-white">
         <SidebarHeader className="p-6 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary shadow-lg shadow-secondary/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm border border-white/10">
               <GraduationCap className="h-6 w-6 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-extrabold tracking-tight leading-none">
+              <span className="text-lg font-semibold tracking-tight leading-none">
                 DormPay
               </span>
-              <span className="text-[10px] font-bold uppercase text-primary-foreground/60 tracking-[0.2em]">
-                University
+              <span className="text-[10px] font-medium uppercase text-white/50 tracking-[0.15em] mt-0.5">
+                Super Admin
               </span>
             </div>
           </div>
@@ -89,7 +89,7 @@ export function VsuAdminSidebar() {
                     <SidebarMenuButton
                       asChild
                       isActive={pathname === item.url}
-                      className="group relative h-11 px-3 text-primary-foreground/70 hover:text-primary hover:bg-white data-[active=true]:bg-secondary data-[active=true]:text-black data-[active=true]:font-medium transition-all duration-200 rounded-lg"
+                      className="group relative h-11 px-3 text-white/60 hover:text-white hover:bg-white/10 data-[active=true]:bg-white data-[active=true]:text-[var(--super-admin)] data-[active=true]:font-medium transition-all duration-200 rounded-lg"
                       tooltip={undefined}
                     >
                       <Link
@@ -108,25 +108,25 @@ export function VsuAdminSidebar() {
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter className="p-4 flex-shrink-0 border-t border-white/10">
+        <SidebarFooter className="p-4 flex-shrink-0 border-t border-white/5">
           <SidebarHeader className="flex items-start gap-2 pb-2">
             <Avatar className="h-9 w-9 border border-white/20">
-              <AvatarFallback className="bg-secondary text-white text-sm font-medium">
+              <AvatarFallback className="bg-white/10 text-white text-xs font-medium">
                 SA
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-primary-foreground truncate">
+              <p className="text-sm font-medium text-white/90 truncate">
                 Dr. Elena Smith
               </p>
-              <p className="text-[10px] text-primary-foreground/50 uppercase tracking-tighter truncate">
+              <p className="text-[10px] text-white/40 uppercase tracking-wider truncate">
                 Super Admin
               </p>
             </div>
           </SidebarHeader>
           <SidebarMenuButton
             onClick={handleSignOut}
-            className="group relative flex items-center gap-3 h-11 px-3 w-full text-primary-foreground/70 hover:text-white hover:bg-red-500 transition-all duration-200 rounded-lg"
+            className="group relative flex items-center gap-3 h-11 px-3 w-full text-white/60 hover:text-white hover:bg-red-500/90 transition-all duration-200 rounded-lg"
             tooltip={undefined}
           >
             <div className="relative">

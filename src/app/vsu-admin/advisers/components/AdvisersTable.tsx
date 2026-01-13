@@ -14,18 +14,18 @@ interface AdvisersTableProps {
 
 export default function AdvisersTable({ advisers, onEdit, onDelete }: AdvisersTableProps) {
   return (
-    <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden">
+    <div className="rounded-lg border border-neutral-200 bg-white overflow-hidden">
       <Table className={undefined}>
-        <TableHeader className="bg-gray-50">
+        <TableHeader className="bg-neutral-50">
           <TableRow className={undefined}>
-            <TableHead className="w-[250px] font-bold text-primary uppercase text-[10px] tracking-widest">
+            <TableHead className="w-[250px] font-medium text-neutral-500 uppercase text-[11px] tracking-wider">
               Name
             </TableHead>
-            <TableHead className="font-bold text-primary uppercase text-[10px] tracking-widest">Contact Info</TableHead>
-            <TableHead className="font-bold text-primary uppercase text-[10px] tracking-widest">
+            <TableHead className="font-medium text-neutral-500 uppercase text-[11px] tracking-wider">Contact Info</TableHead>
+            <TableHead className="font-medium text-neutral-500 uppercase text-[11px] tracking-wider">
               Dormitory
             </TableHead>
-            <TableHead className="font-bold text-primary uppercase text-[10px] tracking-widest text-right">
+            <TableHead className="font-medium text-neutral-500 uppercase text-[11px] tracking-wider text-right">
               Actions
             </TableHead>
           </TableRow>
@@ -39,16 +39,16 @@ export default function AdvisersTable({ advisers, onEdit, onDelete }: AdvisersTa
             </TableRow>
           ) : (
             advisers.map((adviser) => (
-              <TableRow key={adviser.id} className="hover:bg-gray-50/50 transition-colors">
+              <TableRow key={adviser.id} className="hover:bg-neutral-50 transition-colors border-neutral-100">
                 <TableCell className={undefined}>
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8 border">
-                      <AvatarFallback className="bg-[#12372A] text-white text-xs">
+                    <Avatar className="h-9 w-9 border border-neutral-200">
+                      <AvatarFallback className="bg-neutral-900 text-white text-xs font-medium">
                         {adviser.firstName[0]}{adviser.lastName[0]}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
-                      <span className="text-sm font-semibold text-[#12372A]">
+                      <span className="text-[15px] font-medium text-neutral-900">
                         {adviser.firstName} {adviser.lastName}
                       </span>
                     </div>
