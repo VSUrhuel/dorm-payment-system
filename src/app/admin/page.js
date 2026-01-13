@@ -41,7 +41,8 @@ import {
   onSnapshot,
   runTransaction,
   serverTimestamp,
-  where, // Use serverTimestamp for more accurate timestamps
+  where,
+  updateDoc, // Use serverTimestamp for more accurate timestamps
 } from "firebase/firestore";
 import AddPayableModal from "./dormers/components/AddPayabaleModal";
 
@@ -392,7 +393,7 @@ export default function Dashboard() {
     // Fetch data from API
     async function fetchPayables() {
       try {
-        const queryPayable = query(collection(db, "regularCharge"));
+        const queryPayable = query(collection(db, "regularCharge"), where("dormitoryId", "==", dormitoryId));
         const unsubscribe = onSnapshot(queryPayable, (snapshot) => {
           const payablesData = snapshot.docs.map((doc) => ({
             id: doc.id,
@@ -406,7 +407,7 @@ export default function Dashboard() {
       }
     }
     fetchPayables();
-  }, []);
+  }, [dormitoryId]);
 
   const handleAddPayable = () => {
     setPayableToEdit(null); // Clear any existing payable to edit
@@ -422,10 +423,15 @@ export default function Dashboard() {
     try {
       if (payableData.id) {
         const docRef = doc(db, "regularCharge", payableData.id);
-        await setDoc(docRef, payableData, { merge: true });
+        await updateDoc(docRef, {
+          ...payableData,
+        });
         toast.success("Payable Updated Successfully!");
       } else {
-        await addDoc(collection(db, "regularCharge"), payableData);
+        await addDoc(collection(db, "regularCharge"), {
+          ...payableData,
+          dormitoryId: dormitoryId,
+        });
         toast.success("New Payable Added Successfully!");
       }
       setIsAddModalOpen(false); // Close modal on success

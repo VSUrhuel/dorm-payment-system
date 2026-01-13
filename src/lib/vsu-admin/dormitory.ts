@@ -1,5 +1,5 @@
 import { Dormitory } from "@/app/vsu-admin/dormitories/types";
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
 import { firestore as db } from "@/lib/firebase";
 import { toast } from "sonner";
 import { Dormer } from "@/app/admin/dormers/types";
@@ -22,6 +22,7 @@ export const updateDormitory = async (dormitory: Dormitory) => {
     try {
         await setDoc(doc(db, "dormitories", dormitory.id), {
         ...dormitory,
+        isDeleted: false,
         updatedAt: serverTimestamp(),
         })
     } catch (error) {

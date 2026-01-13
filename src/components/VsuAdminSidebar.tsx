@@ -39,7 +39,7 @@ const navItems = [
   },
   { 
     title: "SA/Advisers", 
-    url: "/vsu-admin/sa-advisers", 
+    url: "/vsu-admin/advisers", 
     icon: Users 
   },
 ];

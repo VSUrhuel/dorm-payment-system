@@ -18,35 +18,13 @@ import { createBill, getBill, updateBill } from "@/lib/admin/bill";
 import { paymentConfirmationEmailTemplate } from "../../payments/utils/email";
 import { generateRandomPassword } from "../utils/generateRandomPass";
 import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
+import { sendEmail } from "@/app/utils/sendEmail";
 
 export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { dormitoryId, loading: dormitoryIdLoading } = useCurrentDormitoryId();
-
-  const sendEmail = async (emailData: {
-    to: string;
-    subject: string;
-    html: string;
-  }) => {
-    try {
-      const response = await fetch("/api/send-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(emailData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to send email");
-      }
-
-      await response.json();
-    } catch (error) {
-      toast.error("Failed to send notification email.");
-    }
-  };
-
+  const [errors, setErrors] = useState<string[]>([]);
+  
   const saveDormer = async (dormerData: DormerData, user: User | null) => {
 
     if (!user) {
@@ -68,16 +46,17 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
         return;
       }
 
-      const adminPassword = prompt(
-        "To add security, please enter your password:"
-      );
-
-      if (!adminPassword) {
-        toast.info("Admin creation canceled.");
-        return;
-      }
+      
 
       if (dormerData.role === "Admin") {
+        const adminPassword = prompt(
+          "To add security, please enter your password:"
+        );
+
+        if (!adminPassword) {
+          toast.info("Admin creation canceled.");
+          return;
+        }
         await createAdminDormer(
           dormerData,
           currentAdmin,
@@ -90,7 +69,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
         toast.success("Admin dormer added successfully!");
         await sendEmail({
           to: dormerData.email,
-          subject: "Welcome to Mabolo Payment System",
+          subject: "Welcome to DormPay System",
           html: welcomeAdminTemplate(
             dormerData.firstName,
             dormerData.email,
@@ -98,11 +77,10 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
           ),
         });
       } else {
+
         await createUserDormer(
           dormerData,
           user,
-          adminEmail,
-          adminPassword,
           temporaryPassword,
           dormitoryId
         );
@@ -110,7 +88,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
         toast.success("Dormer added successfully!");
         await sendEmail({
           to: dormerData.email,
-          subject: "Welcome to Mabolo Payment System",
+          subject: "Welcome to DormPay System",
           html: welcomeUserTemplate(
             dormerData.firstName,
             dormerData.email,
@@ -225,6 +203,66 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
     }
   };
 
+  const importDormers = async (dormersList: DormerData[], user: User | null) => {
+    if (!user) {
+      toast.error("Authentication error. Please log in again.");
+      return { successCount: 0, errorCount: 0 };
+    }
+
+    setIsSubmitting(true);
+    setErrors([]);
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const dormerData of dormersList) {
+      try {
+        const existingDormer = dormers.find((d) => d.email === dormerData.email);
+        if (existingDormer) {
+          const errorMsg = `Dormer with email ${dormerData.email} already exists. Skipping.`;
+          console.warn(errorMsg);
+          setErrors((prev) => [...prev, errorMsg]);
+          errorCount++;
+          continue;
+        }
+
+        const temporaryPassword = generateRandomPassword();
+        await createUserDormer(
+          dormerData,
+          user,
+          temporaryPassword,
+          dormitoryId
+        );
+
+        await sendEmail({
+          to: dormerData.email,
+          subject: "Welcome to DormPay System",
+          html: welcomeUserTemplate(
+            dormerData.firstName,
+            dormerData.email,
+            temporaryPassword
+          ),
+        });
+
+        successCount++;
+      } catch (error: any) {
+        errorCount++;
+        const errorMsg = error.message || String(error);
+        setErrors((prevErrors) => [...prevErrors, `${dormerData.email}: ${errorMsg}`]);
+      }
+    }
+
+    setIsSubmitting(false);
+
+    if (successCount > 0) {
+      toast.success(`Successfully imported ${successCount} dormer(s).`);
+    }
+    if (errorCount > 0) {
+      toast.error(`Failed to import ${errorCount} dormer(s).`);
+    }
+
+    return { successCount, errorCount };
+  };
+
   return {
     saveDormer,
     handleSavePayment,
@@ -232,5 +270,7 @@ export function useDormerActions(dormers: Dormer[], bills: Bill[]) {
     deleteDormer,
     isSubmitting,
     updateDormer,
+    importDormers,
+    errors,
   };
 }

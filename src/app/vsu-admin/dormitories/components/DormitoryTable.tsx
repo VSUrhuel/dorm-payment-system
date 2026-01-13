@@ -47,15 +47,15 @@ export default function DormitoryTable({ dorms, editDormitory, deleteDormitory }
                   <TableCell className={undefined}>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-7 w-7 border">
-                        <AvatarImage src={`/.jpg?height=28&width=28&query=${dorm.adviser}`} className={undefined} />
+                        <AvatarImage src={`/.jpg?height=28&width=28&query=${dorm.adviserName}`} className={undefined} />
                         <AvatarFallback className={undefined}>
-                          {dorm.adviser
+                          {dorm.adviserName
                             .split(" ")
                             .map((n) => n[0])
                             .join("")}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="text-xs font-medium">{dorm.adviser}</span>
+                      <span className="text-xs font-medium">{dorm.adviserName}</span>
                     </div>
                   </TableCell>
                   <TableCell className="text-xs">

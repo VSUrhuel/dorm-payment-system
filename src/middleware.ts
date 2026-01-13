@@ -8,6 +8,11 @@ const adminRoutes = [
   "/admin/expenses",
   "/admin/payments",
 ];
+const vsuAdminRoutes = [
+  "/vsu-admin",
+  "/vsu-admin/dormitories",
+  "/vsu-admin/advisers",
+];
 const userRoutes = [
   "/user",
   "/user/payment",
@@ -63,12 +68,17 @@ export async function middleware(request: NextRequest) {
 
   // Redirect authenticated users away from public routes
   if (isAuthenticated && publicRoutes.includes(pathname)) {
-    const url = role === "Admin" ? "/admin" : "/dormer";
+    const url = 
+      (role === "Admin" || role === "Adviser") ? "/admin" : 
+      role === "VSUAdmin" ? "/vsu-admin" : 
+      "/dormer";
     return NextResponse.redirect(new URL(url, request.url));
   }
 
-  // Protect admin routes
-  const allProtectedRoutes = [...adminRoutes, ...userRoutes];
+  // Protect routes
+  const userProtectedRoutes = [...userRoutes, "/dormer"];
+  const allProtectedRoutes = [...adminRoutes, ...vsuAdminRoutes, ...userProtectedRoutes];
+  
   if (
     !isAuthenticated &&
     allProtectedRoutes.some((route) => pathname.startsWith(route))
@@ -79,20 +89,27 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isAuthenticated) {
-    // If a 'User' tries to access an '/admin' route
-    if (
-      role === "User" &&
-      adminRoutes.some((route) => pathname.startsWith(route))
-    ) {
-      return NextResponse.redirect(new URL("/dormer", request.url));
+    const isAdmin = role === "Admin" || role === "Adviser";
+    const isVSUAdmin = role === "VSUAdmin";
+    const isUser = role === "User";
+
+    const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
+    const isVSUAdminRoute = vsuAdminRoutes.some((route) => pathname.startsWith(route));
+    const isUserRoute = userProtectedRoutes.some((route) => pathname.startsWith(route));
+
+    // Admin/Adviser access control: Only allow adminRoutes
+    if (isAdmin && (isVSUAdminRoute || isUserRoute)) {
+      return NextResponse.redirect(new URL("/admin", request.url));
     }
 
-    // If an 'Admin' tries to access a '/user' route
-    if (
-      role === "Admin" &&
-      userRoutes.some((route) => pathname.startsWith(route))
-    ) {
-      return NextResponse.redirect(new URL("/admin", request.url));
+    // VSUAdmin access control: Only allow vsuAdminRoutes
+    if (isVSUAdmin && (isAdminRoute || isUserRoute)) {
+      return NextResponse.redirect(new URL("/vsu-admin", request.url));
+    }
+
+    // User access control: Only allow userRoutes
+    if (isUser && (isAdminRoute || isVSUAdminRoute)) {
+      return NextResponse.redirect(new URL("/dormer", request.url));
     }
   }
 

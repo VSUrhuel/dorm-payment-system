@@ -12,6 +12,7 @@ export interface Dormer {
   dormitoryId: string;
   isDeleted?: boolean;
   bills: Bill[];
+  dormitoryName?: string;
 }
 
 export interface Bill {
@@ -44,6 +45,7 @@ export type ModalType =
   | "deleteDormer"
   | "edit"
   | "delete"
+  | "import"
   | null;
 
 export interface DormerData {
@@ -55,4 +57,15 @@ export interface DormerData {
   role: string;
   roomNumber: string;
   dormerId?: string;
+}
+
+export interface AdviserData {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: string;
+  dormitoryId?: string;
+  dormitoryName?: string;
 }

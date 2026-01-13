@@ -23,8 +23,8 @@ export function useDormitoryData() {
     const dormsPerPage = 10
 
     useEffect(() => {
-        const unsub = onSnapshot(query(collection(db, "dormitories")), (snap) => {
-            const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Dormitory[]
+        const unsub = onSnapshot(query(collection(db, "dormitories"), where("isDeleted", "==", false)), (snap) => {
+            const data = snap.docs.map((doc) => ({ ...doc.data(), id: doc.id })) as Dormitory[]
             setRawDormitories(data)
             setDormsLoaded(true)
         }, (err) => {
@@ -32,8 +32,8 @@ export function useDormitoryData() {
             setLoading(false)
         })
 
-        const advisersUnsub = onSnapshot(query(collection(db, "dormers"), where("role", "==", "Adviser")), (snap) => {
-            const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Dormer[]
+        const advisersUnsub = onSnapshot(query(collection(db, "dormers"), where("role", "==", "Adviser"), where("isDeleted", "==", false)), (snap) => {
+            const data = snap.docs.map((doc) => ({ ...doc.data(), id: doc.id })) as Dormer[]
             setAdvisers(data)
             
         }, (err) => {
@@ -52,7 +52,7 @@ export function useDormitoryData() {
     useEffect(() => {
         setLoading(true)
         const unsub = onSnapshot(query(collection(db, "dormers")), (snap) => {
-            const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+            const data = snap.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
             setAllDormers(data)
             setDormersLoaded(true)
         }, (err) => {
@@ -71,7 +71,8 @@ export function useDormitoryData() {
                 
                 return {
                     ...dorm,
-                    adviser: adviserName,
+                    adviser: dorm.adviser, // Keep as ID
+                    adviserName: adviserName, // Set the name
                     occupancy: allDormers.filter((d) => d.dormitoryId === dorm.id && !d.isDeleted).length
                 };
             });
