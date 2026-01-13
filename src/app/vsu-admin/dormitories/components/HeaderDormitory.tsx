@@ -17,7 +17,7 @@ export default function HeaderDormitory({
           <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Dormitory Registry</h1>
           <p className="text-[15px] text-neutral-500 mt-1 font-normal">Manage university dormitories</p>
         </div>
-        <div className="ml-auto">
+        <div className="flex items-center gap-3">
           <Button className="bg-neutral-900 hover:bg-neutral-800 text-white gap-2 font-medium shadow-sm transition-all" variant={undefined} size={undefined} onClick={onAddDormitory}>
             <Plus className="h-4 w-4" />
             Register Dormitory
