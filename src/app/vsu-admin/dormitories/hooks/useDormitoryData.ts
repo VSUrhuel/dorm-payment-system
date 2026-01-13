@@ -50,7 +50,6 @@ export function useDormitoryData() {
    
 
     useEffect(() => {
-        setLoading(true)
         const unsub = onSnapshot(query(collection(db, "dormers")), (snap) => {
             const data = snap.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
             setAllDormers(data)
@@ -59,7 +58,6 @@ export function useDormitoryData() {
             console.error("Error fetching dormers:", err)
             setLoading(false)
         })
-        setLoading(false)
         return () => unsub()
     }, [])
 
@@ -82,28 +80,22 @@ export function useDormitoryData() {
     }, [rawDormitories, allDormers, dormsLoaded, dormersLoaded]);
 
     useEffect(() => {
-        setLoading(true)
         const totalPages = Math.ceil(dormitories.length / dormsPerPage)
         setTotalPages(totalPages)
-        setLoading(false)
     }, [dormitories])
 
 
     const filteredDormitories = useMemo(() => {
-        setLoading(true)
         const filteredDorm = dormitories.filter((dormitory) =>
             dormitory.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
             dormitory.location.toLowerCase().includes(locationFilter.toLowerCase())
         )
-        setLoading(false)
         return filteredDorm
     }, [dormitories, searchTerm, locationFilter])
     
     const paginatedDormitories = useMemo(() => {
-        setLoading(true)
         const indexOfLastDormitory = currentPage * dormsPerPage
         const indexOfFirstDormitory = indexOfLastDormitory - dormsPerPage
-        setLoading(false)
         return filteredDormitories.slice(indexOfFirstDormitory, indexOfLastDormitory)
     }, [filteredDormitories, currentPage])
 
