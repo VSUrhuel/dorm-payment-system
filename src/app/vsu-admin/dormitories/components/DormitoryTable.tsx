@@ -29,7 +29,7 @@ export default function DormitoryTable({ dorms, editDormitory, deleteDormitory }
                 <TableHead className="font-medium text-neutral-500 uppercase text-[11px] tracking-wider">
                   Occupancy
                 </TableHead>
-                <TableHead className="font-medium text-neutral-500 uppercase text-[11px] tracking-wider">
+                <TableHead className="w-[120px] font-medium text-neutral-500 uppercase text-[11px] tracking-wider text-right">
                   Actions
                 </TableHead>
               </TableRow>
@@ -61,32 +61,36 @@ export default function DormitoryTable({ dorms, editDormitory, deleteDormitory }
                   <TableCell className="text-[14px]">
                     <span className="text-neutral-600 font-medium">{dorm.occupancy}</span>
                   </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-primary"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-[160px]">
-                        <DropdownMenuItem
-                          className="text-xs font-medium py-2 cursor-pointer"
-                          onClick={() => editDormitory(dorm)} inset={undefined}                        >
-                          <Edit2 className="mr-2 h-3.5 w-3.5" />
-                          Edit Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-xs font-medium py-2 cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
-                          onClick={() => deleteDormitory(dorm)} inset={undefined}                        >
-                          <Trash2 className="mr-2 h-3.5 w-3.5" />
-                          Remove Dorm
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                  <TableCell className="text-right align-middle w-[120px]">
+                    <div className="flex justify-end items-center h-full">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-primary"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-[160px]">
+                          <DropdownMenuItem
+                            className="text-xs font-medium py-2 cursor-pointer"
+                            onClick={() => editDormitory(dorm)} inset={undefined}
+                          >
+                            <Edit2 className="mr-2 h-3.5 w-3.5" />
+                            Edit Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-xs font-medium py-2 cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                            onClick={() => deleteDormitory(dorm)} inset={undefined}
+                          >
+                            <Trash2 className="mr-2 h-3.5 w-3.5" />
+                            Remove Dorm
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
