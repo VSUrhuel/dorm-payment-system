@@ -8,17 +8,21 @@ interface AdviserHeaderProps {
 
 export default function AdviserHeader({ onAddAdviser }: AdviserHeaderProps) {
   return (
-    <header className="flex flex-col gap-4 border-b bg-white p-8 sm:flex-row sm:items-center sm:justify-between">
+    <header className="flex flex-col gap-4 border-b border-neutral-100 bg-white p-8 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 className="text-2xl font-bold text-[#12372A]">Adviser Management</h1>
-        <p className="text-sm text-[#12372A]">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="h-1.5 w-1.5 rounded-full bg-neutral-900"></div>
+          <span className="text-[11px] font-medium uppercase tracking-widest text-neutral-500">Super Admin</span>
+        </div>
+        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Adviser Management</h1>
+        <p className="text-[15px] text-neutral-500 mt-1 font-normal">
           Manage and monitor all dormitory advisers
         </p>
       </div>
       <div className="flex items-center gap-3">
         <Button 
           onClick={onAddAdviser}
-          className="bg-[#12372A] hover:bg-[#12372A]/90 text-white"
+          className="bg-neutral-900 hover:bg-neutral-800 text-white font-medium shadow-sm transition-all"
           variant={undefined}
           size={undefined}
         >

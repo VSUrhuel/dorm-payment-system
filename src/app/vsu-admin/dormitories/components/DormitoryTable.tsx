@@ -14,81 +14,83 @@ interface dormitoryTableProps {
 export default function DormitoryTable({ dorms, editDormitory, deleteDormitory }: dormitoryTableProps) {
 
     return (
-        <main className="p-8">
-        <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden">
+        <main className="p-0">
+        <div className="rounded-lg border border-neutral-200 bg-white overflow-hidden">
           <Table className={undefined}>
-            <TableHeader className="bg-gray-50">
+            <TableHeader className="bg-neutral-50">
               <TableRow className={undefined}>
-                <TableHead className="w-[250px] font-bold text-primary uppercase text-[10px] tracking-widest">
+                <TableHead className="w-[250px] font-medium text-neutral-500 uppercase text-[11px] tracking-wider">
                   Dormitory Name
                 </TableHead>
-                <TableHead className="font-bold text-primary uppercase text-[10px] tracking-widest">Location</TableHead>
-                <TableHead className="font-bold text-primary uppercase text-[10px] tracking-widest">
+                <TableHead className="font-medium text-neutral-500 uppercase text-[11px] tracking-wider">Location</TableHead>
+                <TableHead className="font-medium text-neutral-500 uppercase text-[11px] tracking-wider">
                   Assigned Adviser/SA
                 </TableHead>
-                <TableHead className="font-bold text-primary uppercase text-[10px] tracking-widest">
-                  Total Occupancy
+                <TableHead className="font-medium text-neutral-500 uppercase text-[11px] tracking-wider">
+                  Occupancy
                 </TableHead>
-                <TableHead className="font-bold text-primary uppercase text-[10px] tracking-widest">
+                <TableHead className="w-[120px] font-medium text-neutral-500 uppercase text-[11px] tracking-wider text-right">
                   Actions
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className={undefined}>
               {dorms.map((dorm) => (
-                <TableRow key={dorm.id} className="hover:bg-gray-50/50 transition-colors">
-                  <TableCell className="font-semibold">{dorm.name}</TableCell>
-                  <TableCell className="text-xs">
-                    <div className="flex items-center gap-2 text-muted-foreground text-xs">
-                      <MapPin className="h-3 w-3" />
+                <TableRow key={dorm.id} className="hover:bg-neutral-50 transition-colors border-neutral-100">
+                  <TableCell className="font-medium text-[15px] text-neutral-900">{dorm.name}</TableCell>
+                  <TableCell className="text-[14px]">
+                    <div className="flex items-center gap-2 text-neutral-600">
+                      <MapPin className="h-3.5 w-3.5 text-neutral-400" />
                       {dorm.location}
                     </div>
                   </TableCell>
                   <TableCell className={undefined}>
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-7 w-7 border">
+                      <Avatar className="h-7 w-7 border border-neutral-200">
                         <AvatarImage src={`/.jpg?height=28&width=28&query=${dorm.adviserName}`} className={undefined} />
-                        <AvatarFallback className={undefined}>
+                        <AvatarFallback className="bg-neutral-900 text-white text-[10px] font-medium">
                           {dorm.adviserName
                             .split(" ")
                             .map((n) => n[0])
                             .join("")}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="text-xs font-medium">{dorm.adviserName}</span>
+                      <span className="text-[14px] font-medium text-neutral-700">{dorm.adviserName}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-muted-foreground">{dorm.occupancy}</span>
-                    </div>
+                  <TableCell className="text-[14px]">
+                    <span className="text-neutral-600 font-medium">{dorm.occupancy}</span>
                   </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-primary"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-[160px]">
-                        <DropdownMenuItem
-                          className="text-xs font-medium py-2 cursor-pointer"
-                          onClick={() => editDormitory(dorm)} inset={undefined}                        >
-                          <Edit2 className="mr-2 h-3.5 w-3.5" />
-                          Edit Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-xs font-medium py-2 cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
-                          onClick={() => deleteDormitory(dorm)} inset={undefined}                        >
-                          <Trash2 className="mr-2 h-3.5 w-3.5" />
-                          Remove Dorm
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                  <TableCell className="text-right align-middle w-[120px]">
+                    <div className="flex justify-end items-center h-full">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-primary"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-[160px]">
+                          <DropdownMenuItem
+                            className="text-xs font-medium py-2 cursor-pointer"
+                            onClick={() => editDormitory(dorm)} inset={undefined}
+                          >
+                            <Edit2 className="mr-2 h-3.5 w-3.5" />
+                            Edit Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-xs font-medium py-2 cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                            onClick={() => deleteDormitory(dorm)} inset={undefined}
+                          >
+                            <Trash2 className="mr-2 h-3.5 w-3.5" />
+                            Remove Dorm
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
