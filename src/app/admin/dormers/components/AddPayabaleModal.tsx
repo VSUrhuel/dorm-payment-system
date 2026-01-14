@@ -99,7 +99,8 @@ export default function AddPayableModal({
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Name <span className="text-xs text-gray-500">({name.length}/100)</span>
+              Name{" "}
+              <span className="text-xs text-gray-500">({name.length}/100)</span>
             </Label>
             <Input
               id="name"
@@ -125,8 +126,13 @@ export default function AddPayableModal({
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="description" className="text-right">
-              Description <span className="text-xs text-gray-500">({description.length}/300)</span>
+            <Label htmlFor="description" className="text-right md:cols-span-1">
+              <div className="flex flex-col md:flex-row md:items-center">
+                <span>Description</span>
+                <span className="text-xs text-gray-500 md:ml-2 mt-1 md:mt-0">
+                  ({description.length}/300)
+                </span>
+              </div>
             </Label>
             <Textarea
               id="description"
