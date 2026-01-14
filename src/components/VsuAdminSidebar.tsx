@@ -66,8 +66,8 @@ export function VsuAdminSidebar() {
       <div className="flex flex-col h-full bg-[var(--super-admin)] text-white">
         <SidebarHeader className="p-6 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm border border-white/10">
-              <GraduationCap className="h-6 w-6 text-white" />
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg">
+              <img src="/profile-old.webp" alt="Logo" width={65} height={65} />
             </div>
             <div className="flex flex-col">
               <span className="text-lg font-semibold tracking-tight leading-none">

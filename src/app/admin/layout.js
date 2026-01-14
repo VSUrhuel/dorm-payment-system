@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
             <SidebarTrigger className="text-white hover:bg-[#1c4f3d] hover:text-white" />
             <div className="flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
               <img
-                src="/profile.ico"
+                src="/profile-old.webp"
                 alt="Logo"
                 width={32}
                 height={32}
