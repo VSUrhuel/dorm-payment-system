@@ -2,7 +2,6 @@
 
 import {
   Building,
-  GraduationCap,
   Users,
   LogOut,
   LayoutDashboard,
