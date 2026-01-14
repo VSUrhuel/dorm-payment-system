@@ -19,14 +19,14 @@ interface DeleteDormitoryProps {
 
 export default function DeleteDormitory({ isOpen, onClose, onDelete, dormitory }: DeleteDormitoryProps) {
      return (<Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[400px] border-neutral-200">
           <DialogHeader className={undefined}>
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 mb-4">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 mb-4">
               <AlertTriangle className="h-6 w-6 text-red-600" />
             </div>
-            <DialogTitle className="text-center text-xl text-primary">Remove Dormitory</DialogTitle>
-            <DialogDescription className="text-center pt-2">
-              Are you sure you want to remove <span className="font-bold text-foreground">"{dormitory?.name}"</span>?
+            <DialogTitle className="text-center text-lg font-semibold text-neutral-900">Remove Dormitory</DialogTitle>
+            <DialogDescription className="text-center pt-2 text-[15px] text-neutral-600">
+              Are you sure you want to remove <span className="font-semibold text-neutral-900">"{dormitory?.name}"</span>?
               This action will unassign all residents and cannot be undone.
             </DialogDescription>
           </DialogHeader>

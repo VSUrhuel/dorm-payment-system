@@ -2,7 +2,7 @@ import { getDormitoriesOccupancy, getKpiData } from "@/lib/vsu-admin/dashboard"
 import { useEffect, useState } from "react"
 
 export function useDashboardData() {
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [kpiData, setKpiData] = useState(null)
     const [dormitoriesOccupancy, setDormitoriesOccupancy] = useState(null)
@@ -10,7 +10,6 @@ export function useDashboardData() {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                setLoading(true)
                 const kpiData = await getKpiData()
                 const dormitoriesOccupancy = await getDormitoriesOccupancy()
                 setKpiData(kpiData)

@@ -71,20 +71,13 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
   }
   return (
      <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[550px]">
+      <DialogContent className="sm:max-w-[500px] border-neutral-200">
         <DialogHeader className={undefined}>
-          <DialogTitle className="text-2xl font-bold text-primary flex items-center gap-2">
-            {type === "add" ? (
-              <>
-                <Building2 className="h-6 w-6 text-secondary" />
-                Add New Dormitory
-              </>
-            ) : (
-              <>
-                <Building2 className="h-6 w-6 text-secondary" />
-                Edit Building Details
-              </>
-            )}
+          <DialogTitle className="text-xl font-semibold text-neutral-900 flex items-center gap-2.5">
+            <div className="h-9 w-9 rounded-lg bg-neutral-100 flex items-center justify-center">
+              <Building2 className="h-5 w-5 text-neutral-700" />
+            </div>
+            {type === "add" ? "Add New Dormitory" : "Edit Dormitory Details"}
           </DialogTitle>
           <DialogDescription className={undefined}>
             {type === "add"
@@ -93,51 +86,51 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-6 py-4">
-          <div className="grid gap-2">
+        <div className="grid gap-5 py-4">
+          <div className="grid gap-1.5">
             <Label
               htmlFor="name"
-              className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5"
+              className="text-[13px] font-medium text-neutral-700 flex items-center gap-1.5"
             >
-              <Building2 className="h-3.5 w-3.5" />
+              <Building2 className="h-3.5 w-3.5 text-neutral-400" />
               Building Name
             </Label>
             <Input
                id="name"
                placeholder="e.g. Narra Residence"
                value={dormitoryName}
-               className="border-gray-200 focus:ring-secondary focus:border-secondary transition-all" type={undefined}
+               className="border-neutral-200 focus:ring-neutral-900 focus:border-neutral-900 h-10" type={undefined}
                onChange={(e) => setDormitoryName(e.target.value)}            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
+            <div className="grid gap-1.5">
               <Label
                 htmlFor="location"
-                className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5"
+                className="text-[13px] font-medium text-neutral-700 flex items-center gap-1.5"
               >
-                <MapPin className="h-3.5 w-3.5" />
+                <MapPin className="h-3.5 w-3.5 text-neutral-400" />
                 Location
               </Label>
               <Input
                  id="location"
                  placeholder="e.g. North Campus"
                  value={dormitoryLocation}
-                 className="border-gray-200 focus:ring-secondary focus:border-secondary" type={undefined}
+                 className="border-neutral-200 focus:ring-neutral-900 focus:border-neutral-900 h-10" type={undefined}
                  onChange={(e) => setDormitoryLocation(e.target.value)}              />
             </div>
           </div>
               {advisers.length > 0 && (
-          <div className="grid gap-2">
+          <div className="grid gap-1.5">
             <Label
               htmlFor="adviser"
-              className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5"
+              className="text-[13px] font-medium text-neutral-700 flex items-center gap-1.5"
             >
-              <User className="h-3.5 w-3.5" />
+              <User className="h-3.5 w-3.5 text-neutral-400" />
               Adviser
             </Label>
             <Select value={dormitoryAdviser} onValueChange={(value) => setDormitoryAdviser(value)}>
-              <SelectTrigger id="adviser" className="border-gray-200 focus:ring-secondary focus:border-secondary">
+              <SelectTrigger id="adviser" className="border-neutral-200 focus:ring-neutral-900 focus:border-neutral-900 h-10">
                 <SelectValue placeholder="Select an adviser" />
               </SelectTrigger>
               <SelectContent className={undefined} >
@@ -157,12 +150,12 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
               )}
         </div>
 
-        <DialogFooter className="gap-2 sm:gap-0">
-          <Button variant="ghost" onClick={onClose} className="hover:bg-gray-100" size={undefined}>
-            Discard Changes
+        <DialogFooter className="gap-2 sm:gap-0 pt-2">
+          <Button variant="ghost" onClick={onClose} className="hover:bg-neutral-100 text-neutral-600 font-medium" size={undefined}>
+            Cancel
           </Button>
-          <Button onClick={handleSave} className="hover:bg-blue-500" variant={undefined} size={undefined}>
-            {type === "add" ? "Register Dormitory" : "Update Registry"}
+          <Button onClick={handleSave} className="bg-neutral-900 hover:bg-neutral-800 text-white font-medium" variant={undefined} size={undefined}>
+            {type === "add" ? "Register Dormitory" : "Save Changes"}
           </Button>
         </DialogFooter>
       </DialogContent>
