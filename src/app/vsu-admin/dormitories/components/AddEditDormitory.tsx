@@ -45,7 +45,7 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
   }, [dormitory, isOpen]);
     
   const handleSave = () => {
-    if(dormitoryName === "" || dormitoryLocation === "" || dormitoryAdviser === "") {
+    if(dormitoryName === "" || dormitoryLocation === "") {
       toast.error("Please fill in all fields!")
       return
     }
@@ -57,7 +57,6 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
         location: dormitoryLocation,
         adviser: dormitoryAdviser,
       })
-      toast.success("Dormitory added successfully!")
     } else {
       onUpdate({
         id: dormitory.id,
@@ -65,7 +64,6 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
         location: dormitoryLocation,
         adviser: dormitoryAdviser
       })
-      toast.success("Dormitory updated successfully!")
     }
     onClose()
   }

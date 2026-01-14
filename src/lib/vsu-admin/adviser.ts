@@ -6,6 +6,7 @@ import { createAccountWithoutLoggingOut } from "../admin/dormer";
 import { User } from "firebase/auth";
 import { sendEmail } from "@/app/utils/sendEmail";
 import { welcomeAdviserEmail } from "@/app/admin/dormers/email-templates/welcomeAdviserEmail";
+import { generateRandomPassword } from "@/app/admin/dormers/utils/generateRandomPass";
 
 export const createAdviserData = async (adviser: AdviserData, currentAdmin: User, temporaryPassword: string) => {
     try {
@@ -51,9 +52,23 @@ export const softDeleteAdviserData = async (adviserId: string) => {
         isDeleted: true,
         deletedAt: serverTimestamp(),
         })
+        await removeDormAdvisory(adviserId)
         toast.success("Adviser soft deleted successfully")
     } catch (error) {
         toast.error("Error soft deleting adviser:", error)
+    }
+}
+
+export const removeDormAdvisory = async (adviserId: string) => {
+    try {
+        await updateDoc(doc(db, "dormers", adviserId), {
+        dormitoryId: null,
+        dormitoryName: null,
+        updatedAt: serverTimestamp(),
+        })
+        toast.success("Dormitory advisory removed successfully")
+    } catch (error) {
+        toast.error("Error removing dormitory advisory:", error)
     }
 }
 
@@ -89,6 +104,8 @@ export const updateDormAdvisory = async (dormId: string, adviserId: string, dorm
             updatedAt: serverTimestamp(),
             isDeleted: false,
         })
+
+        const temporaryPassword = generateRandomPassword();
         
         await sendEmail({
                   to: adviserData.email,
@@ -96,7 +113,7 @@ export const updateDormAdvisory = async (dormId: string, adviserId: string, dorm
                   html: welcomeAdviserEmail(
                     adviserData.firstName,
                     adviserData.email,
-                    "iloveVSU-DormPay",
+                    temporaryPassword,
                     dormitoryName
                   ),
                 });
@@ -105,6 +122,27 @@ export const updateDormAdvisory = async (dormId: string, adviserId: string, dorm
     } catch (error) {
         console.error(error)
         toast.error("Error updating dormitory advisory:", error)
+    }
+}
+
+export const assignDormAdvisory = async (dormId: string, adviserId: string, dormitoryName: string) => {
+    try {
+        const adviserData = await getAdviserById(adviserId)
+        if(!adviserData) {
+            toast.error("Adviser not found!")
+            return
+        }
+        await updateDoc(doc(db, "dormers", adviserId), {
+            dormitoryId: dormId,
+            dormitoryName: dormitoryName,
+            updatedAt: serverTimestamp(),
+            isDeleted: false,
+        })
+        toast.success("Dormitory advisor was assigned successfully")
+        return;
+    } catch (error) {
+        console.error(error)
+        toast.error("Error assigning dormitory advisor:", error)
     }
 }
 

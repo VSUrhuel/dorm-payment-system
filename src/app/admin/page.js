@@ -233,7 +233,7 @@ export default function Dashboard() {
     setLoading(true);
     // Helper function to find dormer info safely
     const getDormerInfo = (dormerId) => {
-      return dormersData.find((d) => d.id === dormerId && d.isDeleted === false) || {};
+      return dormersData.find((d) => d.id === dormerId) || {};
     };
 
     const getBillInfo = (billId) => {

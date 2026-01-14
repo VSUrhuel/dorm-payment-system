@@ -112,15 +112,15 @@ export function VsuAdminSidebar() {
           <SidebarHeader className="flex items-start gap-2 pb-2">
             <Avatar className="h-9 w-9 border border-white/20">
               <AvatarFallback className="bg-white/10 text-white text-xs font-medium">
-                SA
+                DI
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white/90 truncate">
-                Dr. Elena Smith
+                Developer Interface
               </p>
               <p className="text-[10px] text-white/40 uppercase tracking-wider truncate">
-                Super Admin
+                VSU Admin
               </p>
             </div>
           </SidebarHeader>

@@ -1,4 +1,4 @@
-import { updateDormAdvisory } from "@/lib/vsu-admin/adviser"
+import { assignDormAdvisory, updateDormAdvisory } from "@/lib/vsu-admin/adviser"
 import { Dormitory } from "../types"
 import { createDormitory, getDormitoryById, softDeleteDormitory, updateDormitory } from "@/lib/vsu-admin/dormitory"
 import { toast } from "sonner"
@@ -17,9 +17,10 @@ export function useDormitoryAction() {
         try {
             if(dormitory.id){
                 const dormitoryData = await getDormitoryById(dormitory.id)
-                console.log(dormitoryData.adviser, dormitory.adviser)
                 if(dormitoryData.adviser != dormitory.adviser){
                     await updateDormAdvisory(dormitory.id, dormitory.adviser, dormitory.name)
+                } else if((dormitoryData.adviser == "" || dormitoryData.adviser == null) && dormitory.adviser != '' || dormitory.adviser != null) {
+                    await assignDormAdvisory(dormitory.id, dormitory.adviser, dormitory.name)
                 }
                 await updateDormitory(dormitory)
             }

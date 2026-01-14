@@ -71,7 +71,7 @@ export function useDormitoryData() {
                     ...dorm,
                     adviser: dorm.adviser, // Keep as ID
                     adviserName: adviserName, // Set the name
-                    occupancy: allDormers.filter((d) => d.dormitoryId === dorm.id && !d.isDeleted).length
+                    occupancy: allDormers.filter((d) => d.dormitoryId === dorm.id && !d.isDeleted && d.role === "User").length
                 };
             });
             setDormitories(merged);
