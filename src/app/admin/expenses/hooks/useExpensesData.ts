@@ -38,7 +38,7 @@ export function useExpensesData() {
       }
     );
 
-    const qDormers = query(collection(db, "dormers"));
+    const qDormers = query(collection(db, "dormers"), where("dormitoryId", "==", dormitoryId));
     const unsubscribeDormers = onSnapshot(
       qDormers,
       (snapshot) => {
