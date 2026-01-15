@@ -5,17 +5,9 @@ import { Carousel } from "@/components/ui/carousel"
 import { Building, Users, Wrench, TrendingUp, ArrowUpRight, ArrowDownRight, Clock, CheckCircle2, AlertCircle, DollarSign } from "lucide-react"
 import { useDashboardData } from "./hooks/useDashboardData"
 import { DashboardSkeleton } from "./components/DashboardSkeleton"
+import { useAdvisersData } from "./advisers/hooks/useAdvisersData"
 
 // Mock data for dormitory distribution chart
-const dormitoryData = [
-  { name: "Mariposa", occupancy: 156, capacity: 180, percentage: 87 },
-  { name: "Sampaguita Ladies Hall", occupancy: 250, capacity: 272, percentage: 92 },
-  { name: "Mabolo Res", occupancy: 98, capacity: 120, percentage: 82 },
-  { name: "Ilang-Ilang", occupancy: 187, capacity: 200, percentage: 94 },
-  { name: "Mahogany Men's Hall", occupancy: 134, capacity: 160, percentage: 84 },
-  { name: "Kanlaon", occupancy: 178, capacity: 190, percentage: 94 },
-  { name: "Zea Mey's", occupancy: 89, capacity: 140, percentage: 64 },
-]
 
 // Mock data for repair requests
 const repairRequests = [
@@ -43,9 +35,9 @@ const getStatusIcon = (status: string) => {
 }
 
 export default function VsuAdminDashboard() {
-  const { loading } = useDashboardData()
-
-  if (loading) {
+  const { loading, dormitoryData } = useDashboardData()
+  const { advisers } = useAdvisersData()
+  if (loading || dormitoryData === null) {
     return <DashboardSkeleton />
   }
 
@@ -84,8 +76,8 @@ export default function VsuAdminDashboard() {
                   <div className="flex-1">
                     <p className="text-xs font-medium text-neutral-400 uppercase tracking-wide">Dormitories</p>
                     <div className="flex items-baseline gap-2 mt-0.5">
-                      <span className="text-3xl font-semibold text-white">12</span>
-                      <span className="text-xs text-emerald-400 font-medium">All active</span>
+                      <span className="text-3xl font-semibold text-white">{dormitoryData?.length}</span>
+                      <span className="text-xs text-emerald-400 font-medium">All registered</span>
                     </div>
                   </div>
                 </div>
@@ -102,7 +94,7 @@ export default function VsuAdminDashboard() {
                   <div className="flex-1">
                     <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">Total Dormers</p>
                     <div className="flex items-baseline gap-2 mt-0.5">
-                      <span className="text-3xl font-semibold text-neutral-900">2,450</span>
+                      <span className="text-3xl font-semibold text-neutral-900">{dormitoryData?.reduce((total, dormitory) => total + (dormitory.occupancy || 0), 0)}</span>
                       <span className="text-xs text-neutral-400 font-medium">residents</span>
                     </div>
                   </div>
@@ -120,9 +112,12 @@ export default function VsuAdminDashboard() {
                   <div className="flex-1">
                     <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">Pending Repairs</p>
                     <div className="flex items-baseline gap-2 mt-0.5">
-                      <span className="text-3xl font-semibold text-neutral-900">23</span>
-                      <span className="text-xs text-amber-600 font-medium">needs review</span>
+                      <span className="text-xl text-gray-400">coming soon</span>
                     </div>
+                    {/* <div className="flex items-baseline gap-2 mt-0.5">
+                    <span className="text-3xl font-semibold text-neutral-900 tabular-nums">23</span>
+                    <span className="text-xs text-amber-600 font-medium">need attention</span>
+                  </div> */}
                   </div>
                 </div>
               </CardContent>
@@ -144,7 +139,7 @@ export default function VsuAdminDashboard() {
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-neutral-400 uppercase tracking-wide">Dormitories</p>
                   <div className="flex items-baseline gap-2 mt-0.5">
-                    <span className="text-3xl font-semibold text-white tabular-nums">12</span>
+                    <span className="text-3xl font-semibold text-white tabular-nums">{dormitoryData?.length}</span>
                     <span className="text-xs text-emerald-400 font-medium">All registered</span>
                   </div>
                 </div>
@@ -163,7 +158,7 @@ export default function VsuAdminDashboard() {
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">Total Dormers</p>
                   <div className="flex items-baseline gap-2 mt-0.5">
-                    <span className="text-3xl font-semibold text-neutral-900 tabular-nums">2,450</span>
+                    <span className="text-3xl font-semibold text-neutral-900 tabular-nums">{dormitoryData?.reduce((total, dormitory) => total + (dormitory.occupancy || 0), 0)}</span>
                     <span className="text-xs text-neutral-400 font-medium">residents</span>
                   </div>
                 </div>
@@ -182,9 +177,12 @@ export default function VsuAdminDashboard() {
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">Pending Repairs</p>
                   <div className="flex items-baseline gap-2 mt-0.5">
-                    <span className="text-3xl font-semibold text-neutral-900 tabular-nums">23</span>
-                    <span className="text-xs text-amber-600 font-medium">needs attention</span>
+                      <span className="text-xl text-gray-400">coming soon</span>
                   </div>
+                  {/* <div className="flex items-baseline gap-2 mt-0.5">
+                    <span className="text-3xl font-semibold text-neutral-900 tabular-nums">23</span>
+                    <span className="text-xs text-amber-600 font-medium">need attention</span>
+                  </div> */}
                 </div>
               </div>
             </CardContent>
@@ -241,7 +239,8 @@ export default function VsuAdminDashboard() {
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent className="p-0">
+            <div className="text-center text-gray-400">Feature coming soon!</div>
+            {/* <CardContent className="p-0">
               <div className="divide-y divide-neutral-100">
                 {repairRequests.map((request) => (
                   <div key={request.id} className="px-5 py-3.5 hover:bg-neutral-50 transition-colors cursor-pointer">
@@ -271,7 +270,7 @@ export default function VsuAdminDashboard() {
                   View all requests →
                 </button>
               </div>
-            </CardContent>
+            </CardContent> */}
           </Card>
         </div>
 
@@ -310,19 +309,19 @@ export default function VsuAdminDashboard() {
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-[13px] font-medium text-neutral-700">Occupancy Rate</p>
-                <span className="text-[20px] font-semibold text-neutral-900">86%</span>
+                <span className="text-[20px] font-semibold text-neutral-900">{(dormitoryData?.reduce((total, dormitory) => total + (dormitory.occupancy || 0), 0) / dormitoryData?.reduce((total, dormitory) => total + (dormitory.capacity || 0), 0) * 100).toFixed(2)}%</span>
               </div>
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="bg-neutral-50 rounded-lg p-2.5">
-                  <p className="text-[18px] font-semibold text-neutral-900">2,450</p>
+                  <p className="text-[18px] font-semibold text-neutral-900">{dormitoryData?.reduce((total, dormitory) => total + (dormitory.occupancy || 0), 0)}</p>
                   <p className="text-[10px] text-neutral-500 uppercase tracking-wide mt-0.5">Occupied</p>
                 </div>
                 <div className="bg-neutral-50 rounded-lg p-2.5">
-                  <p className="text-[18px] font-semibold text-neutral-900">400</p>
+                  <p className="text-[18px] font-semibold text-neutral-900">{dormitoryData?.reduce((total, dormitory) => total + (dormitory.capacity || 0), 0) - dormitoryData?.reduce((total, dormitory) => total + (dormitory.occupancy || 0), 0)}</p>
                   <p className="text-[10px] text-neutral-500 uppercase tracking-wide mt-0.5">Available</p>
                 </div>
                 <div className="bg-neutral-50 rounded-lg p-2.5">
-                  <p className="text-[18px] font-semibold text-neutral-900">2,850</p>
+                  <p className="text-[18px] font-semibold text-neutral-900">{dormitoryData?.reduce((total, dormitory) => total + (dormitory.capacity || 0), 0)}</p>
                   <p className="text-[10px] text-neutral-500 uppercase tracking-wide mt-0.5">Total</p>
                 </div>
               </div>
@@ -333,20 +332,22 @@ export default function VsuAdminDashboard() {
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-[13px] font-medium text-neutral-700">Active Advisers</p>
-                <Badge variant="outline" className="text-[10px] font-medium border-neutral-200 text-neutral-600">12 total</Badge>
+                <Badge variant="outline" className="text-[10px] font-medium border-neutral-200 text-neutral-600">{advisers.length} total</Badge>
               </div>
               <div className="flex -space-x-2">
-                {[1, 2, 3, 4, 5].map((i) => (
+                {advisers.slice(0, Math.min(advisers.length, 5)).map((adviser) => (
                   <div 
-                    key={i} 
+                    key={adviser.id} 
                     className="h-9 w-9 rounded-full bg-neutral-900 border-2 border-white flex items-center justify-center text-[11px] font-medium text-white"
                   >
-                    A{i}
+                    {adviser.firstName.slice(0, 1)}{adviser.lastName.slice(0, 1)}
                   </div>
                 ))}
-                <div className="h-9 w-9 rounded-full bg-neutral-200 border-2 border-white flex items-center justify-center text-[11px] font-medium text-neutral-600">
-                  +7
-                </div>
+                {advisers.length > 5 && (
+                  <div className="h-9 w-9 rounded-full bg-neutral-200 border-2 border-white flex items-center justify-center text-[11px] font-medium text-neutral-600">
+                    +{advisers.length - 5}
+                  </div>
+                )}
               </div>
               <p className="text-[12px] text-neutral-500 mt-3">All advisers currently active</p>
             </CardContent>

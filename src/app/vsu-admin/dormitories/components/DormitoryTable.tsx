@@ -29,6 +29,9 @@ export default function DormitoryTable({ dorms, editDormitory, deleteDormitory }
                 <TableHead className="font-medium text-neutral-500 uppercase text-[11px] tracking-wider">
                   Occupancy
                 </TableHead>
+                <TableHead className="font-medium text-neutral-500 uppercase text-[11px] tracking-wider">
+                  Capacity
+                </TableHead>
                 <TableHead className="w-[120px] font-medium text-neutral-500 uppercase text-[11px] tracking-wider text-right">
                   Actions
                 </TableHead>
@@ -60,6 +63,9 @@ export default function DormitoryTable({ dorms, editDormitory, deleteDormitory }
                   </TableCell>
                   <TableCell className="text-[14px]">
                     <span className="text-neutral-600 font-medium">{dorm.occupancy}</span>
+                  </TableCell>
+                  <TableCell className="text-[14px]">
+                    <span className="text-neutral-600 font-medium">{dorm.capacity}</span>
                   </TableCell>
                   <TableCell className="text-right align-middle w-[120px]">
                     <div className="flex justify-end items-center h-full">

@@ -36,11 +36,13 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
   const [dormitoryName, setDormitoryName] = useState(dormitory?.name || "")
   const [dormitoryLocation, setDormitoryLocation] = useState(dormitory?.location || "")
   const [dormitoryAdviser, setDormitoryAdviser] = useState(dormitory?.adviser || "")
+  const [dormitoryCapacity, setDormitoryCapacity] = useState(dormitory?.capacity || 0)
   useEffect(() => {
     if (isOpen) {
       setDormitoryName(dormitory?.name || "");
       setDormitoryLocation(dormitory?.location || "");
       setDormitoryAdviser(dormitory?.adviser || "");
+      setDormitoryCapacity(dormitory?.capacity || 0);
     }
   }, [dormitory, isOpen]);
     
@@ -56,13 +58,15 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
         name: dormitoryName,
         location: dormitoryLocation,
         adviser: dormitoryAdviser,
+        capacity: dormitoryCapacity,
       })
     } else {
       onUpdate({
         id: dormitory.id,
         name: dormitoryName,
         location: dormitoryLocation,
-        adviser: dormitoryAdviser
+        adviser: dormitoryAdviser,
+        capacity: dormitoryCapacity,
       })
     }
     onClose()
@@ -99,6 +103,22 @@ export default function AddEditDormitory({ isOpen, onClose, dormitory, type, onA
                value={dormitoryName}
                className="border-neutral-200 focus:ring-neutral-900 focus:border-neutral-900 h-10" type={undefined}
                onChange={(e) => setDormitoryName(e.target.value)}            />
+          </div>
+
+          <div className="grid gap-1.5">
+            <Label
+              htmlFor="capacity"
+              className="text-[13px] font-medium text-neutral-700 flex items-center gap-1.5"
+            >
+              <Info className="h-3.5 w-3.5 text-neutral-400" />
+              Capacity
+            </Label>
+            <Input
+               id="capacity"
+               placeholder="e.g. 100"
+               value={dormitoryCapacity}
+               className="border-neutral-200 focus:ring-neutral-900 focus:border-neutral-900 h-10" type="number"
+               onChange={(e) => setDormitoryCapacity(Number(e.target.value))}            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">

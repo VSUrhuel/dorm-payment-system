@@ -3,6 +3,7 @@ export interface Dormitory {
     name: string;
     location: string;
     adviser: string;
+    capacity: number;
     adviserName?: string;
     isDeleted?: boolean;
     occupancy?: number;

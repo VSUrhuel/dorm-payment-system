@@ -59,7 +59,7 @@ export const generateEmailHtml = (reportTable: string) => {
           <br>
           <p>If you have any questions, please don't hesitate to reach out.</p>
           <p>Thank you!</p>
-          <p><strong>Mabolo Management</strong></p>
+          <p><strong>VSU DormPay</strong></p>
         </div>
         <div style="background-color: #f2f2f2; color: #777; padding: 10px; text-align: center; font-size: 12px;">
           <p>This is an automated report. Generated on ${new Date().toLocaleDateString()}.</p>

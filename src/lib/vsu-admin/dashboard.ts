@@ -17,6 +17,24 @@ export const totalOccupancyCount = async () => {
     }
 }
 
+export const getDormitoryData = async () => {
+    try {
+        const dormitories = await getDormitories();
+        const dormitoryData = dormitories.map(async (dormitory: any) => {
+            const totalDormers = await dormerCount(dormitory.id)
+            return {
+                name: dormitory.name,
+                occupancy: totalDormers,
+                capacity: dormitory.capacity,
+                percentage: (totalDormers / dormitory.capacity * 100).toPrecision(2)
+            }
+        })
+        const resolvedDormitoryData = await Promise.all(dormitoryData)
+        return resolvedDormitoryData;
+    } catch (error) {
+        toast.error("Error getting dormitory data:", error)
+    }
+}
 
 export const getKpiData = async () => {
     try {

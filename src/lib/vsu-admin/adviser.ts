@@ -105,7 +105,7 @@ export const updateDormAdvisory = async (dormId: string, adviserId: string, dorm
             isDeleted: false,
         })
 
-        const temporaryPassword = generateRandomPassword();
+        const temporaryPassword = "iloveVSU-DormPay"
         
         await sendEmail({
                   to: adviserData.email,
