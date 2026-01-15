@@ -12,8 +12,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "DormPay System",
-  description: "Admin dashboard for managing dormitory payments",
+  title: "DormPay",
+  description: "Dormitory Payment System",
+  icons: {
+    icon: "/profile-old.webp",
+  },
 };
 
 export default function RootLayout({ children }) {
