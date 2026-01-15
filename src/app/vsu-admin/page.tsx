@@ -77,7 +77,7 @@ export default function VsuAdminDashboard() {
                     <p className="text-xs font-medium text-neutral-400 uppercase tracking-wide">Dormitories</p>
                     <div className="flex items-baseline gap-2 mt-0.5">
                       <span className="text-3xl font-semibold text-white">{dormitoryData?.length}</span>
-                      <span className="text-xs text-emerald-400 font-medium">All active</span>
+                      <span className="text-xs text-emerald-400 font-medium">All registered</span>
                     </div>
                   </div>
                 </div>
@@ -112,9 +112,12 @@ export default function VsuAdminDashboard() {
                   <div className="flex-1">
                     <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">Pending Repairs</p>
                     <div className="flex items-baseline gap-2 mt-0.5">
-                      <span className="text-3xl font-semibold text-neutral-900">23</span>
-                      <span className="text-xs text-amber-600 font-medium">needs review</span>
+                      <span className="text-xl text-gray-400">coming soon</span>
                     </div>
+                    {/* <div className="flex items-baseline gap-2 mt-0.5">
+                    <span className="text-3xl font-semibold text-neutral-900 tabular-nums">23</span>
+                    <span className="text-xs text-amber-600 font-medium">need attention</span>
+                  </div> */}
                   </div>
                 </div>
               </CardContent>
@@ -174,9 +177,12 @@ export default function VsuAdminDashboard() {
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">Pending Repairs</p>
                   <div className="flex items-baseline gap-2 mt-0.5">
-                    <span className="text-3xl font-semibold text-neutral-900 tabular-nums">23</span>
-                    <span className="text-xs text-amber-600 font-medium">needs attention</span>
+                      <span className="text-xl text-gray-400">coming soon</span>
                   </div>
+                  {/* <div className="flex items-baseline gap-2 mt-0.5">
+                    <span className="text-3xl font-semibold text-neutral-900 tabular-nums">23</span>
+                    <span className="text-xs text-amber-600 font-medium">need attention</span>
+                  </div> */}
                 </div>
               </div>
             </CardContent>
@@ -233,7 +239,8 @@ export default function VsuAdminDashboard() {
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent className="p-0">
+            <div className="text-center text-gray-400">Feature coming soon!</div>
+            {/* <CardContent className="p-0">
               <div className="divide-y divide-neutral-100">
                 {repairRequests.map((request) => (
                   <div key={request.id} className="px-5 py-3.5 hover:bg-neutral-50 transition-colors cursor-pointer">
@@ -263,7 +270,7 @@ export default function VsuAdminDashboard() {
                   View all requests →
                 </button>
               </div>
-            </CardContent>
+            </CardContent> */}
           </Card>
         </div>
 

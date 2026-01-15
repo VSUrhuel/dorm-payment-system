@@ -5,7 +5,7 @@ export default function LoadingScreen() {
         <div className="relative">
           <div className="absolute inset-0 bg-[#2E7D32]/20 rounded-full animate-ping"></div>
           <img
-            src="/profile.ico"
+            src="/profile-old.webp"
             alt="DormPay Logo"
             width={80}
             height={80}

@@ -134,7 +134,7 @@ export default function AuthPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-600">
         <img
-          src="/profile.ico"
+          src="/profile-old.webp"
           alt="Logo"
           width={32}
           height={32}
@@ -150,7 +150,7 @@ export default function AuthPage() {
       <header className="w-full h-[74px] bg-[#12372A] shadow-md flex items-center justify-between px-6 md:px-12 lg:px-24 animate-in fade-in duration-700">
         <div className="flex items-center gap-3">
           <img
-            src="/profile.ico"
+            src="/profile-old.webp"
             alt="Logo"
             width={40}
             height={40}
