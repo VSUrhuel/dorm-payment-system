@@ -52,6 +52,10 @@ import { toast } from "sonner";
 import { formatAmount } from "./expenses/utils";
 import { convertToHTMLTable, generateEmailHtml } from "@/lib/admin/dashboardUtils";
 import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
+import { FinesCards } from "./components/fines-cards";
+import { useFinesData } from "./fines/hooks/useFinesData";
+import { useFinesActions } from "./fines/hooks/useFinesAction";
+import AddFineModal from "./components/add-fine-modal";
 
 function SkeletonCard() {
   return (
@@ -132,6 +136,13 @@ export default function Dashboard() {
   const [payableToEdit, setPayableToEdit] = useState(null);
 
   const { dormitoryId, loading: dormitoryIdLoading} = useCurrentDormitoryId();
+
+  // Fines Data
+  const [fineToEdit, setFineToEdit] = useState(null);
+  const [isAddFineModalOpen, setIsAddFineModalOpen] = useState(false);
+
+  const {fines, loading: finesLoading} = useFinesData();
+  const {addFine, updateFine, deleteFine} = useFinesActions();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -419,6 +430,22 @@ export default function Dashboard() {
     setIsAddModalOpen(true); // Open the modal for editing
   };
 
+  const handleSaveFine = async (fineData) => {
+    try {
+      if (fineData.id) {
+        await updateFine(fineData)
+        toast.success("Fine Updated Successfully!");
+      } else {
+        await addFine(fineData)
+        toast.success("New Fine Added Successfully!");
+      }
+      setIsAddFineModalOpen(false); // Close modal on success
+    } catch (error) {
+      console.error("Error saving fine:", error);
+      toast.error("There was a problem saving the fine.");
+    }
+  };
+
   const handleSavePayable = async (payableData) => {
     try {
       if (payableData.id) {
@@ -694,6 +721,24 @@ export default function Dashboard() {
           )}
         </CardContent>
       </Card>
+
+      <FinesCards
+        fines={fines}
+        handleAddFine={() => setIsAddFineModalOpen(true)}
+        handleEditFine={ (fine) => {
+          setFineToEdit(fine);
+          if(fineToEdit){
+            setIsAddFineModalOpen(true);
+          }
+        }}
+      />
+
+      <AddFineModal
+        isOpen={isAddFineModalOpen}
+        onClose={() => setIsAddFineModalOpen(false)}
+        onSave={handleSaveFine}
+        fine={fineToEdit}
+      />
 
       <AddPayableModal
         isOpen={isAddModalOpen}
