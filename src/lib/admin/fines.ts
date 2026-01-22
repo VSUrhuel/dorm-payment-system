@@ -1,6 +1,6 @@
-import { addDoc, collection, doc, onSnapshot, query, serverTimestamp, updateDoc, where } from "firebase/firestore"
+import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, query, serverTimestamp, updateDoc, where } from "firebase/firestore"
 import { firestore as db } from "../firebase"
-import { Fine } from "@/app/admin/fines/types";
+import { Fine, FineSummary } from "@/app/admin/fines/types";
 
 export const getFines = (dormitoryId: string, onNext: (fines: Fine[]) => void) => {
     const q = query(
@@ -48,6 +48,21 @@ export const deleteFine = async (fine: Fine) => {
             isDeleted: true,
             deletedAt: serverTimestamp()
         });
+    } catch (error) {
+        throw error
+    }
+}
+
+export const getFinesSummary = async (dormitoryId: string) => {
+    try {
+        const finesSummary = await getDocs(query(collection(db, "finesPayment"), where("dormitoryId", "==", dormitoryId)));
+        const totalFines = finesSummary.docs.reduce((total, fine) => total + fine.data().totalAmountDue, 0);
+        const collectedFines = finesSummary.docs.reduce((total, fine) => total + fine.data().amountPaid, 0);
+        return {
+            totalFines,
+            collectedFines,
+            collectibleFines: totalFines - collectedFines
+        } as FineSummary 
     } catch (error) {
         throw error
     }

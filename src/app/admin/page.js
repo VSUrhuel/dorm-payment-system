@@ -141,7 +141,7 @@ export default function Dashboard() {
   const [fineToEdit, setFineToEdit] = useState(null);
   const [isAddFineModalOpen, setIsAddFineModalOpen] = useState(false);
 
-  const {fines, loading: finesLoading} = useFinesData();
+  const {payableFines, loading: finesLoading} = useFinesData();
   const {addFine, updateFine, deleteFine} = useFinesActions();
 
   useEffect(() => {
@@ -723,7 +723,7 @@ export default function Dashboard() {
       </Card>
 
       <FinesCards
-        fines={fines}
+        fines={payableFines}
         handleAddFine={() => setIsAddFineModalOpen(true)}
         handleEditFine={ (fine) => {
           setFineToEdit(fine);

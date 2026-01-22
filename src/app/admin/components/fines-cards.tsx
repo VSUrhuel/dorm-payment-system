@@ -19,7 +19,7 @@ export const FinesCards = ({fines, handleAddFine, handleEditFine}: FinesCardProp
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 sm:mb-1.5">
                       <CardTitle className="text-sm sm:text-base md:text-lg font-bold text-[#12372A] truncate">
-                        Regular fines
+                        Regular Fines
                       </CardTitle>
                       {fines.length > 0 && (
                         <Badge
@@ -31,7 +31,7 @@ export const FinesCards = ({fines, handleAddFine, handleEditFine}: FinesCardProp
                       )}
                     </div>
                     <CardDescription className="text-xs sm:text-sm text-gray-600 truncate">
-                      Recurring monthly expenses
+                      Indentified fines in the dorm
                     </CardDescription>
                   </div>
                   <Button
@@ -39,7 +39,7 @@ export const FinesCards = ({fines, handleAddFine, handleEditFine}: FinesCardProp
                     onClick={() => handleAddFine()}
                     className="gap-2 bg-[#2E7D32] text-white hover:bg-[#54ba59] hover:text-white w-full sm:w-auto text-xs sm:text-sm touch-manipulation active:scale-95 flex-shrink-0" size={undefined}                  >
                     <PlusIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-                    <span className="truncate">Add fine</span>
+                    <span className="truncate">Add Fine</span>
                   </Button>
                 </CardHeader>
                 <CardContent className="relative z-10">
@@ -49,10 +49,10 @@ export const FinesCards = ({fines, handleAddFine, handleEditFine}: FinesCardProp
                         <Wallet className="h-7 w-7 sm:h-8 sm:w-8 text-[#2E7D32]" />
                       </div>
                       <h3 className="text-sm sm:text-base font-semibold text-[#12372A] mb-1.5 sm:mb-2">
-                        No fines Yet
+                        No Fines Yet
                       </h3>
                       <p className="text-xs sm:text-sm text-slate-500 mb-3 sm:mb-4 truncate">
-                        Start by adding your first recurring expense
+                        Start by adding your first fine
                       </p>
                       <Button
                         variant="outline"
@@ -61,7 +61,7 @@ export const FinesCards = ({fines, handleAddFine, handleEditFine}: FinesCardProp
                         className="gap-2 bg-[#2E7D32] text-white hover:bg-[#54ba59] hover:text-white text-xs sm:text-sm"
                       >
                         <PlusIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                        <span className="truncate">Add First fine</span>
+                        <span className="truncate">Add First Fine</span>
                       </Button>
                     </div>
                   ) : (
@@ -94,7 +94,7 @@ function FineItem({ fine, onEdit }: { fine: Fine; onEdit: (fine: Fine) => void }
               <Wallet className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#2E7D32]" />
             </div>
             <h3 className="text-xs sm:text-sm font-bold text-[#333333] group-hover:text-[#2E7D32] transition-colors truncate">
-              {fine.name || "Untitled fine"}
+              {fine.name || "Untitled Fine"}
             </h3>
           </div>
           <p className="text-2xl sm:text-3xl font-extrabold text-[#2E7D32] mb-1.5 sm:mb-2 tracking-tight">

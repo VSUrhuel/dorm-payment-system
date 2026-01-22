@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { Fine } from "../types";
+import { BillFines, Fine, PaymentFines } from "../types";
 import { addFine as addFineLib, updateFine as updateFineLib, deleteFine as deleteFineLib } from "@/lib/admin/fines";
 import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
 import { toast } from "sonner";
-
+import { addDoc, collection, doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { firestore as db } from "@/lib/firebase";
 import { User } from "firebase/auth";
 
 export const useFinesActions = () => {
-    const [loading, setLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     
     const { dormitoryId } = useCurrentDormitoryId();
@@ -18,50 +19,92 @@ export const useFinesActions = () => {
             return;
         }
         try {
-            setLoading(true);
+            setIsSubmitting(true);
             await addFineLib(fine, dormitoryId);
-            setLoading(false);
+            setIsSubmitting(false);
             toast.success("Fine added successfully");
         } catch (error) {
             setError(error as Error);
-            setLoading(false);
+            setIsSubmitting(false);
             toast.error("Failed to add fine");
         }
     };
 
-    
     const updateFine = async (fine: Fine) => {
         try {
-            setLoading(true);
+            setIsSubmitting(true);
             await updateFineLib(fine);
-            setLoading(false);
+            setIsSubmitting(false);
         } catch (error) {
-            setError(error);
-            setLoading(false);
+            setError(error as Error);
+            setIsSubmitting(false);
         }
     };
     
     const deleteFine = async (fine: Fine) => {
         try {
-            setLoading(true);
+            setIsSubmitting(true);
             await deleteFineLib(fine);
-            setLoading(false);
+            setIsSubmitting(false);
         } catch (error) {
-            setError(error);
-            setLoading(false);
+            setError(error as Error);
+            setIsSubmitting(false);
         }
     };
 
-    const saveFinePayable = async (fineData: Fine, user: User | null) => {
+    const saveFine = async (fineData: BillFines, user: User | null) => {
+        if (!dormitoryId) return;
         try {
-            setLoading(true);
-            await saveFinePayable(fineData, user);
-            setLoading(false);
+            setIsSubmitting(true);
+            await addDoc(collection(db, "finesPayment"), {
+                ...fineData,
+                status: "Unpaid",
+                remainingBalance: fineData.totalAmountDue,
+                amountPaid: 0,
+                createdAt: serverTimestamp(),
+                paymentDate: null,
+                createdBy: user?.uid
+            });
+            toast.success("Fine generated successfully");
+            setIsSubmitting(false);
         } catch (error) {
-            setError(error);
-            setLoading(false);
+            setError(error as Error);
+            setIsSubmitting(false);
+            toast.error("Failed to generate fine");
         }
-    }
+    };
+
+    const handleSavePayment = async (paymentData: any, user: User | null) => {
+        try {
+            setIsSubmitting(true);
+            if(!paymentData.id) {
+                toast.error("Invalid payment!")
+                return;
+            }
+            await updateDoc(doc(db, "finesPayment", paymentData.id), {
+                amountPaid: paymentData.amountPaid,
+                paymentDate: paymentData.paymentDate,
+                paymentMethod: paymentData.paymentMethod,
+                remainingBalance: paymentData.remainingBalance,
+                notes: paymentData.notes,
+                status: paymentData.remainingBalance <= 0 ? "Paid" : paymentData.remainingBalance > 0 ? "Partially Paid" : "Unpaid",
+                updatedAt: serverTimestamp(),
+                updatedBy: user?.uid
+            });
+            await addDoc(collection(db, "finesPaymentHistory"), {
+                ...paymentData,
+                createdAt: serverTimestamp(),
+                createdBy: user?.uid
+            });
+            toast.success("Payment recorded successfully");
+            setIsSubmitting(false);
+        } catch (error) {
+            setError(error as Error);
+            console.error(error);
+            setIsSubmitting(false);
+            toast.error("Failed to record payment");
+        }
+    };
     
-    return { addFine, updateFine, deleteFine, loading, error };
+    return { addFine, updateFine, deleteFine, saveFine, handleSavePayment, isSubmitting, error };
 }
