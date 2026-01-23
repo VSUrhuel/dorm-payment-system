@@ -56,11 +56,17 @@ export default function GenerateFinesModal({
   >({});
   const [totalAmount, setTotalAmount] = useState(0);
   const [description, setDescription] = useState("");
+  const [finesRemarks, setFinesRemarks] = useState("");
 
   useEffect(() => {
     const newTotal = payables.reduce((sum, payable) => {
       return selectedPayables[payable.id] ? sum + payable.amount : sum;
     }, 0);
+    setFinesRemarks(
+      payables.reduce((description, payable) => {
+        return selectedPayables[payable.id] ? description + payable.name + " - " : description;
+      }, "").slice(0, -2)
+    )
     setTotalAmount(newTotal);
   }, [selectedPayables, payables]);
 
@@ -95,6 +101,8 @@ export default function GenerateFinesModal({
     const paymentFineData = {
       dormerId: dormer.id, 
       dormitoryId: dormer.dormitoryId,
+      finesRemarks: finesRemarks,
+      description: description,
       totalAmountDue: totalAmount,
     };
 

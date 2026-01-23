@@ -1,6 +1,6 @@
 import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, query, serverTimestamp, updateDoc, where } from "firebase/firestore"
 import { firestore as db } from "../firebase"
-import { Fine, FineSummary } from "@/app/admin/fines/types";
+import { Fine, FineSummary, PaymentFines } from "@/app/admin/fines/types";
 
 export const getFines = (dormitoryId: string, onNext: (fines: Fine[]) => void) => {
     const q = query(
@@ -63,6 +63,18 @@ export const getFinesSummary = async (dormitoryId: string) => {
             collectedFines,
             collectibleFines: totalFines - collectedFines
         } as FineSummary 
+    } catch (error) {
+        throw error
+    }
+}
+
+export const getFinesPayment = async (userId: string, dormitoryId: string) => {
+    try {
+        const finesPayment = await getDocs(query(collection(db, "finesPayment"), where("dormerId", "==", userId), where("dormitoryId", "==", dormitoryId)));
+        return finesPayment.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        })) as PaymentFines[];
     } catch (error) {
         throw error
     }

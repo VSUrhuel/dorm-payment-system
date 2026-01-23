@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CreditCard } from "lucide-react";
+import { CreditCard, ChevronDown, ChevronUp } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -41,12 +41,21 @@ export default function FinesModal({
   dormer,
   onRecordPayment,
 }: FinesModalProps) {
+  const [expandedRemarks, setExpandedRemarks] = useState<Record<string, boolean>>({});
+
+  const toggleRemarks = (fineId: string) => {
+    setExpandedRemarks(prev => ({
+      ...prev,
+      [fineId]: !prev[fineId]
+    }));
+  };
+
   if (!dormer) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className="sm:max-w-2xl max-w-4xl max-h-[90vh] overflow-y-auto"
+        className="sm:max-w-3xl lg:max-w-5xl max-w-[95vw] max-h-[90vh] overflow-y-auto"
         onInteractOutside={(e) => {
           e.preventDefault();
         }}
@@ -91,6 +100,7 @@ export default function FinesModal({
                     <TableHead className={undefined}>Amount Due</TableHead>
                     <TableHead className={undefined}>Amount Paid</TableHead>
                     <TableHead className={undefined}>Date Paid</TableHead>
+                    <TableHead className="max-w-[20ch]">Remarks</TableHead>
                     <TableHead className={undefined}>Status</TableHead>
                     <TableHead className="text-right">Action</TableHead>
                   </TableRow>
@@ -98,44 +108,87 @@ export default function FinesModal({
                 <TableBody className={undefined}>
                   {dormer.fines.map((fine) => {
                     const { className, Icon } = getStatusBadgeInfo(fine.status);
+                    const isExpanded = expandedRemarks[fine.id] || false;
+                    const shouldTruncate = fine.finesRemarks && fine.finesRemarks.length > 20;
+                    
                     return (
-                      <TableRow key={fine.id} className={undefined}>
-                        <TableCell className="w-[150px]">
-                          <span className="truncate block" title={fine.createdAt.toDate().toString()}>
-                            {formatDate(fine.createdAt)}
-                          </span>
-                        </TableCell>
-                        <TableCell className="w-[120px]">
-                          ₱{fine.totalAmountDue.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="w-[120px]">
-                          ₱{(fine.amountPaid || 0).toFixed(2)}
-                        </TableCell>
-                        <TableCell className="w-[120px]">
-                          {fine.paymentDate ? <span className="truncate block" title={fine.paymentDate.toDate().toString()}>
-                            {formatDate(fine.paymentDate)}
-                          </span> : "-"}
-                        </TableCell>
-                        <TableCell className="w-[140px]">
-                          <Badge className={className} variant={undefined}>
-                            {Icon && <Icon className="h-4 w-4 mr-1 flex-shrink-0" />}
-                            <span className="truncate">{fine.status}</span>
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right w-[120px]">
-                          {(fine.status === "Unpaid" ||
-                            fine.status === "Partially Paid") && (
-                            <Button
-                              size="sm"
-                              onClick={() => onRecordPayment(fine)}
-                              className="h-8 bg-red-600 hover:bg-red-700 text-white whitespace-nowrap"
-                              variant={undefined}
-                            >
-                              <CreditCard className="h-4 w-4 mr-1" /> Pay
-                            </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
+                      <React.Fragment key={fine.id}>
+                        <TableRow className={undefined}>
+                          <TableCell className="w-[150px]">
+                            <span className="truncate block" title={fine.createdAt.toDate().toString()}>
+                              {formatDate(fine.createdAt)}
+                            </span>
+                          </TableCell>
+                          <TableCell className="w-[120px]">
+                            ₱{fine.totalAmountDue.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="w-[120px]">
+                            ₱{(fine.amountPaid || 0).toFixed(2)}
+                          </TableCell>
+                          <TableCell className="w-[120px]">
+                            {fine.paymentDate ? <span className="truncate block" title={fine.paymentDate.toDate().toString()}>
+                              {formatDate(fine.paymentDate)}
+                            </span> : "-"}
+                          </TableCell>
+                          <TableCell className="max-w-[20ch]">
+                            <div className="flex items-start max-w-[20ch]">
+                              <div className={`flex-1 ${shouldTruncate ? 'line-clamp-2 max-w-[20ch]' : ''} break-words pr-2`}>
+                                {fine.finesRemarks || "-"}
+                              </div>
+                              {fine.finesRemarks && fine.finesRemarks.length > 20 && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => toggleRemarks(fine.id)}
+                                  className="h-6 w-6 p-0 flex-shrink-0"
+                                >
+                                  {isExpanded ? (
+                                    <ChevronUp className="h-4 w-4" />
+                                  ) : (
+                                    <ChevronDown className="h-4 w-4" />
+                                  )}
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="w-[140px]">
+                            <Badge className={className} variant={undefined}>
+                              {Icon && <Icon className="h-4 w-4 mr-1 flex-shrink-0" />}
+                              <span className="truncate">{fine.status}</span>
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right w-[120px]">
+                            {(fine.status === "Unpaid" ||
+                              fine.status === "Partially Paid") && (
+                              <Button
+                                size="sm"
+                                onClick={() => onRecordPayment(fine)}
+                                className="h-8 bg-red-600 hover:bg-red-700 text-white whitespace-nowrap"
+                                variant={undefined}
+                              >
+                                <CreditCard className="h-4 w-4 mr-1" /> Pay
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                        
+                        {/* Expanded remarks row */}
+                        {isExpanded && fine.finesRemarks && fine.finesRemarks.length > 20 && (
+                          <TableRow className="bg-gray-50 hover:bg-gray-50">
+                            <TableCell colSpan={7} className="p-0 border-t-0">
+                              <div className="p-3 pl-[200px] bg-gray-50 border-t border-gray-200">
+                                <div className="font-medium text-sm text-gray-600 mb-1">
+                                  Full Remarks:
+                                </div>
+                                <div className="text-gray-800 whitespace-pre-wrap break-words bg-white p-3 rounded border border-gray-200">
+                                  {fine.finesRemarks}
+                                </div>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </React.Fragment>
                     );
                   })}
                 </TableBody>
@@ -182,7 +235,7 @@ export default function FinesModal({
                       <p>
                         {dormer.createdAt
                           ? new Date(
-                              dormer.createdAt.seconds * 1000
+                              dormer.createdAt.seconds * 500
                             ).toLocaleDateString()
                           : "N/A"}
                       </p>

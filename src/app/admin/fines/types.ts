@@ -23,6 +23,7 @@ export interface PaymentFines {
     paymentDate: Timestamp;
     dormerId: string;
     dormitoryId: string;
+    finesRemarks: string;
     createdAt: Timestamp;
     status: "Paid" | "Unpaid" | "Partially Paid";
     isDeleted?: boolean;
@@ -32,6 +33,8 @@ export interface BillFines {
     id?: string;
     totalAmountDue: number;
     dormerId: string;
+    finesRemarks: string;
+    description: string;
     dormitoryId: string;
     isDeleted?: boolean;
 }

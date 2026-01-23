@@ -163,6 +163,10 @@ export default function FinePaymentModal({
                   <Label className="text-xs text-gray-500">Amount Paid</Label>
                   <p>₱{(fine.amountPaid || 0).toFixed(2)}</p>
                 </div>
+                <div>
+                  <Label className="text-xs text-gray-500">Remarks</Label>
+                  <p className="">{fine.finesRemarks}</p>
+                </div>
               </div>
             </CardContent>
           </Card>
