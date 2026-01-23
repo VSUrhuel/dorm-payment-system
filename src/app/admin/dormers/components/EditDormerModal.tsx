@@ -22,6 +22,8 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { DormerData } from "../types";
+import { useCurrentDormitoryId } from "@/hooks/useCurrentDormitoryId";
+import { MaboloRoomNumber, SampaguitaRoomNumber } from "@/app/constants/roomNumber";
 
 // --- Type Definitions ---
 interface EditDormerModalProps {
@@ -76,6 +78,8 @@ export default function EditDormerModal({
     setRoomNumber("");
     onClose();
   };
+
+  const {dormitoryName} = useCurrentDormitoryId();
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -189,39 +193,17 @@ export default function EditDormerModal({
                 <SelectValue placeholder="Select room" />
               </SelectTrigger>
               <SelectContent className={undefined}>
-                <SelectItem value="1" className={undefined}>
-                  Room 1
-                </SelectItem>
-                <SelectItem value="2" className={undefined}>
-                  Room 2
-                </SelectItem>
-                <SelectItem value="3" className={undefined}>
-                  Room 3
-                </SelectItem>
-                <SelectItem value="4A" className={undefined}>
-                  Room 4A
-                </SelectItem>
-                <SelectItem value="4B" className={undefined}>
-                  Room 4B
-                </SelectItem>
-                <SelectItem value="5" className={undefined}>
-                  Room 5
-                </SelectItem>
-                <SelectItem value="6" className={undefined}>
-                  Room 6
-                </SelectItem>
-                <SelectItem value="7" className={undefined}>
-                  Room 7
-                </SelectItem>
-                <SelectItem value="8" className={undefined}>
-                  Room 8
-                </SelectItem>
-                <SelectItem value="9" className={undefined}>
-                  Room 9
-                </SelectItem>
-                <SelectItem value="SA Room" className={undefined}>
-                  SA Room
-                </SelectItem>
+                {dormitoryName === "Mabolo Mens Home" ? (
+                  MaboloRoomNumber.map((room) => {
+                    <SelectItem key={room} className={undefined} value={room}>
+                      {room}
+                    </SelectItem>
+                  })
+                ): (SampaguitaRoomNumber.map((room) => {
+                  <SelectItem key={room} className={undefined} value={room}>
+                    {room}
+                  </SelectItem>
+                }))}
               </SelectContent>
             </Select>
           </div>
